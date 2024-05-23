@@ -1,0 +1,12 @@
+# Bỏ qua thư mục node_modules ở cả hai phần server và client
+node_server/node_modules/
+node_server/build/
+music_client/node_modules/
+music_client/build/
+
+# Bỏ qua tệp .env ở cả hai phần server và client
+node_server/.env
+music_client/.env
+
+smart_contract/build
+node_server/src/public

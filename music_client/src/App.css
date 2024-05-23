@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;700&display=swap');
+
+body {
+  font-family: 'Barlow', sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.lyric::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background: rgba(128, 128, 128, 0.38);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.7);
+}
+
+.ReactModal__Overlay.ReactModal__Overlay--after-open {
+  z-index: 99999;
+}
+
+.shadow-custom {
+  box-shadow: 0 0 5px 0 rgba(20, 20, 20, 0.685);
+}
+
+.style__buttons {
+  @apply p-2 flex justify-center items-center bg-transparent rounded-[25%] transition-all duration-200 hover:bg-primary-300/30
+}
+
+
+.custom-slider .ant-slider-handle::after,
+.custom-slider .ant-slider-handle::before {
+  width: 10px;
+  height: 10px;
+  box-shadow: none;
+  border-radius: 50%;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  background: transparent;
+  transition: all ease-in-out 150ms;
+
+}
+
+
+
+.ant-slider.custom-slider:hover .ant-slider-handle::after,
+.custom-slider .ant-slider-handle:hover::after,
+.custom-slider .ant-slider-handle:focus::after {
+  box-shadow: none;
+  width: 10px;
+  height: 10px;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  background-color: #673AB7;
+  transition: all ease-in-out 150ms;
+}
+
+
+
+
+
+
+.music_wave span {
+  height: 5px;
+  position: absolute;
+  animation: bodong 0.55s infinite ease;
+}
+
+.music_wave span:first-child {
+  left: 0px;
+  animation-delay: .3s;
+}
+
+.music_wave span:nth-child(2) {
+  left: 7px;
+  animation-delay: .4s;
+
+}
+
+.music_wave span:nth-child(3) {
+  left: 14px;
+  animation-delay: .6s;
+}
+
+.music_wave span:nth-child(4) {
+  left: 21px;
+  animation-delay: .8s;
+}
+
+
+
+@keyframes bodong {
+  0% {
+    height: 5px;
+  }
+
+  30% {
+    height: 15px;
+  }
+
+  60% {
+    height: 20px;
+  }
+
+  80% {
+    height: 15px;
+  }
+
+  100% {
+    height: 5px;
+  }
+}
+
+:where(.css-dev-only-do-not-override-17seli4).ant-select-outlined:not(.ant-select-disabled):not(.ant-select-customize-input):not(.ant-pagination-size-changer):hover .ant-select-selector {
+  border-color: rgb(251 110 144 / var(--tw-border-opacity)) !important;
+}
+
+
+@keyframes lyric-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes lyric-down {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
