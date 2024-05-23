@@ -120,8 +120,8 @@ const RechargePage = () => {
   return (
     <>
       <DefaultLayout>
-        <div className="mr-5">
-          <div className=" bg-white p-2 rounded">
+        <div className="mr-5 flex-1 h-full">
+          <div className=" bg-white p-2 rounded  h-full flex flex-col justify-between">
             <div className="text-center">
               <h5 className="text-xl my-3 font-medium">
                 Chọn số tiền bạn muốn nạp

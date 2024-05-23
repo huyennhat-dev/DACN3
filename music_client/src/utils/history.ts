@@ -1,13 +1,32 @@
-const getHistory = () => {
-  return localStorage.getItem("music_app_history");
+const getSearchHistory = () => {
+  return localStorage.getItem("music_app_search_history");
 };
 
-const saveHistory = (value: string) => {
-  localStorage.setItem("music_app_history", value);
+const saveSearchHistory = (value: string) => {
+  localStorage.setItem("music_app_search_history", value);
 };
 
-const clearHistory = () => {
-  localStorage.removeItem("music_app_history");
+const clearSearchHistory = () => {
+  localStorage.removeItem("music_app_search_history");
 };
 
-export { getHistory, saveHistory, clearHistory };
+const getRecentSound = () => {
+  return localStorage.getItem("music_app_recent_sound");
+};
+
+const saveRecentSound = (value: string) => {
+  localStorage.setItem("music_app_recent_sound", value);
+};
+
+const clearRecentSound = () => {
+  localStorage.removeItem("music_app_recent_sound");
+};
+
+export {
+  getSearchHistory,
+  saveSearchHistory,
+  clearSearchHistory,
+  getRecentSound,
+  saveRecentSound,
+  clearRecentSound,
+};

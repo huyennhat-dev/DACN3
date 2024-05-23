@@ -6,6 +6,18 @@ const homeApi = {
     const url = "/home/index";
     return axiosClient.get(url, { params });
   },
+  saveRecent: (data: { type: string; id: string }) => {
+    const url = "/history/create";
+    return axiosClient.post(url, { ...data });
+  },
+  getAllRecent: () => {
+    const url = "/history";
+    return axiosClient.get(url);
+  },
+  deleteRecent: (id: string) => {
+    const url = "/history/delete/" + id;
+    return axiosClient.delete(url);
+  },
 };
 
 export default homeApi;

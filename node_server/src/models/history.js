@@ -10,8 +10,11 @@ const historySchema = new mongoose.Schema(
     sound: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Sound",
-      required: true,
     },
+    playlist:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Playlist",
+    }
   },
   {
     timestamps: true,

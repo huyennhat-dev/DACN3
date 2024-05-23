@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
             <SidebarItem
               title="Thư viện"
               link="/mymusic"
-              active={pathname == "/mymusic"}
+              active={pathname.includes("/mymusic")}
               icon={<IconMusic stroke={1.5} />}
             />
             <SidebarItem

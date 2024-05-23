@@ -2,6 +2,7 @@ import { ComponentType, LazyExoticComponent, lazy } from "react";
 
 const HomePage = lazy(() => import("../pages/Home"));
 const MyMusic = lazy(() => import("../pages/MyMusic"));
+const History = lazy(() => import("../pages/History"));
 const RechargePage = lazy(() => import("../pages/Recharge"));
 const UploadSoundPage = lazy(() => import("../pages/UploadSound"));
 
@@ -21,6 +22,11 @@ export const routes: RouteConfig[] = [
     pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",
     url: "/mymusic",
     component: MyMusic,
+  },
+  {
+    pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",
+    url: "/mymusic/history",
+    component: History,
   },
   {
     pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",

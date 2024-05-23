@@ -23,7 +23,7 @@ export interface sound {
   main_sound?: string;
   preview_sound?: string;
   photo?: string;
-  lyric?: { data: string, startTime: number, endTime: number }[];
+  lyric?: { data: string; startTime: number; endTime: number }[];
   price?: number;
   listens?: number;
   hashTag?: string[];
@@ -31,11 +31,8 @@ export interface sound {
 }
 
 export interface history {
-  type?: number;
-  id: string;
-  title: string;
-  photo?: string;
-  link: string;
+  type?: string;
+  sound: sound;
 }
 
 export interface params {
@@ -57,4 +54,13 @@ export interface uploadData {
   photo: string | null;
   price: number;
   hashTag: string[];
+}
+
+export interface playlist {
+  _id?: string;
+  user?: userType;
+  title?: string;
+  photo?: string;
+  sounds?: sound[];
+  favourite: number;
 }

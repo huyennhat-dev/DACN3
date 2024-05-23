@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
-import { clearHistory, getHistory, saveHistory } from "../../utils/history";
+import { clearSearchHistory, getSearchHistory, saveSearchHistory } from "../../utils/history";
 import { history } from "../../utils/types";
 
 const SearchForm = () => {
@@ -15,18 +15,18 @@ const SearchForm = () => {
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
-  const [historyData, setHistoryData] = useState<history[]>([]);
+  const [searchHistoryData, setSearchHistoryData] = useState<history[]>([]);
 
   useEffect(() => {
     try {
-      let data = JSON.parse(getHistory()!).reverse();
+      let data = JSON.parse(getSearchHistory()!).reverse();
       if (!Array.isArray(data)) {
-        saveHistory(JSON.stringify([]))
+        saveSearchHistory(JSON.stringify([]))
         data = []
       }
-      setHistoryData(data);
+      setSearchHistoryData(data);
     } catch (error) {
-      saveHistory(JSON.stringify([]))
+      saveSearchHistory(JSON.stringify([]))
     }
   }, []);
 
@@ -49,18 +49,18 @@ const SearchForm = () => {
     }, 150)
   };
 
-  const handleSaveHistory = (history: history) => {
-    const data = JSON.parse(getHistory()!)
+  const handleSaveSearchHistory = (history: history) => {
+    const data = JSON.parse(getSearchHistory()!)
     const newHistoryData: history[] = [...data];
     newHistoryData.push(history);
-    setHistoryData(newHistoryData.reverse())
-    saveHistory(JSON.stringify(newHistoryData));
+    setSearchHistoryData(newHistoryData.reverse())
+    saveSearchHistory(JSON.stringify(newHistoryData));
   };
 
   const handleRemoveHistory = () => {
     setShowSuggestion(true)
-    clearHistory();
-    setHistoryData([]);
+    clearSearchHistory();
+    setSearchHistoryData([]);
   };
 
   const handleOnSubmit = (e: any) => {

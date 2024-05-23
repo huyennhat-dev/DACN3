@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Play from "../Icons/Play";
-import { sound } from "../../utils/types";
+import { history, sound } from "../../utils/types";
 import { env } from "../../configs/env";
 import { formatCoin, formatRelativeTime } from "../../utils/format";
 import { IconDots } from "@tabler/icons-react";
@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import transactionApi from "../../api/transaction.api";
 import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
+import homeApi from "../../api/home.api";
 
 const TrackItem = ({ data }: { data: sound }) => {
   const dispatch = useAppDispatch();
@@ -48,20 +49,31 @@ const TrackItem = ({ data }: { data: sound }) => {
     dispatch(setAutoPlay(false));
   };
 
-  const handleClickPlaySound = () => {
+
+
+  const handleClickPlaySound = async () => {
+
+
     if (isPlay) {
       if (data._id != songId) {
-        if (!data.main_sound)
+        if (!data.main_sound && info?.id != data.user?._id)
           message.warning(
             "Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!"
           );
-        return playSound();
+        playSound();
+      } else {
+        pauseSound();
       }
-      pauseSound();
+
     } else {
       if (!data.main_sound)
         message.warning("Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!");
       playSound();
+    }
+    const token = getToken()
+
+    if (songId != data._id && token) {
+      await homeApi.saveRecent({ type: 'sound', id: data._id! })
     }
   };
 
@@ -124,7 +136,7 @@ const TrackItem = ({ data }: { data: sound }) => {
             {!(songId == data._id && isPlay) ? (
               <Play setColor="white" setHeight="20px" setWidth="20px" />
             ) : (
-              <MusicWave color="#fff" />
+              <MusicWave color="#fff" classes="top-[66%] left-[26%] " />
             )}
           </div>
         )}
@@ -133,6 +145,7 @@ const TrackItem = ({ data }: { data: sound }) => {
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <h5
+            title={data.name}
             onClick={handleClickPlaySound}
             className="line-clamp-1 overflow-hidden font-medium cursor-pointer hover:text-primary-300"
           >
@@ -156,7 +169,7 @@ const TrackItem = ({ data }: { data: sound }) => {
           <Popover
             placement="rightTop"
             content={
-              <TrackPopup buySound={data.price ? handleBuySound : null} />
+              <TrackPopup buySound={(data.price && info?.id != data.user?._id) ? handleBuySound : null} />
             }
             trigger="click"
           >

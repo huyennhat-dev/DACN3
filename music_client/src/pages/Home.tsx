@@ -1,44 +1,43 @@
 import { startTransition, useEffect, useState } from "react";
 import { banners } from "../api/_mock";
 import DefaultLayout from "../layout/Layout";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import homeApi from "../api/home.api";
-import { useAppSelector } from "../hooks/redux";
-import { propTypes, sound } from "../utils/types";
 import TrackItem from "../components/Global/TrackItem";
 import Skeleton from "react-loading-skeleton";
-import PlayListItem from "../components/Global/PlayListItem";
 import { getToken } from "../utils/tokenUtils";
+import RecentSoundItem from "../components/Global/RecentSoundItem";
+import { useAppSelector } from "../hooks/redux";
 
 interface homeData {
-  title: string;
-  sectionType: string;
-  items: sound[];
+  recentSounds: any,
+  newSounds: any
+  playlist: []
 }
 
 const HomePage = () => {
   const navigate = useNavigate();
-
+  const userinfo = useAppSelector((state) => state.auth.userInfo)
   const [loading, setLoading] = useState<boolean>(false);
-  const [homeData, setHomeData] = useState<homeData[] | undefined>();
+  const [homeData, setHomeData] = useState<homeData | undefined>();
+
+  const getHomeData = () => {
+    setLoading(true);
+    startTransition(() => {
+      homeApi
+        .getHome({ token: getToken()! })
+        .then((rs: any) => {
+          setLoading(false);
+          setHomeData(rs.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    });
+  };
 
   useEffect(() => {
-    const getHomeData = () => {
-      setLoading(true);
-      startTransition(() => {
-        homeApi
-          .getHome({ token: getToken()!})
-          .then((rs: any) => {
-            setLoading(false);
-            setHomeData(rs.data.playlist);
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-          });
-      })
-    };
-
     getHomeData();
   }, []);
 
@@ -56,13 +55,28 @@ const HomePage = () => {
               />
             ))}
           </div>
+
+          {(userinfo?.id && homeData?.recentSounds.items.length > 0) && (
+            <div className="bg-white p-2 rounded mb-5">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-title-md ">{homeData?.recentSounds.title}</h3>
+                <Link to="/mymusic/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
+              </div>
+              <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+                {homeData?.recentSounds.items.map((item: any, index: number) => (
+                  <RecentSoundItem key={index} data={item} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {!loading ? (
             homeData &&
-            homeData[0].items.length > 0 && (
+            homeData.newSounds.items.length > 0 && (
               <div className="bg-white p-2 rounded mb-5">
-                <h3 className="text-title-md mb-2">{homeData[0].title}</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {homeData[0].items.map((item, index) => (
+                <h3 className="text-title-md mb-2">{homeData.newSounds.title}</h3>
+                <div className="grid grid-cols-4 gap-2">
+                  {homeData.newSounds.items.map((item: any, index: number) => (
                     <TrackItem key={index} data={item} />
                   ))}
                 </div>
@@ -93,11 +107,15 @@ const HomePage = () => {
             </div>
           )}
 
-          {homeData?.slice(1) &&
+          {/* {homeData?.slice(1) &&
             homeData.slice(1).map((playlist, index) => (
-              <div key={index} className="bg-white p-2 rounded mb-5">
+              <div
+                key={index}
+                className={`bg-white p-2 rounded ${index != homeData.slice(1).length - 1 && "mb-5"
+                  }`}
+              >
                 <h3 className="text-title-md mb-2">{playlist.title}</h3>
-                <div className="grid grid-cols-5 gap-5">
+                <div className="grid grid-cols-6 gap-5">
                   {playlist.items.map((item, i) => (
                     <PlayListItem
                       key={i}
@@ -108,12 +126,11 @@ const HomePage = () => {
                       price={item.price!}
                       hashTag={item.hashTag!}
                       type={propTypes.sound}
-
                     />
                   ))}
                 </div>
               </div>
-            ))}
+            ))} */}
         </div>
       </DefaultLayout>
     </>

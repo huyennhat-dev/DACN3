@@ -1,3 +1,4 @@
+import historyModel from "~/models/history";
 import soundModel from "~/models/sound";
 import userModel from "~/models/user";
 import { chillHashtags, healingHashtags, remixHashTags } from "~/utils";
@@ -8,11 +9,8 @@ const homeController = {
   home: async (req, res, next) => {
     try {
       const token = req.query.token;
-      let modifierNewRelease;
-      let modifierRemixPlayList;
-      let modifierChillPlayList;
-      let modifierHotPlayList;
-      let modifierHealPlayList;
+      let modifierNewRelease=[]
+      let modifierRecent=[]
 
       const newRelease = await soundModel
         .find({ status: true })
@@ -23,46 +21,6 @@ const homeController = {
         })
         .sort({ createdAt: -1 })
         .limit(12);
-
-      const remixPlayList = await soundModel
-        .find({ status: true, hashTag: { $in: remixHashTags } })
-        .populate({
-          path: "user",
-          select:
-            "-username -password -sounds -createdAt -updatedAt -purchases -playlist",
-        })
-        .sort({ listens: -1 })
-        .limit(4);
-
-      const chillPlayList = await soundModel
-        .find({ status: true, hashTag: { $in: chillHashtags } })
-        .populate({
-          path: "user",
-          select:
-            "-username -password -sounds -createdAt -updatedAt -purchases -playlist",
-        })
-        .sort({ listens: -1 })
-        .limit(4);
-
-      const hotPlayList = await soundModel
-        .find({ status: true })
-        .populate({
-          path: "user",
-          select:
-            "-username -password -sounds -createdAt -updatedAt -purchases -playlist",
-        })
-        .sort({ listens: -1 })
-        .limit(4);
-
-      const healPlayList = await soundModel
-        .find({ status: true, hashTag: { $in: healingHashtags } })
-        .populate({
-          path: "user",
-          select:
-            "-username -password -sounds -createdAt -updatedAt -purchases -playlist",
-        })
-        .sort({ listens: -1 })
-        .limit(4);
 
       if (token) {
         const uid = verifyAccessToken(token)?.id;
@@ -76,7 +34,15 @@ const homeController = {
           .populate({ path: "purchases" })
           .select("-username -password -sounds");
 
+        const recentSounds = await historyModel
+          .find({ user: uid })
+          .populate("sound")
+          .populate("playlist")
+          .limit(8)
+          .sort({ createdAt: -1 });
+
         const purchases = user.purchases?.map((data) => data.sound.toString());
+
         modifierNewRelease = newRelease.map((item) => {
           const sound_url = item.main_sound;
           if (item.price > 0 && !purchases.includes(item._id.toString())) {
@@ -88,28 +54,16 @@ const homeController = {
           return item;
         });
 
-        modifierRemixPlayList = remixPlayList.map((item) => {
-          if (item.price > 0 && !purchases.includes(item._id)) {
-            item.main_sound = undefined;
+        modifierRecent = recentSounds.map((item) => {
+          const sound_url = item.main_sound;
+          if (
+            item.sound?.price > 0 &&
+            !purchases.includes(item.sound._id.toString())
+          ) {
+            item.sound.main_sound = undefined;
           }
-          return item;
-        });
-
-        modifierChillPlayList = chillPlayList.map((item) => {
-          if (item.price > 0 && !purchases.includes(item._id)) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-        modifierHotPlayList = hotPlayList.map((item) => {
-          if (item.price > 0 && !purchases.includes(item._id)) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-        modifierHealPlayList = healPlayList.map((item) => {
-          if (item.price > 0 && !purchases.includes(item._id)) {
-            item.main_sound = undefined;
+          if (uid == item.sound?.user._id.toString()) {
+            item.sound.main_sound = sound_url;
           }
           return item;
         });
@@ -120,64 +74,20 @@ const homeController = {
           }
           return item;
         });
-        modifierRemixPlayList = remixPlayList.map((item) => {
-          if (item.price > 0) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-
-        modifierChillPlayList = chillPlayList.map((item) => {
-          if (item.price > 0) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-        modifierHotPlayList = hotPlayList.map((item) => {
-          if (item.price > 0) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-
-        modifierHealPlayList = healPlayList.map((item) => {
-          if (item.price > 0) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
       }
 
       return res.status(200).json({
         statusCode: 200,
         data: {
-          playlist: [
-            {
-              sectionType: "playlist",
-              title: "Mới phát hành",
-              items: modifierNewRelease,
-            },
-            {
-              title: "Nhạc Remix cực bốc",
-              sectionType: "playlist",
-              items: modifierRemixPlayList,
-            },
-            {
-              title: "Chill",
-              sectionType: "playlist",
-              items: modifierChillPlayList,
-            },
-            {
-              title: "Mỗi ngày một niềm vui",
-              sectionType: "playlist",
-              items: modifierHealPlayList,
-            },
-            {
-              sectionType: "playlist",
-              title: "Album Hot",
-              items: modifierHotPlayList,
-            },
-          ],
+          recentSounds: {
+            title: "Nghe gần đây",
+            items: modifierRecent,
+          },
+          newSounds: {
+            title: "Mới phát hành",
+            items: modifierNewRelease,
+          },
+          playlist: [],
         },
       });
     } catch (error) {

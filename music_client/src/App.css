@@ -136,6 +136,7 @@ body {
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0%);
   }
@@ -145,7 +146,33 @@ body {
   from {
     transform: translateY(0%);
   }
+
   to {
     transform: translateY(100%);
   }
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #fa3d6a !important;
+}
+
+.ant-tabs .ant-tabs-tab:active,
+.ant-tabs .ant-tabs-tab:focus,
+.ant-tabs .ant-tabs-tab:visited,
+.ant-tabs .ant-tabs-tab:target,
+.ant-tabs .ant-tabs-tab:focus-within,
+.ant-tabs .ant-tabs-tab:focus-visible,
+:where(.css-dev-only-do-not-override-17seli4).ant-tabs .ant-tabs-tab-btn:focus:not(:focus-visible),
+:where(.css-dev-only-do-not-override-17seli4).ant-tabs .ant-tabs-tab-remove:focus:not(:focus-visible),
+:where(.css-dev-only-do-not-override-17seli4).ant-tabs .ant-tabs-tab-btn:active,
+:where(.css-dev-only-do-not-override-17seli4).ant-tabs .ant-tabs-tab-remove:active,
+.ant-tabs .ant-tabs-tab:hover {
+  color: #fa3d69ab !important;
+
+}
+
+
+
+.ant-tabs-ink-bar {
+  background-color: #fa3d6a !important;
 }
