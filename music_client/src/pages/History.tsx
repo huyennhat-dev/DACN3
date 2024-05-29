@@ -34,26 +34,21 @@ const History = () => {
 
   const handleDelete = (id: string) => {
     try {
-      const newSounds = sounds.filter((item) => item._id != id)
+      const newSounds = sounds.filter((item) => item._id != id);
 
-      homeApi.deleteRecent(id).then(rs => {
-        setSounds(newSounds)
-
-      })
+      homeApi.deleteRecent(id).then(() => {
+        setSounds(newSounds);
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   const tabContent = ({ data }: { data: any }) => {
-
-
-
-
     return (
       <>
         <div className="grid grid-cols-8 gap-4">
-          {data.map((item: any, index: number) => (
+          {data.items.map((item: any, index: number) => (
             <div className="relative">
               <RecentSoundItem key={index} data={item} />
               <div
@@ -72,13 +67,23 @@ const History = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Sound",
-      children: tabContent({ data: sounds }),
+      label: "Tải lên",
+      children: tabContent({
+        data: {
+          type: "sound",
+          items: sounds
+        }
+      }),
     },
     {
       key: "2",
       label: "Playlist",
-      children: tabContent({ data: playlist }),
+      children: tabContent({
+        data: {
+          type: "playlist",
+          items: playlist
+        }
+      }),
     },
   ];
   return (

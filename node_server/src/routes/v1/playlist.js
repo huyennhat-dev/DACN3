@@ -8,5 +8,6 @@ router
   .put("/update/:id", authMiddleware, playlistController.update)
   .delete("/delete/:id", authMiddleware, playlistController.delete)
   .get("/read/:id", playlistController.read)
+  .get("/get-playlist-by-other", playlistController.getPlaylistByOther);
 
 export const playlistRouter = router;

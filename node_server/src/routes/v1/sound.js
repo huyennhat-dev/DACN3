@@ -11,6 +11,7 @@ router
   .delete("/delete/:id",authMiddleware, soundController.delete)
   .get("/read/:id", soundController.read)
   .get("/search", soundController.search)
+  .get("/get-sounds-by-other", soundController.getSoundsByOther)
 
 // router.get("/api/play-audio", (req, res) => {
 //   const filePath = path.resolve(

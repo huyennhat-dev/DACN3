@@ -7,7 +7,7 @@ const store = configureStore({
   reducer: {
     audio: audioReducer,
     auth: authReducer,
-    loading:loadingReducer
+    loading: loadingReducer,
   },
 });
 

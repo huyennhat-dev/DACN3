@@ -60,7 +60,7 @@ const HomePage = () => {
             <div className="bg-white p-2 rounded mb-5">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-title-md ">{homeData?.recentSounds.title}</h3>
-                <Link to="/mymusic/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
+                <Link to="/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
               </div>
               <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
                 {homeData?.recentSounds.items.map((item: any, index: number) => (
@@ -75,7 +75,7 @@ const HomePage = () => {
             homeData.newSounds.items.length > 0 && (
               <div className="bg-white p-2 rounded mb-5">
                 <h3 className="text-title-md mb-2">{homeData.newSounds.title}</h3>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   {homeData.newSounds.items.map((item: any, index: number) => (
                     <TrackItem key={index} data={item} />
                   ))}

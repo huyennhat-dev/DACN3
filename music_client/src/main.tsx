@@ -9,17 +9,18 @@ import { Provider } from 'react-redux'
 import { store } from './redux/store.ts'
 import { BrowserRouter } from 'react-router-dom';
 import { AudioProvider } from './context/AudioContext.tsx';
+import { ModalProvider } from './context/ModalContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Provider store={store}>
+  <BrowserRouter>
+    <Provider store={store}>
+      <ModalProvider>
         <AudioProvider>
           <App />
         </AudioProvider>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>,
+      </ModalProvider>
+    </Provider>
+  </BrowserRouter>
 )
 
 

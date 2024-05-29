@@ -384,6 +384,75 @@ const soundController = {
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
     }
   },
+  getSoundsByOther: async (req, res, next) => {
+    try {
+      let modifiedSoundData;
+      const { token, keyword, limit = 1000, page = 1 } = req.query;
+      const startIndex = (page - 1) * limit;
+      const sounds = await soundModel
+        .find({ user: keyword, status: true })
+        .populate({
+          path: "user",
+          select:
+            "-username -password -createdAt -updatedAt -sounds -purchases",
+        })
+        .skip(startIndex)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+
+      const totalResults = await soundModel.countDocuments({
+        user: keyword,
+        status: true,
+      });
+
+      if (token) {
+        const uid = verifyAccessToken(token)?.id;
+
+        if (!uid) {
+          return next(new ApiError(403, "Access token không hợp lệ."));
+        }
+
+        const user = await userModel
+          .findById(uid)
+          .populate({ path: "purchases" })
+          .select("-username -password -sounds");
+
+        const purchases = user.purchases?.map((data) => data.sound.toString());
+
+        modifiedSoundData = sounds.map((item) => {
+          const sound_url = item.main_sound;
+          if (
+            item.sound?.price > 0 &&
+            !purchases.includes(item.sound._id.toString())
+          ) {
+            item.sound.main_sound = undefined;
+          }
+          if (uid == item.sound?.user._id.toString()) {
+            item.sound.main_sound = sound_url;
+          }
+          return item;
+        });
+      } else {
+        modifiedSoundData = sounds.map((item) => {
+          if (item.price > 0) {
+            item.main_sound = undefined;
+          }
+          return item;
+        });
+      }
+
+      return res.status(200).json({
+        statusCode: 200,
+        data: modifiedSoundData,
+        page,
+        limit,
+        total: totalResults,
+      });
+    } catch (error) {
+      console.log(error);
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
 };
 
 export default soundController;

@@ -61,12 +61,13 @@ export interface playlist {
   user?: userType;
   title?: string;
   photo?: string;
-  sounds?: sound[];
-  favourite: number;
+  sounds?: sound[]|string[];
+  favourite?: number;
+  status?: string;
 }
 
 export interface processType {
-  id?:string;
+  id?: string;
   name: string;
   photo: string;
   process: number;

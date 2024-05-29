@@ -1,8 +1,5 @@
 import { IconLogout, IconRecharging, IconUser } from "@tabler/icons-react";
 import { logout, setToken } from "../../redux/features/authSlice";
-import Web3 from "web3";
-import { toast } from "react-toastify";
-import authApi from "../../api/auth.api";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";

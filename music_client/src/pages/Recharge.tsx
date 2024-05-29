@@ -120,8 +120,8 @@ const RechargePage = () => {
   return (
     <>
       <DefaultLayout>
-        <div className="mr-5 flex-1 h-full">
-          <div className=" bg-white p-2 rounded  h-full flex flex-col justify-between">
+        <div className="mr-5 ">
+          <div className=" bg-white p-2 rounded  flex flex-col justify-between">
             <div className="text-center">
               <h5 className="text-xl my-3 font-medium">
                 Chọn số tiền bạn muốn nạp
@@ -146,13 +146,13 @@ const RechargePage = () => {
                 </div>
               ))}
             </div>
-            <p className="italic my-3 text-sm w-full text-center font-normal">
+            <p className="italic my-3 mb-10 text-sm w-full text-center font-normal">
               Giá trị quy đổi là 1/1000 (Ví dụ: để nạp{" "}
               <strong>{formatCoin(100)}</strong>
               <span className="mx-1">thì bạn phải có</span>
               <strong>0.1 ETH</strong>)
             </p>
-            <div className="border-t-[1px] py-5 mt-20 grid grid-cols-3 border-grey-300 gap-3">
+            <div className="border-t-[1px] py-5  grid grid-cols-3 border-grey-300 gap-3">
               <div></div>
               <div></div>
               <div className="flex items-center justify-around">

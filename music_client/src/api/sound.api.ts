@@ -1,4 +1,4 @@
-import { params, sound, uploadData } from "../utils/types";
+import { params, uploadData } from "../utils/types";
 import axiosClient from "./axiosClient";
 
 const soundApi = {
@@ -8,7 +8,15 @@ const soundApi = {
   },
   create: ({ data, processFunc }: { data: uploadData; processFunc: any }) => {
     const url = `/sound/create`;
-    return axiosClient.post(url, { ...data }, { onUploadProgress: processFunc });
+    return axiosClient.post(
+      url,
+      { ...data },
+      { onUploadProgress: processFunc }
+    );
+  },
+  getSoundByOther: (params: params) => {
+    const url = `/sound/get-sounds-by-other`;
+    return axiosClient.get(url, { params });
   },
 };
 

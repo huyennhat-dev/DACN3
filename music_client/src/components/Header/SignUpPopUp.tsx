@@ -202,7 +202,7 @@ const SignUpPopUp
                         <Button
                             onclick={handleToggle}
                             title="Hủy"
-                            classes={`w-full mt-2 py-3 text-primary-300 text-sm font-medium rounded-xl border-[1.5px] border-prprimary`}
+                            classes={`w-full mt-2 py-3 text-primary-300 text-sm font-medium rounded-xl border-[1.5px] border-primary`}
                         />
                     </div>
                 </Modal>

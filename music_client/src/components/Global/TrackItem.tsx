@@ -14,7 +14,7 @@ import {
 import MusicWave from "../Icons/MusicWave";
 import { Popover, message } from "antd";
 import { useAudio } from "../../context/AudioContext";
-import TrackPopup from "./TrackPopup";
+import TrackPopup from "./Pop/TrackPopup";
 import { toast } from "react-toastify";
 import transactionApi from "../../api/transaction.api";
 import soundApi from "../../api/sound.api";
@@ -119,7 +119,7 @@ const TrackItem = ({ data }: { data: sound }) => {
       onMouseOut={() => {
         setCoverHover(false);
       }}
-      className={`flex items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${songId == data._id && "bg-primary-100/20"
+      className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${songId == data._id && "bg-primary-100/20"
         }`}
     >
       <div className="relative w-14 h-14 cursor-pointer rounded mr-2">

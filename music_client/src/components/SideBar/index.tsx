@@ -43,8 +43,8 @@ const Sidebar: React.FC = () => {
           <ul className="flex-1 px-3 py-3">
             <SidebarItem
               title="Thư viện"
-              link="/mymusic"
-              active={pathname.includes("/mymusic")}
+              link="/library"
+              active={pathname.includes("/library")}
               icon={<IconMusic stroke={1.5} />}
             />
             <SidebarItem
