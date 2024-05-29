@@ -12,21 +12,21 @@ router
   .get("/read/:id", soundController.read)
   .get("/search", soundController.search)
 
-router.get("/api/play-audio", (req, res) => {
-  const filePath = path.resolve(
-    __dirname,
-    "../../../uploads/lyrics/subtitle.txt"
-  );
+// router.get("/api/play-audio", (req, res) => {
+//   const filePath = path.resolve(
+//     __dirname,
+//     "../../../uploads/lyrics/subtitle.txt"
+//   );
 
-  // Kiểm tra xem file tồn tại hay không
-  // res.sendFile(filePath, (err) => {
-  //   if (err) {
-  //     console.error('Error sending file:', err);
-  //     res.status(err.status).end();
-  //   } else {
-  //     console.log('File sent successfully');
-  //   }
-  // });
-});
+//   // Kiểm tra xem file tồn tại hay không
+//   // res.sendFile(filePath, (err) => {
+//   //   if (err) {
+//   //     console.error('Error sending file:', err);
+//   //     res.status(err.status).end();
+//   //   } else {
+//   //     console.log('File sent successfully');
+//   //   }
+//   // });
+// });
 
 export const soundRouter = router;

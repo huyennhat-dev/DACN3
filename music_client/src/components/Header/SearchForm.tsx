@@ -43,11 +43,14 @@ const SearchForm = () => {
     }
   }, [debouncedSearchValue]);
 
+  
+
   const toggleShowSearchSuggestion = () => {
     setTimeout(() => {
       return setShowSuggestion(!showSuggestion);
     }, 150)
   };
+
 
   const handleSaveSearchHistory = (history: history) => {
     const data = JSON.parse(getSearchHistory()!)

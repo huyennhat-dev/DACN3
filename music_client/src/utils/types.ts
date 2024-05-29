@@ -64,3 +64,17 @@ export interface playlist {
   sounds?: sound[];
   favourite: number;
 }
+
+export interface processType {
+  id?:string;
+  name: string;
+  photo: string;
+  process: number;
+  status: Process;
+}
+
+export enum Process {
+  Success,
+  Error,
+  Pending,
+}

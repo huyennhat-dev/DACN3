@@ -6,9 +6,9 @@ const soundApi = {
     const url = `/sound/read/${id}`;
     return axiosClient.get(url, { params });
   },
-  create: (data: uploadData) => {
+  create: ({ data, processFunc }: { data: uploadData; processFunc: any }) => {
     const url = `/sound/create`;
-    return axiosClient.post(url, { ...data });
+    return axiosClient.post(url, { ...data }, { onUploadProgress: processFunc });
   },
 };
 

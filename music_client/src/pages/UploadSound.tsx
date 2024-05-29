@@ -1,15 +1,13 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useId, useState } from "react";
 import DefaultLayout from "../layout/Layout";
 import ImgCrop from "antd-img-crop";
 import { Button, Input, Select, Upload, message } from "antd";
 import { IconUpload } from "@tabler/icons-react";
 import { hashTagOptions } from "../api/_mock";
 import { toast } from "react-toastify";
+import { Process, processType, uploadData } from "../utils/types";
+import UploadProcessBar from "../components/Global/UploadProcessBar";
 import soundApi from "../api/sound.api";
-import { uploadData } from "../utils/types";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { toggleLoading } from "../redux/features/loadingSlice";
-
 const initialData: uploadData = {
     name: "",
     sound: "",
@@ -19,10 +17,9 @@ const initialData: uploadData = {
     price: 0,
 };
 
-
 const UploadSound = () => {
-    const dispatch = useAppDispatch()
     const [uploadData, setUploadData] = useState<uploadData>(initialData);
+    const [processData, setProcessData] = useState<processType[]>([]);
     const [audioSrc, setAudioSrc] = useState<string | null>(null);
     const [lyricSrc, setLyricSrc] = useState<any>(null);
 
@@ -72,57 +69,106 @@ const UploadSound = () => {
     const handleChangeLyric = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 setLyricSrc(e.target!.result);
             };
             reader.readAsText(file);
 
-            getBase64(file, (base64Value) =>
-                handleUpdateState(base64Value, "lyric")
-
-            );
+            getBase64(file, (base64Value) => handleUpdateState(base64Value, "lyric"));
         }
     };
-    const handleUpload = () => {
-        dispatch(toggleLoading(true))
 
+    const handleUpdateProcessData = (data: processType) => {
+        setProcessData((prevData) => [data, ...prevData]);
+    };
+
+    const handleUpload = async () => {
         if (!uploadData.name || !uploadData.photo || !uploadData.sound) {
-            return toast.warning("Dữ liệu quan trọng không được bỏ trống!")
+            return toast.warning("Dữ liệu quan trọng không được bỏ trống!");
         }
         try {
-            soundApi.create(uploadData).then((rs: any) => {
-                toast.success(rs.message)
-                dispatch(toggleLoading(false))
-                setUploadData(initialData)
-            }).catch(err => {
-                console.log(err)
-                dispatch(toggleLoading(false))
+            const sid = Date.now().toString();
+            let percent = 0;
 
+            const handleUpdateProcessStatus = (id: string, newData: Partial<processType>) => {
+                setProcessData((prevData) => {
+                    const newDataArray = prevData.map((item) => {
+                        if (item.id === id) {
+                            return { ...item, ...newData };
+                        }
+                        return item;
+                    });
+                    return newDataArray;
+                });
+            };
+
+            const config = {
+                onUploadProgress: (progressEvent: ProgressEvent) => {
+                    const { loaded, total } = progressEvent;
+                    percent = Math.floor((loaded * 100) / total);
+                    handleUpdateProcessStatus(sid, { process: percent });
+                    if (percent === 100) {
+                        handleUpdateProcessStatus(sid, { status: Process.Success });
+                    }
+                },
+            };
+
+            handleUpdateProcessData({
+                id: sid,
+                name: uploadData.name,
+                photo: uploadData.photo,
+                process: percent,
+                status: Process.Pending,
+            });
+
+            soundApi.create({ data: uploadData, processFunc: config.onUploadProgress }).then((rs: any) => {
+                toast.success(rs.message);
             })
+            setUploadData(initialData);
+            setAudioSrc("")
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
+    };
+
+    const handleDeleteProcess = (id: string) => {
+        setProcessData((prevData) => {
+            return prevData.filter((item) => item.id != id);
+        });
     }
-
-    useEffect(() => {
-
-        console.log(uploadData)
-    }, [uploadData])
 
 
     return (
         <>
             <DefaultLayout>
-                <div className="mr-5">
-                    <div className="bg-white py-2 px-6 rounded grid grid-cols-1 md:grid-cols-2 gap-3 text-grey-600">
+                {processData.length > 0 && (
+                    <div className="mr-5 mb-5">
+
+                        {processData.map((item, index) => (
+                            <div key={index} className="process-item mb-1">
+                                <UploadProcessBar
+                                    name={item.name}
+                                    photo={item.photo}
+                                    process={item.process}
+                                    status={item.status}
+                                    onClick={() => handleDeleteProcess(item.id!)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <div className="mr-5 h-full">
+                    <div className=" bg-white py-2 px-6 rounded grid grid-cols-1 md:grid-cols-2 gap-3 text-grey-600">
                         <div className="text-start p-3">
                             <div className="w-full ">
                                 <p className="text-grey-600 my-3">
                                     Chọn thumbnail cho bản nhạc
                                 </p>
-                                <label htmlFor="upload-photo" className="cursor-pointer inline-block  w-50 h-50">
+                                <label
+                                    htmlFor="upload-photo"
+                                    className="cursor-pointer inline-block  w-50 h-50"
+                                >
                                     {uploadData.photo ? (
                                         <img
                                             className="rounded w-50 h-50 object-cover"
@@ -188,8 +234,8 @@ const UploadSound = () => {
                                 </div>
                             </div>
                             {lyricSrc && (
-                                <div className="w-full  overflow-y-auto overflow-x-hidden">
-                                    <pre className=" border-[1.5px] p-2 rounded">{lyricSrc}</pre>
+                                <div className="w-full border-[1.5px] p-2 rounded overflow-y-auto overflow-x-hidden">
+                                    <pre className=" overflow-x-hidden ">{lyricSrc}</pre>
                                 </div>
                             )}
                         </div>
@@ -202,25 +248,36 @@ const UploadSound = () => {
                                     value={uploadData.name || ""}
                                     onChange={(e) => handleUpdateState(e.target.value, "name")}
                                     placeholder="Nhập tiêu đề"
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200" />
+                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                                />
                             </div>
                             <div className="w-full my-3">
-                                <label htmlFor="sound-price">Giá bạn muốn (<span className="italic">để trống nó nếu bạn muốn chia sẻ miễn phí</span>):</label>
+                                <label htmlFor="sound-price">
+                                    Giá bạn muốn (
+                                    <span className="italic">
+                                        để trống nó nếu bạn muốn chia sẻ miễn phí
+                                    </span>
+                                    ):
+                                </label>
                                 <Input
                                     min={0}
                                     id="sound-price"
                                     type="number"
                                     value={uploadData.price || 0}
-                                    onChange={(e) => handleUpdateState(Number(e.target.value), "price")}
+                                    onChange={(e) =>
+                                        handleUpdateState(Number(e.target.value), "price")
+                                    }
                                     placeholder="Nhập tiêu đề"
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200" />
+                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                                />
                             </div>
 
                             <div className="w-full my-3">
                                 <label htmlFor="sound-tag">Hash Tag:</label>
                                 <Select
                                     mode="multiple"
-                                    style={{ width: '100%' }}
+                                    style={{ width: "100%" }}
+                                    value={uploadData.hashTag}
                                     placeholder="Hash tag"
                                     onChange={(value) => {
                                         setUploadData((prev) => ({
@@ -229,11 +286,13 @@ const UploadSound = () => {
                                         }));
                                     }}
                                     options={hashTagOptions}
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200" />
-
+                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                                />
                             </div>
                             <div className="w-full text-center my-3">
-                                <Button onClick={handleUpload} ghost danger type="primary">Tải lên</Button>
+                                <Button onClick={handleUpload} ghost danger type="primary">
+                                    Tải lên
+                                </Button>
                             </div>
                         </div>
                     </div>

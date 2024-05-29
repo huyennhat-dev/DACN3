@@ -13,6 +13,7 @@ import PlayControl from "./Control/PlayControl";
 import NextControl from "./Control/NextControl";
 import RepeatControl from "./Control/RepeatControl";
 import ShuffleControl from "./Control/ShuffleControl";
+import useDebounce from "../../hooks/useDebounce";
 
 const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
   const isLyric = useAppSelector((state) => state.audio.isLyric);
@@ -42,12 +43,26 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
   );
   const lyric = useAppSelector((state) => state.audio.infoSoundPlayer.lyric);
 
+  function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+    let timeout: ReturnType<typeof setTimeout>;
+    return (...args: Parameters<T>): void => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  }
+
+
+  const scrollToView = debounce((index) => {
+    document
+      .getElementById(`line-${index}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, 100);
+
   return (
     <>
       <div
-        className={`fixed z-999999 inset-0 flex flex-col justify-between bg-black transition-all ease-linear duration-100 ${
-          isLyric ? "animate-[lyric-up_1s]" : "hidden"
-        }`}
+        className={`fixed z-999999 inset-0 flex flex-col justify-between bg-black transition-all ease-linear duration-100 ${isLyric ? "animate-[lyric-up_1s]" : "hidden"
+          }`}
         ref={lyrRef}
       >
         <div
@@ -73,11 +88,15 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
 
         <div className="relative z-999 flex justify-center overflow-y-auto px-20 py-20 gap-20 flex-1">
           <div className="flex items-center">
+            <div className="relative">
             <img
               src={infoSoundPlayer.photo}
               alt={infoSoundPlayer.name}
-              className="w-100 h-100 object-cover rounded-xl"
+              className={`w-100 h-100 object-cover rounded-xl shadow-md ${isPlay&&"image-animate"}` }
+          
             />
+            <div className="absolute rounded-xl top-2 left-2 bottom-2 right-2 image-border"></div>
+            </div>
           </div>
           <div className="lyric font-semibold text-[24px] text-white max-w-2xl my-0 flex-1 flex flex-col overflow-y-auto ">
             <div className="mt-[10vh]"></div>
@@ -87,20 +106,17 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
                   e: { data: string; startTime: number; endTime: number },
                   index: number
                 ) => {
-                  if (e.startTime <= currentTime && currentTime <= e.endTime) {
-                    document
-                      .getElementById(`line-${index}`)
-                      ?.scrollIntoView({ behavior: "smooth", block: "center" });
-                  }
+                  if (e.startTime <= currentTime && currentTime <= e.endTime) scrollToView(index);
+
                   return (
                     <div
                       id={`line-${index}`}
                       key={index}
                       className={
-                        "my-[2px] mx-0 px-[18px] py-3 rounded-xl transition-all duration-500 hover:bg-primary-50/10 box-border " +
+                        "my-[2px] mx-0 px-[18px] py-3 rounded-xl transition-all duration-500 ease-in-out hover:bg-primary-50/10 box-border " +
                         (e.startTime <= currentTime &&
                           currentTime <= e.endTime &&
-                          "origin-[center_left]5")
+                          "origin-[center_left]")
                       }
                       onDoubleClick={() => {
                         if (auRef) {
@@ -115,11 +131,10 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
                     >
                       <span
                         className={
-                          "cursor-pointer inline-block " +
-                          (e.startTime <= currentTime &&
-                          currentTime <= e.endTime
+                          "cursor-pointer inline-block transition-transform duration-500 ease-in-out " +
+                          (e.startTime <= currentTime && currentTime <= e.endTime
                             ? "opacity-100 scale-105"
-                            : "opacity-50" )
+                            : "opacity-50")
                         }
                       >
                         {e.data}
@@ -128,6 +143,7 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
                   );
                 }
               )
+
             ) : (
               <div className="flex-1 flex items-center ">
                 <p>Không có lời bài hát</p>
