@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Play from "../Icons/Play";
-import { history, sound } from "../../utils/types";
+import { sound } from "../../utils/types";
 import { env } from "../../configs/env";
 import { formatCoin, formatRelativeTime } from "../../utils/format";
 import { IconDots } from "@tabler/icons-react";
@@ -15,7 +15,6 @@ import MusicWave from "../Icons/MusicWave";
 import { Popover, message } from "antd";
 import { useAudio } from "../../context/AudioContext";
 import TrackPopup from "./Pop/TrackPopup";
-import { toast } from "react-toastify";
 import transactionApi from "../../api/transaction.api";
 import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
@@ -49,11 +48,7 @@ const TrackItem = ({ data }: { data: sound }) => {
     dispatch(setAutoPlay(false));
   };
 
-
-
   const handleClickPlaySound = async () => {
-
-
     if (isPlay) {
       if (data._id != songId) {
         if (!data.main_sound && info?.id != data.user?._id)
@@ -64,21 +59,20 @@ const TrackItem = ({ data }: { data: sound }) => {
       } else {
         pauseSound();
       }
-
     } else {
       if (!data.main_sound)
         message.warning("Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!");
       playSound();
     }
-    const token = getToken()
+    const token = getToken();
 
     if (songId != data._id && token) {
-      await homeApi.saveRecent({ type: 'sound', id: data._id! })
+      await homeApi.saveRecent({ type: "sound", id: data._id! });
     }
   };
 
   const handleBuySound = () => {
-    if (!info?.id) return toast.warning("Bạn chưa đăng nhập!");
+    if (!info?.id) return message.warning("Bạn chưa đăng nhập!");
 
     try {
       transactionApi
@@ -101,15 +95,13 @@ const TrackItem = ({ data }: { data: sound }) => {
           });
         })
         .catch((err: any) => {
-          toast.error(err.response.data.message);
+          message.error(err.response.data.message);
           console.log(err);
         });
     } catch (error) {
       console.log(error);
     }
   };
-
-
 
   return (
     <div
@@ -119,8 +111,9 @@ const TrackItem = ({ data }: { data: sound }) => {
       onMouseOut={() => {
         setCoverHover(false);
       }}
-      className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${songId == data._id && "bg-primary-100/20"
-        }`}
+      className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${
+        songId == data._id && "bg-primary-100/20"
+      }`}
     >
       <div className="relative w-14 h-14 cursor-pointer rounded mr-2">
         <img
@@ -151,7 +144,7 @@ const TrackItem = ({ data }: { data: sound }) => {
           >
             {data.name}
           </h5>
-          {(data.price! > 0 && data.user?._id != info?.id) && (
+          {data.price! > 0 && data.user?._id != info?.id && (
             <h5 className="font-bold text-xs text-[#e19435]">
               {formatCoin(data.price!)}
             </h5>
@@ -169,7 +162,13 @@ const TrackItem = ({ data }: { data: sound }) => {
           <Popover
             placement="rightTop"
             content={
-              <TrackPopup buySound={(data.price && info?.id != data.user?._id) ? handleBuySound : null} />
+              <TrackPopup
+                buySound={
+                  data.price && info?.id != data.user?._id
+                    ? handleBuySound
+                    : null
+                }
+              />
             }
             trigger="click"
           >

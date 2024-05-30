@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../../hooks/useDebounce";
-import { clearSearchHistory, getSearchHistory, saveSearchHistory } from "../../utils/history";
+import { clearSearchHistory, getSearchHistory, saveSearchHistory } from "../../utils/storage";
 import { history } from "../../utils/types";
 
 const SearchForm = () => {

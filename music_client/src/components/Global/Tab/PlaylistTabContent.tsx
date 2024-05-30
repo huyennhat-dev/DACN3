@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { playlist } from "../../utils/types";
-import { useAppSelector } from "../../hooks/redux";
-import playlistApi from "../../api/playlist.api";
-import { getToken } from "../../utils/tokenUtils";
-import PlayListItem from "./PlayListItem";
+import { playlist } from "../../../utils/types";
+import { useAppSelector } from "../../../hooks/redux";
+import playlistApi from "../../../api/playlist.api";
+import { getToken } from "../../../utils/tokenUtils";
+import PlayListItem from "../PlayListItem";
 import { IconPlus } from "@tabler/icons-react";
-import Button from "./Button";
-import ModalComponent from "../../common/Modal";
+import Button from "../Button";
+import ModalComponent from "../../../common/Modal";
 import { message } from "antd";
+import useQuery from "../../../hooks/useQuery";
+import { TabList } from "../../../pages/Library";
 
 const initialData: playlist = {
   title: "",
@@ -15,6 +17,10 @@ const initialData: playlist = {
 };
 
 const PlaylistTabContent = () => {
+
+  const query = useQuery();
+  const tab = query.get('tab');
+
   const [playlist, setPlaylist] = useState<playlist[]>([]);
   const uid = useAppSelector((state) => state.auth.userInfo?.id);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,8 +59,9 @@ const PlaylistTabContent = () => {
   }
 
   useEffect(() => {
-    getPlaylist();
-  }, []);
+    if (tab == TabList.Playlist)
+      getPlaylist();
+  }, [tab]);
 
   return (
     <>

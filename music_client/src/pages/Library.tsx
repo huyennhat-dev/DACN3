@@ -1,33 +1,51 @@
 import DefaultLayout from "../layout/Layout";
 import { Tabs, TabsProps } from "antd";
-import SoundTabContent from "../components/Global/SoundTabContent";
-import PlaylistTabContent from "../components/Global/PlaylistTabContent";
+import SoundTabContent from "../components/Global/Tab/SoundTabContent";
+import PlaylistTabContent from "../components/Global/Tab/PlaylistTabContent";
 import { useNavigate } from "react-router-dom";
 import useQuery from "../hooks/useQuery";
+import PurchaseTabContent from "../components/Global/Tab/PurchaseTabContent";
 
+// Định nghĩa enum TabList để quản lý các tab một cách rõ ràng
+export enum TabList {
+    MySound = "my-sound",
+    Playlist = "playlist",
+    Purchase = "purchase"
+}
 
+// Khởi tạo component Library
 const Library = () => {
 
+    // Sử dụng custom hook useQuery để lấy các tham số query từ URL
     const query = useQuery();
+    // Sử dụng hook useNavigate để điều hướng trang
     const navigate = useNavigate();
+    // Lấy giá trị của tham số 'tab' từ URL
     const tab = query.get('tab');
 
+    // Định nghĩa các tab với label, key và nội dung tương ứng
     const items: TabsProps["items"] = [
         {
+            label: "Đã mua",
+            key: TabList.Purchase,
+            children: <PurchaseTabContent />,
+        },
+        {
             label: "Tải lên",
-            key: 'my-sound',
+            key: TabList.MySound,
             children: <SoundTabContent />,
         },
         {
             label: "Playlist",
-            key: 'playlist',
+            key: TabList.Playlist,
             children: <PlaylistTabContent />
         },
     ];
 
+    // Hàm thay đổi tab và cập nhật URL với tham số query mới
     const changeTab = (newTab: string) => {
-        query.set('tab', newTab);
-        navigate({ search: query.toString() });
+        query.set('tab', newTab); // Đặt giá trị mới cho tham số 'tab'
+        navigate({ search: query.toString() }); // Điều hướng với URL mới
     };
     return (
         <>
@@ -39,7 +57,7 @@ const Library = () => {
                             onChange={(val) => changeTab(val)}
                             className="px-5 h-full flex-1 overflow-hidden"
                             tabPosition="top"
-                            defaultActiveKey={tab ?? "my-sound"}
+                            defaultActiveKey={tab ?? TabList.Purchase}
                             items={items}
                         />
                     </div>

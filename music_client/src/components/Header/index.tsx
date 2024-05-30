@@ -1,73 +1,75 @@
-import React, { startTransition, useEffect, useState } from "react";
-import SignUpPopUp from "./SignUpPopUp";
-import LoginPopUp from "./LoginPopUp";
 import { useAppSelector } from "../../hooks/redux";
 import ProfilePopUp from "./ProfilePopUp";
-import IconButton from "../Global/IconButton";
-import {
-  IconArrowBack,
-  IconArrowLeft,
-  IconArrowRight,
-} from "@tabler/icons-react";
-import { useLocation, useNavigate } from "react-router-dom";
+
 import SearchForm from "./SearchForm";
+import Button from "../Global/Button";
+import ModalComponent from "../../common/Modal";
+import { useState } from "react";
+import SignUpPopUp from "./SignUpPopUp";
+import LoginPopUp from "./LoginPopUp";
+
+enum ModalAction {
+  Login,
+  SignUp,
+}
 
 const Header = () => {
   const authState = useAppSelector((state) => state.auth.userInfo);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
-  const [showButton, setShowButton] = useState<boolean>(false);
+  const [modalAction, setModalAction] = useState<ModalAction>(
+    ModalAction.Login
+  );
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [canGoForward, setCanGoForward] = useState(false);
-
-  useEffect(() => {
-    const handlePopState = () => {
-      setCanGoBack(window.history.state?.idx > 0);
-      setCanGoForward(window.history.state?.idx < window.history.length - 2);
-    };
-
-    handlePopState();
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [location]);
+  const handleChangeModalAction = (data: ModalAction) => {
+    setShowModal(true);
+    setModalAction(data);
+  };
 
   return (
     <>
       <header className="sticky top-0 z-999 flex h-20 min-h-20 w-full gap-2 drop-shadow-1 items-center justify-between pr-12">
         <div className="flex items-center justify-start gap-2">
-          {/* <IconButton
-            icon={<IconArrowLeft />}
-            onClick={() =>
-              canGoBack ? startTransition(() => navigate(-1)) : null
-            }
-            className={`${!canGoBack && 'text-primary-300 hover:text-primary-300 hover:bg-grey-100 cursor-default'}`}
-          />
-          <IconButton
-            icon={<IconArrowRight />}
-            onClick={() =>
-              canGoForward ? startTransition(() => navigate(+1)) : null
-            }
-            className={`${!canGoForward && 'text-primary-300 hover:text-primary-300 hover:bg-grey-100 cursor-default'}`}
-          /> */}
           <SearchForm />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {!authState?.id && (
-            <LoginPopUp showButton={showButton} setShowButton={setShowButton} />
+            <Button
+              classes="px-3 py-2 font-medium hover:text-primary-100 "
+              onclick={() => handleChangeModalAction(ModalAction.Login)}
+              title="Đăng nhập"
+            />
           )}
           {!authState?.id && (
-            <SignUpPopUp
-              showButton={showButton}
-              setShowButton={setShowButton}
+            <div className="h-5 border-[1px] border-primary-100 " />
+          )}
+          {!authState?.id && (
+            <Button
+              classes="px-3 py-[7px] font-medium hover:text-primary-100"
+              onclick={() => handleChangeModalAction(ModalAction.SignUp)}
+              title="Đăng ký"
             />
           )}
           {authState?.id && <ProfilePopUp />}
         </div>
       </header>
+      {showModal && (
+        <ModalComponent hideModal={() => setShowModal(false)}>
+          <div className="my-5 mx-3">
+            {modalAction == ModalAction.SignUp ? (
+              <SignUpPopUp
+                hideModal={() => setShowModal(false)}
+                changeModalAction={() => setModalAction(ModalAction.Login)}
+              />
+            ) : (
+              <LoginPopUp
+                hideModal={() => setShowModal(false)}
+                changeModalAction={() => setModalAction(ModalAction.SignUp)}
+              />
+            )}
+          </div>
+        </ModalComponent>
+      )}
     </>
   );
 };

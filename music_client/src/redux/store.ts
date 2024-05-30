@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
+import appReducer from "./features/appSlice";
 import audioReducer from "./features/audioSlice";
 import authReducer from "./features/authSlice";
 import loadingReducer from "./features/loadingSlice";
 
 const store = configureStore({
   reducer: {
+    app: appReducer,
     audio: audioReducer,
     auth: authReducer,
     loading: loadingReducer,

@@ -2,12 +2,20 @@ import React, { useState } from "react";
 import { playlist } from "../../utils/types";
 import { env } from "../../configs/env";
 import Play from "../Icons/Play";
-import { defaultImg } from "../../assets/images";
 import { IconDots, IconX } from "@tabler/icons-react";
 import { Popconfirm } from "antd";
+import { useAppSelector } from "../../hooks/redux";
+import { handleImageError } from "../../utils";
 
-const PlayListItem = ({ data, onDelete }: { data: playlist, onDelete?: () => void }) => {
+const PlayListItem = ({
+  data,
+  onDelete,
+}: {
+  data: playlist;
+  onDelete?: () => void;
+}) => {
   const [isHover, setHover] = useState<boolean>(false);
+  const uid = useAppSelector((state) => state.auth.userInfo?.id);
 
   return (
     <div className="text-start">
@@ -18,13 +26,15 @@ const PlayListItem = ({ data, onDelete }: { data: playlist, onDelete?: () => voi
         onMouseOut={() => {
           setHover(false);
         }}
-        className="relative w-full rounded overflow-hidden "
+        className="relative w-full rounded overflow-hidden shadow-md "
       >
         <img
-          src={data.photo ? (env.apiUrl + "/static/" + data.photo) : defaultImg}
+          src={`${env.apiUrl}/static/${data.photo}`}
           alt={data.title}
-          className={`${isHover && "scale-110"
-            } duration-[400ms] ease-in-out w-full h-full object-cover`}
+          onError={handleImageError}
+          className={`${
+            isHover && "scale-110"
+          } duration-[400ms] ease-in-out w-full h-full object-cover`}
         />
 
         {isHover && (
@@ -55,9 +65,11 @@ const PlayListItem = ({ data, onDelete }: { data: playlist, onDelete?: () => voi
       <h3 className="text-base px-1 font-medium mt-1 line-clamp-2 overflow-hidden">
         {data.title}
       </h3>
-      <p className="text-xs px-1  hover:text-primary-100 cursor-pointer hover:underline">
-        {data.user?.fullName}
-      </p>
+      {uid != data.user?._id && (
+        <p className="text-xs px-1  hover:text-primary-100 cursor-pointer hover:underline">
+          {data.user?.fullName}
+        </p>
+      )}
     </div>
   );
 };

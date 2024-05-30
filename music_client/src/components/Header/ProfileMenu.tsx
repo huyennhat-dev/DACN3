@@ -1,6 +1,6 @@
-import { IconLogout, IconRecharging, IconUser } from "@tabler/icons-react";
-import { logout, setToken } from "../../redux/features/authSlice";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { IconLogout, IconRecharging, IconUpload, IconUser } from "@tabler/icons-react";
+import { logout } from "../../redux/features/authSlice";
+import { useAppDispatch } from "../../hooks/redux";
 import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { changeIconPlay, setAutoPlay, setSongId } from "../../redux/features/audioSlice";
@@ -12,10 +12,15 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
 
     const { audioRef } = useAudio();
 
-    const handleRechargingCoin = () => {
+    const handleNavigateRechargingCoin = () => {
         hidePopover()
         startTransition(() => navigate("/recharge"))
     };
+
+    const handleNavigateUpload = () => {
+        hidePopover()
+        startTransition(() => navigate("/upload-sound"))
+    }
 
     const handleLogout = () => {
         try {
@@ -41,10 +46,16 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
                     <span>Thông tin tài khoản</span>
                 </li>
                 <li
-                    onClick={handleRechargingCoin}
+                    onClick={handleNavigateRechargingCoin}
                     className="flex mb-2 items-center justify-start gap-2 cursor-pointer hover:text-primary-200"
                 >
                     <IconRecharging strokeWidth={1.5} size={20} /> <span>Nạp coin</span>
+                </li>
+                <li
+                    onClick={handleNavigateUpload}
+                    className="flex mb-2 items-center justify-start gap-2 cursor-pointer hover:text-primary-200"
+                >
+                    <IconUpload strokeWidth={1.5} size={20} /> <span>Tải lên</span>
                 </li>
                 <li
                     onClick={handleLogout}

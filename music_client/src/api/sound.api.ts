@@ -18,6 +18,10 @@ const soundApi = {
     const url = `/sound/get-sounds-by-other`;
     return axiosClient.get(url, { params });
   },
+  getSoundByBuyer: (params: params) => {
+    const url = `/sound/get-sounds-by-buyer`;
+    return axiosClient.get(url, { params });
+  },
 };
 
 export default soundApi;

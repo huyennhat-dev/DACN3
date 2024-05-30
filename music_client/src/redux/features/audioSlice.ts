@@ -12,8 +12,9 @@ interface AudioState {
   volume: number;
   isLoop: boolean;
   autoPlay: boolean;
-  playlistSong: Array<object>;
+  playlistSong: sound[];
   isLyric: boolean;
+  isOpenPlaylist: boolean;
 }
 
 const initialSound: sound = {
@@ -44,6 +45,7 @@ const initialState: AudioState = {
   autoPlay: false,
   playlistSong: [],
   isLyric: false,
+  isOpenPlaylist: false,
 };
 
 const audioSlice = createSlice({
@@ -81,7 +83,7 @@ const audioSlice = createSlice({
     setAutoPlay: (state, action: PayloadAction<boolean>) => {
       state.autoPlay = action.payload;
     },
-    setPlaylistSong: (state, action: PayloadAction<Array<object>>) => {
+    setPlaylistSong: (state, action: PayloadAction<sound[]>) => {
       state.playlistSong = action.payload;
     },
     setCurrentIndexPlaylist: (state, action: PayloadAction<number>) => {
@@ -89,6 +91,9 @@ const audioSlice = createSlice({
     },
     setOpenLyric: (state, action: PayloadAction<boolean>) => {
       state.isLyric = action.payload;
+    },
+    setOpenPlaylist: (state, action: PayloadAction<boolean>) => {
+      state.isOpenPlaylist = action.payload;
     },
   },
 });
@@ -106,5 +111,6 @@ export const {
   setPlaylistSong,
   setCurrentIndexPlaylist,
   setOpenLyric,
+  setOpenPlaylist,
 } = audioSlice.actions;
 export default audioSlice.reducer;

@@ -1,5 +1,4 @@
-import { startTransition, useEffect, useState } from "react";
-import { banners } from "../api/_mock";
+import { startTransition, useCallback, useEffect, useState } from "react";
 import DefaultLayout from "../layout/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import homeApi from "../api/home.api";
@@ -8,6 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import { getToken } from "../utils/tokenUtils";
 import RecentSoundItem from "../components/Global/RecentSoundItem";
 import { useAppSelector } from "../hooks/redux";
+import Banner from "../components/Global/Banner";
 
 interface homeData {
   recentSounds: any,
@@ -16,12 +16,12 @@ interface homeData {
 }
 
 const HomePage = () => {
-  const navigate = useNavigate();
   const userinfo = useAppSelector((state) => state.auth.userInfo)
   const [loading, setLoading] = useState<boolean>(false);
   const [homeData, setHomeData] = useState<homeData | undefined>();
 
-  const getHomeData = () => {
+  const getHomeData = useCallback(() => {
+    console.log("start");
     setLoading(true);
     startTransition(() => {
       homeApi
@@ -35,26 +35,20 @@ const HomePage = () => {
           setLoading(false);
         });
     });
-  };
+  }, []);
+
 
   useEffect(() => {
     getHomeData();
   }, []);
 
+
   return (
     <>
       <DefaultLayout>
         <div className="mr-5">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
-            {banners.map((banner, index) => (
-              <img
-                key={index}
-                src={banner.photo}
-                onClick={() => startTransition(() => navigate(banner.link))}
-                className="cursor-pointer rounded-md object-cover"
-              />
-            ))}
-          </div>
+
+          <Banner />
 
           {(userinfo?.id && homeData?.recentSounds.items.length > 0) && (
             <div className="bg-white p-2 rounded mb-5">

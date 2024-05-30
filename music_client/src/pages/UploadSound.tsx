@@ -1,10 +1,9 @@
-import React, { ChangeEvent, useId, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import DefaultLayout from "../layout/Layout";
 import ImgCrop from "antd-img-crop";
 import { Button, Input, Select, Upload, message } from "antd";
 import { IconUpload } from "@tabler/icons-react";
 import { hashTagOptions } from "../api/_mock";
-import { toast } from "react-toastify";
 import { Process, processType, uploadData } from "../utils/types";
 import UploadProcessBar from "../components/Global/UploadProcessBar";
 import soundApi from "../api/sound.api";
@@ -85,7 +84,7 @@ const UploadSound = () => {
 
     const handleUpload = async () => {
         if (!uploadData.name || !uploadData.photo || !uploadData.sound) {
-            return toast.warning("Dữ liệu quan trọng không được bỏ trống!");
+            return message.warning("Dữ liệu quan trọng không được bỏ trống!");
         }
         try {
             const sid = Date.now().toString();
@@ -123,7 +122,7 @@ const UploadSound = () => {
             });
 
             soundApi.create({ data: uploadData, processFunc: config.onUploadProgress }).then((rs: any) => {
-                toast.success(rs.message);
+                message.success(rs.message);
             })
             setUploadData(initialData);
             setAudioSrc("")

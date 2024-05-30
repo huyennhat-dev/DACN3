@@ -23,7 +23,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     throw new Error("SidebarItem must be used within a Sidebar");
   }
 
-  const { expanded } = context;
+  const { isOpenSideBar } = context;
 
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
       {icon}
       <span
         className={`overflow-hidden transition-all text-nowrap ${
-          expanded ? "w-52 ml-3" : "w-0 h-0"
+          isOpenSideBar ? "w-52 ml-3" : "w-0 h-0"
         }`}
       >
         {title}
@@ -51,12 +51,12 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
       {alert && (
         <div
           className={`absolute right-2 w-2 h-2 rounded bg-primary-400 ${
-            expanded ? "" : "top-2"
+            isOpenSideBar ? "" : "top-2"
           }`}
         />
       )}
 
-      {!expanded && (
+      {!isOpenSideBar && (
         <div
           className={`absolute z-99999  shadow-custom text-nowrap left-full rounded-md px-3 py-1 ml-6 bg-white text-primary-400 text-base invisible opacity-20 -translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
         >

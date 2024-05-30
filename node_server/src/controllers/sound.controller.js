@@ -2,7 +2,6 @@ import fs from "fs";
 import cutSound from "~/services/cutSound";
 import ApiError from "~/utils/ApiError";
 import { extractFileName, fileNameGeneral, typeFile } from "~/utils";
-// import getAudioDurationInSeconds from "get-audio-duration";
 import soundModel from "~/models/sound";
 import slug from "slug";
 import performCRUD from "~/services/performCRUD";
@@ -11,6 +10,7 @@ import readLyric from "~/services/lyric";
 import deleteFile from "~/services/deleteFile";
 import userModel from "~/models/user";
 import { verifyAccessToken } from "~/utils/token";
+import purchaseModel from "~/models/purchase";
 
 const soundController = {
   create: async (req, res, next) => {
@@ -444,6 +444,38 @@ const soundController = {
       return res.status(200).json({
         statusCode: 200,
         data: modifiedSoundData,
+        page,
+        limit,
+        total: totalResults,
+      });
+    } catch (error) {
+      console.log(error);
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
+  getSoundsByBuyer: async (req, res, next) => {
+    try {
+      const uid = req.user.id;
+      const { limit = 1000, page = 1 } = req.query;
+      const startIndex = (page - 1) * limit;
+      const sounds = await purchaseModel
+        .find({ buyer: uid })
+        .populate("sound")
+        .skip(startIndex)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+
+      const totalResults = await purchaseModel.countDocuments({
+        buyer: uid,
+      });
+
+      const modifierData = sounds.map((data)=>{
+        return data.sound 
+      })
+
+      return res.status(200).json({
+        statusCode: 200,
+        data: modifierData,
         page,
         limit,
         total: totalResults,

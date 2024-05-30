@@ -9,6 +9,7 @@ import TrackInfo from "./TrackInfo";
 import VolumeControl from "./VolumeControl";
 import VolumeSliderControl from "./VolumeSliderControl";
 import SongSliderControl from "./SongSliderControl";
+import PlayListControl from "./PlayListControl";
 
 const Control: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
   return (
@@ -38,6 +39,7 @@ const Control: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
           <ShuffleControl />
           <VolumeControl auRef={auRef} />
           <VolumeSliderControl auRef={auRef} />
+          <PlayListControl/>
         </div>
         {/* End Right Controls Button */}
       </div>

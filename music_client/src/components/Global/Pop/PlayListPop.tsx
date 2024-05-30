@@ -55,10 +55,9 @@ const PlayListPop = ({
     if (data.length <= 0) return message.warning("Chọn tối thiểu 1 soud!")
     if (!selectPlaylist) return message.warning("Chọn một playlist")
 
-    playlistApi.update({ data: { sounds: data, _id: selectPlaylist } }).then((rs) => {
+    playlistApi.update({ data: { sounds: data, _id: selectPlaylist } }).then(() => {
       message.success("Thêm vào playlist thành công!")
       hidePopover()
-
     })
   }
 

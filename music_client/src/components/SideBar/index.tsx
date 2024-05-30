@@ -1,20 +1,18 @@
-import React, { createContext, useState } from "react";
+import React, { createContext } from "react";
 import {
-    IconArrowLeft,
+  IconArrowLeft,
   IconArrowRight,
   IconBrandEdge,
-  IconClock,
-  IconCoinBitcoin,
-  IconHeart,
   IconMusic,
   IconTimeline,
-  IconUpload,
 } from "@tabler/icons-react";
 import { SidebarItem } from "./SideBarItem";
 import { useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { toggleSideBar } from "../../redux/features/appSlice";
 
 interface SidebarContextType {
-  expanded: boolean;
+  isOpenSideBar: boolean;
 }
 
 export const SidebarContext = createContext<SidebarContextType | undefined>(
@@ -24,8 +22,12 @@ export const SidebarContext = createContext<SidebarContextType | undefined>(
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const { pathname } = location;
-  const [expanded, setExpanded] = useState(true);
+  const dispatch = useAppDispatch();
+  const isOpenSideBar = useAppSelector((state) => state.app.isOpenSideBar);
 
+  const handleToggleSideBar = () => {
+    dispatch(toggleSideBar(!isOpenSideBar));
+  };
   return (
     <aside className="h-full">
       <nav className="h-full flex flex-col bg-white  shadow-sm">
@@ -33,13 +35,13 @@ const Sidebar: React.FC = () => {
           <img
             src="https://img.logoipsum.com/243.svg"
             className={`overflow-hidden transition-all ${
-              expanded ? "w-32" : "w-10 h-10"
-            } object-cover` }
+              isOpenSideBar ? "w-32" : "w-10 h-10"
+            } object-cover`}
             alt=""
           />
         </div>
 
-        <SidebarContext.Provider value={{ expanded }}>
+        <SidebarContext.Provider value={{ isOpenSideBar }}>
           <ul className="flex-1 px-3 py-3">
             <SidebarItem
               title="Thư viện"
@@ -59,34 +61,15 @@ const Sidebar: React.FC = () => {
               active={pathname == "/chart"}
               icon={<IconTimeline stroke={1.5} />}
             />
-            <SidebarItem
-              title="Yêu thích"
-              link="/wishlist"
-              active={pathname == "/wishlist"}
-              icon={<IconHeart stroke={1.5} />}
-            />
-            <SidebarItem
-              title="Nghe gần đây"
-              link="/history"
-              active={pathname == "/history"}
-              icon={<IconClock stroke={1.5} />}
-            />
-               <SidebarItem
-              title="Đăng bản nhạc"
-              link="/upload-sound"
-              active={pathname == "/upload-sound"}
-              icon={<IconUpload stroke={1.5} />}
-            />
           </ul>
         </SidebarContext.Provider>
-        
 
         <div className=" flex p-3 justify-center items-center">
           <button
-            onClick={() => setExpanded((curr) => !curr)}
+            onClick={handleToggleSideBar}
             className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100"
           >
-            {expanded ? <IconArrowLeft /> : <IconArrowRight />}
+            {isOpenSideBar ? <IconArrowLeft /> : <IconArrowRight />}
           </button>
         </div>
       </nav>

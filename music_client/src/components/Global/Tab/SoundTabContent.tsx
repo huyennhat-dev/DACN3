@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { sound } from "../../utils/types";
-import TrackItem from "./TrackItem";
-import soundApi from "../../api/sound.api";
-import { useAppSelector } from "../../hooks/redux";
-import { getToken } from "../../utils/tokenUtils";
+import { sound } from "../../../utils/types";
+import TrackItem from "../TrackItem";
+import soundApi from "../../../api/sound.api";
+import { useAppSelector } from "../../../hooks/redux";
+import { getToken } from "../../../utils/tokenUtils";
 import {
     IconCheck,
     IconMusic,
@@ -12,17 +12,21 @@ import {
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
 import { Popover } from "antd";
-import PlayListPop from "./Pop/PlayListPop";
+import PlayListPop from "../Pop/PlayListPop";
+import useQuery from "../../../hooks/useQuery";
+import { TabList } from "../../../pages/Library";
 
 const SoundTabContent = () => {
+
+    const query = useQuery();
+    const tab = query.get('tab');
     const navigate = useNavigate();
     const uid = useAppSelector((state) => state.auth.userInfo?.id);
     const limit = 20;
-
+    const containerRef = useRef<HTMLDivElement>(null);
     const [sounds, setSounds] = useState<sound[]>([]);
     const [page, setPage] = useState<number>(1);
     const [reachedEnd, setReachedEnd] = useState<boolean>(false);
-    const containerRef = useRef<HTMLDivElement>(null);
     const [checked, setChecked] = useState<boolean>(false);
     const [selectSounds, setSelectSounds] = useState<string[]>([]);
 
@@ -42,7 +46,12 @@ const SoundTabContent = () => {
             token: getToken()!,
         };
         soundApi.getSoundByOther(params).then((rs: any) => {
-            setSounds((prevSounds) => [...prevSounds, ...rs.data]);
+            setSounds((prevSounds) => {
+                const existingIds = new Set(prevSounds.map(sound => sound._id));
+                // Lọc những item từ rs.data mà id của chúng chưa tồn tại trong existingIds
+                const newSounds = rs.data.filter((sound: sound) => !existingIds.has(sound._id));
+                return [...prevSounds, ...newSounds];
+            });
             if (rs.data.length < limit) {
                 setReachedEnd(true);
             }
@@ -62,8 +71,11 @@ const SoundTabContent = () => {
     };
 
     useEffect(() => {
-        getSoundsData();
+        if (tab == TabList.MySound)
+            getSoundsData();
+    }, [page, tab]);
 
+    useEffect(() => {
         if (containerRef.current) {
             containerRef.current.addEventListener("scroll", handleScroll);
             return () => {
@@ -72,7 +84,8 @@ const SoundTabContent = () => {
                 }
             };
         }
-    }, [page]);
+    }, [])
+
 
     const handleSelectSound = (id: string) => {
         setSelectSounds((prevSounds) => {
@@ -108,7 +121,7 @@ const SoundTabContent = () => {
                 {checked && (
                     <Popover
                         placement="rightTop"
-                        content={<PlayListPop data={selectSounds} hidePopover={hidePopover}/>}
+                        content={<PlayListPop data={selectSounds} hidePopover={hidePopover} />}
                         trigger="click"
                         open={visiblePopOver}
                         onOpenChange={handleVisibleChange}
