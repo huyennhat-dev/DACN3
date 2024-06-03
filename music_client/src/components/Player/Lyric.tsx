@@ -13,7 +13,6 @@ import PlayControl from "./Control/PlayControl";
 import NextControl from "./Control/NextControl";
 import RepeatControl from "./Control/RepeatControl";
 import ShuffleControl from "./Control/ShuffleControl";
-import useDebounce from "../../hooks/useDebounce";
 
 const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
   const isLyric = useAppSelector((state) => state.audio.isLyric);

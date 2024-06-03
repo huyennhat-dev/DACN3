@@ -1,19 +1,20 @@
 import React from "react"
 import IconPrevious from "../../Icons/Previous"
 import { useAppSelector, useAppDispatch } from "../../../hooks/redux"
-import { setSongId, setCurrentIndexPlaylist, changeIconPlay } from "../../../redux/features/audioSlice"
+import { setSoundPlay, setCurrentIndexPlaylist, changeIconPlay } from "../../../redux/features/audioSlice"
+import { playlist } from "../../../utils/types"
 
 const PreviousControl: React.FC = () => {
 
   const currentIndexPlaylist = useAppSelector((state) => state.audio.currentIndexPlaylist)
-  const playlistSong:any = useAppSelector((state) => state.audio.playlistSong)
+  const playlistSong: playlist = useAppSelector((state) => state.audio.playlistSong!)
 
   const dispatch = useAppDispatch()
 
   const handleNextSong = () => {
-    if(playlistSong !== undefined && playlistSong.length > 0) {
+    if (playlistSong !== undefined && playlistSong?.sounds?.length! > 0) {
       let currentIndex
-      if(currentIndexPlaylist === 0) {
+      if (currentIndexPlaylist === 0) {
         currentIndex = 0
       } else {
         currentIndex = currentIndexPlaylist - 1
@@ -23,9 +24,12 @@ const PreviousControl: React.FC = () => {
         currentIndex
       ))
 
-      dispatch(setSongId(
-        playlistSong[currentIndex].encodeId
-      ))
+      if (playlistSong && Array.isArray(playlistSong.sounds) && playlistSong.sounds[currentIndex]) {
+        const sound = playlistSong.sounds[currentIndex];
+        if (typeof sound === 'object' && '_id' in sound) {
+          dispatch(setSoundPlay(sound));
+        }
+      }
 
       dispatch(changeIconPlay(true))
     }

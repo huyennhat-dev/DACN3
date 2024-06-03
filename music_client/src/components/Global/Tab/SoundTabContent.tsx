@@ -169,7 +169,7 @@ const SoundTabContent = () => {
                                 onChange={() => handleSelectSound(item._id!)}
                             />
                         )}
-                        <TrackItem key={item._id} data={item} />
+                        <TrackItem key={item._id} sound={item} />
                     </div>
                 ))}
             </div>

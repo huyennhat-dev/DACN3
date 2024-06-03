@@ -8,9 +8,6 @@ const PlayControl: React.FC<{ auRef: HTMLAudioElement | null | undefined }> = ({
 
   const isPlay = useAppSelector((state) => state.audio.isPlay)
   const dispatch = useAppDispatch()
-
-
-
   const handlePlaySong = () => {
     if (isPlay === true) {
       dispatch(changeIconPlay(false))

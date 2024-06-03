@@ -7,7 +7,6 @@ import { useAppDispatch } from "../../hooks/redux";
 import { setBalance, setToken } from "../../redux/features/authSlice";
 import { getBalance } from "../../utils";
 import { useAudio } from "../../context/AudioContext";
-import { setSongId } from "../../redux/features/audioSlice";
 import { message } from "antd";
 
 interface Props {
@@ -82,7 +81,6 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
             .then(async (rs: any) => {
                 setLoading(false);
                 dispatch(setToken({ token: rs.accessToken }));
-                dispatch(setSongId(""));
                 hideModal()
                 const balance = await getBalance();
                 if (audioRef && audioRef.current) {

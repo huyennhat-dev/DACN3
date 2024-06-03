@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import Play from "../Icons/Play";
-import { sound } from "../../utils/types";
+import { playlist, sound } from "../../utils/types";
 import { env } from "../../configs/env";
 import { formatCoin, formatRelativeTime } from "../../utils/format";
 import { IconDots } from "@tabler/icons-react";
@@ -9,7 +9,8 @@ import {
   changeIconPlay,
   setAutoPlay,
   setInfoSoundPlayer,
-  setSongId,
+  setPlaylistSong,
+  setSoundPlay,
 } from "../../redux/features/audioSlice";
 import MusicWave from "../Icons/MusicWave";
 import { Popover, message } from "antd";
@@ -20,9 +21,10 @@ import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
 import homeApi from "../../api/home.api";
 
-const TrackItem = ({ data }: { data: sound }) => {
+const TrackItem = memo(({ sound }: { sound: sound }) => {
   const dispatch = useAppDispatch();
-  const songId = useAppSelector((state) => state.audio.songId);
+  const songId = useAppSelector((state) => state.audio.sound._id);
+  const playlistSong = useAppSelector((state) => state.audio.playlistSong);
   const info = useAppSelector((state) => state.auth.userInfo);
   const { audioRef } = useAudio();
 
@@ -35,7 +37,7 @@ const TrackItem = ({ data }: { data: sound }) => {
     if (audioRef && audioRef.current) {
       audioRef.current.play();
     }
-    dispatch(setSongId(data._id!));
+    dispatch(setSoundPlay(sound));
     dispatch(changeIconPlay(true));
     dispatch(setAutoPlay(true));
   };
@@ -50,24 +52,43 @@ const TrackItem = ({ data }: { data: sound }) => {
 
   const handleClickPlaySound = async () => {
     if (isPlay) {
-      if (data._id != songId) {
-        if (!data.main_sound && info?.id != data.user?._id)
+      if (sound._id != songId) {
+        if (!sound.main_sound && info?.id != sound.user?._id)
           message.warning(
             "Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!"
           );
         playSound();
+
+        const filteredSounds: sound[] =
+          playlistSong?.sounds?.filter(
+            (sound): sound is sound =>
+              typeof sound === "object" && "_id" in sound
+          ) || [];
+        const newSound: sound = sound; // Giả sử `sound` là một đối tượng sound hợp lệ
+
+        // Kiểm tra xem sound mới đã tồn tại trong danh sách chưa
+        const isSoundExists = filteredSounds.some(
+          (sound) => sound._id === newSound._id
+        );
+        if (!isSoundExists) {
+          const newPlayList: playlist = {
+            ...playlistSong,
+            sounds: [newSound, ...filteredSounds],
+          };
+          dispatch(setPlaylistSong(newPlayList));
+        }
       } else {
         pauseSound();
       }
     } else {
-      if (!data.main_sound)
+      if (!sound.main_sound)
         message.warning("Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!");
       playSound();
     }
     const token = getToken();
 
-    if (songId != data._id && token) {
-      await homeApi.saveRecent({ type: "sound", id: data._id! });
+    if (songId != sound._id && token) {
+      await homeApi.saveRecent({ type: "sound", id: sound._id! });
     }
   };
 
@@ -76,26 +97,26 @@ const TrackItem = ({ data }: { data: sound }) => {
 
     try {
       transactionApi
-        .buySound(data._id!)
+        .buySound(sound._id!)
         .then((rs) => {
-          soundApi.getSound({ token: getToken()! }, songId).then((rs: any) => {
+          soundApi.getSound({ token: getToken()! }, songId!).then((rs: any) => {
             dispatch(
               setInfoSoundPlayer({
-                ...rs.data,
+                ...rs.sound,
                 main_sound:
-                  rs.data.main_sound &&
-                  env.apiUrl + "/static/" + rs.data.main_sound,
+                  rs.sound.main_sound &&
+                  env.apiUrl + "/static/" + rs.sound.main_sound,
                 preview_sound:
-                  rs.data.preview_sound &&
-                  env.apiUrl + "/static/" + rs.data.preview_sound,
-                photo: env.apiUrl + "/static/" + rs.data.photo,
+                  rs.sound.preview_sound &&
+                  env.apiUrl + "/static/" + rs.sound.preview_sound,
+                photo: env.apiUrl + "/static/" + rs.sound.photo,
               })
             );
-            message.success(rs.data.message);
+            message.success(rs.sound.message);
           });
         })
         .catch((err: any) => {
-          message.error(err.response.data.message);
+          message.error(err.response.sound.message);
           console.log(err);
         });
     } catch (error) {
@@ -112,21 +133,21 @@ const TrackItem = ({ data }: { data: sound }) => {
         setCoverHover(false);
       }}
       className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${
-        songId == data._id && "bg-primary-100/20"
+        songId == sound._id && "bg-primary-100/20"
       }`}
     >
       <div className="relative w-14 h-14 cursor-pointer rounded mr-2">
         <img
-          src={env.apiUrl + "/static/" + data.photo}
-          alt={data.name}
+          src={env.apiUrl + "/static/" + sound.photo}
+          alt={sound.name}
           className=" w-14 h-14 object-cover rounded"
         />
-        {(songId == data._id || isCoverHover) && (
+        {(songId == sound._id || isCoverHover) && (
           <div
             onClick={handleClickPlaySound}
             className="absolute left-0 right-0 bottom-0 top-0 flex items-center justify-center bg-black/20 rounded"
           >
-            {!(songId == data._id && isPlay) ? (
+            {!(songId == sound._id && isPlay) ? (
               <Play setColor="white" setHeight="20px" setWidth="20px" />
             ) : (
               <MusicWave color="#fff" classes="top-[66%] left-[26%] " />
@@ -138,33 +159,34 @@ const TrackItem = ({ data }: { data: sound }) => {
       <div className="flex-1">
         <div className="flex items-center justify-between">
           <h5
-            title={data.name}
+            title={sound.name}
             onClick={handleClickPlaySound}
             className="line-clamp-1 overflow-hidden font-medium cursor-pointer hover:text-primary-300"
           >
-            {data.name}
+            {sound.name}
           </h5>
-          {data.price! > 0 && data.user?._id != info?.id && (
+          {sound.price! > 0 && sound.user?._id != info?.id && (
             <h5 className="font-bold text-xs text-[#e19435]">
-              {formatCoin(data.price!)}
+              {formatCoin(sound.price!)}
             </h5>
           )}
         </div>
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-grey-500 hover:underline hover:text-primary-300 cursor-pointer">
-              {data.user?.fullName}
+              {sound.user?.fullName}
             </p>
             <p className="text-xs text-grey-500">
-              {formatRelativeTime(data.createdAt!)}
+              {formatRelativeTime(sound.createdAt!)}
             </p>
           </div>
           <Popover
             placement="rightTop"
             content={
               <TrackPopup
+              sound={sound}
                 buySound={
-                  data.price && info?.id != data.user?._id
+                  sound.price && info?.id != sound.user?._id
                     ? handleBuySound
                     : null
                 }
@@ -174,7 +196,9 @@ const TrackItem = ({ data }: { data: sound }) => {
           >
             <div
               onClick={() => setOpenPopup(!openPopup)}
-              className=" relative w-6 h-6 rounded-full hover:text-primary-300 hover:bg-primary-300/30 cursor-pointer flex items-center justify-center"
+              className={` relative w-6 h-6 rounded-full hover:text-primary-300 hover:bg-primary-300/30 cursor-pointer flex items-center justify-center ${
+                isCoverHover ? "opacity-100" : "opacity-0"
+              }`}
             >
               <IconDots className="rotate-90" size={20} />
             </div>
@@ -183,6 +207,6 @@ const TrackItem = ({ data }: { data: sound }) => {
       </div>
     </div>
   );
-};
+});
 
 export default TrackItem;

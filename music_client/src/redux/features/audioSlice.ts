@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { sound } from "../../utils/types";
+import { playlist, sound } from "../../utils/types";
+import { savePlaylist } from "../../utils/storage";
 
 interface AudioState {
   isPlay: boolean;
   isMute: boolean;
-  songId: string;
+  sound: sound;
   currentIndexPlaylist: number;
   infoSoundPlayer: sound;
   currentTime: number;
@@ -12,7 +13,7 @@ interface AudioState {
   volume: number;
   isLoop: boolean;
   autoPlay: boolean;
-  playlistSong: sound[];
+  playlistSong: playlist | null;
   isLyric: boolean;
   isOpenPlaylist: boolean;
 }
@@ -35,7 +36,7 @@ const initialSound: sound = {
 const initialState: AudioState = {
   isPlay: false,
   isMute: false,
-  songId: localStorage.getItem("songId") || "",
+  sound: JSON.parse(localStorage.getItem("sound-play")!) || "",
   currentIndexPlaylist: 0,
   infoSoundPlayer: initialSound,
   currentTime: 0,
@@ -43,7 +44,7 @@ const initialState: AudioState = {
   volume: Number(localStorage.getItem("volume")) || 0.5,
   isLoop: false,
   autoPlay: false,
-  playlistSong: [],
+  playlistSong: null,
   isLyric: false,
   isOpenPlaylist: false,
 };
@@ -58,9 +59,9 @@ const audioSlice = createSlice({
     changeIconVolume: (state, action: PayloadAction<boolean>) => {
       state.isMute = action.payload;
     },
-    setSongId: (state, action: PayloadAction<string>) => {
-      state.songId = action.payload;
-      localStorage.setItem("songId", action.payload);
+    setSoundPlay: (state, action: PayloadAction<sound>) => {
+      state.sound = action.payload;
+      localStorage.setItem("sound-play", JSON.stringify(action.payload));
     },
     setInfoSoundPlayer: (state, action: PayloadAction<object>) => {
       state.infoSoundPlayer = {
@@ -83,8 +84,9 @@ const audioSlice = createSlice({
     setAutoPlay: (state, action: PayloadAction<boolean>) => {
       state.autoPlay = action.payload;
     },
-    setPlaylistSong: (state, action: PayloadAction<sound[]>) => {
+    setPlaylistSong: (state, action: PayloadAction<playlist>) => {
       state.playlistSong = action.payload;
+      savePlaylist(JSON.stringify(action.payload));
     },
     setCurrentIndexPlaylist: (state, action: PayloadAction<number>) => {
       state.currentIndexPlaylist = action.payload;
@@ -101,7 +103,7 @@ const audioSlice = createSlice({
 export const {
   changeIconPlay,
   changeIconVolume,
-  setSongId,
+  setSoundPlay,
   setInfoSoundPlayer,
   setCurrentTime,
   setDuration,

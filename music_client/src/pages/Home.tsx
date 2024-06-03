@@ -6,19 +6,19 @@ import TrackItem from "../components/Global/TrackItem";
 import Skeleton from "react-loading-skeleton";
 import { getToken } from "../utils/tokenUtils";
 import RecentSoundItem from "../components/Global/RecentSoundItem";
-import { useAppSelector } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Banner from "../components/Global/Banner";
+import { setHomeData } from "../redux/features/appSlice";
+import { playlist, sound } from "../utils/types";
 
-interface homeData {
-  recentSounds: any,
-  newSounds: any
-  playlist: []
-}
+
 
 const HomePage = () => {
+  const dispatch = useAppDispatch()
   const userinfo = useAppSelector((state) => state.auth.userInfo)
   const [loading, setLoading] = useState<boolean>(false);
-  const [homeData, setHomeData] = useState<homeData | undefined>();
+
+  const homeData = useAppSelector((state) => state.app.homeData)
 
   const getHomeData = useCallback(() => {
     console.log("start");
@@ -28,7 +28,7 @@ const HomePage = () => {
         .getHome({ token: getToken()! })
         .then((rs: any) => {
           setLoading(false);
-          setHomeData(rs.data);
+          dispatch(setHomeData(rs.data))
         })
         .catch((err) => {
           console.log(err);
@@ -50,15 +50,15 @@ const HomePage = () => {
 
           <Banner />
 
-          {(userinfo?.id && homeData?.recentSounds.items.length > 0) && (
+          {(userinfo?.id && homeData && homeData?.recentSounds.items.length > 0) && (
             <div className="bg-white p-2 rounded mb-5">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-title-md ">{homeData?.recentSounds.title}</h3>
                 <Link to="/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
               </div>
               <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
-                {homeData?.recentSounds.items.map((item: any, index: number) => (
-                  <RecentSoundItem key={index} data={item} />
+                {homeData?.recentSounds.items.map((item: sound | playlist) => (
+                  <RecentSoundItem key={item._id} data={item} />
                 ))}
               </div>
             </div>
@@ -71,7 +71,7 @@ const HomePage = () => {
                 <h3 className="text-title-md mb-2">{homeData.newSounds.title}</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {homeData.newSounds.items.map((item: any, index: number) => (
-                    <TrackItem key={index} data={item} />
+                    <TrackItem key={index} sound={item} />
                   ))}
                 </div>
               </div>

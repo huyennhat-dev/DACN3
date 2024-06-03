@@ -6,7 +6,6 @@ import Loader from "../../common/Loader";
 import { useAppDispatch } from "../../hooks/redux";
 import { setBalance, setToken } from "../../redux/features/authSlice";
 import { getBalance } from "../../utils";
-import { setSongId } from "../../redux/features/audioSlice";
 import { useAudio } from "../../context/AudioContext";
 import { message } from "antd";
 
@@ -59,7 +58,6 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
             .then(async (rs: any) => {
                 setLoading(false);
                 dispatch(setToken({ token: rs.accessToken }));
-                dispatch(setSongId(""));
                 hideModal()
                 const balance = await getBalance();
                 if (audioRef && audioRef.current) {

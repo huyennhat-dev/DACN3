@@ -61,7 +61,7 @@ export interface playlist {
   user?: userType;
   title?: string;
   photo?: string;
-  sounds?: sound[]|string[];
+  sounds?: sound[] | string[];
   favourite?: number;
   status?: string;
 }
@@ -78,4 +78,15 @@ export enum Process {
   Success,
   Error,
   Pending,
+}
+
+export interface homeData {
+  recentSounds: {
+    title: string;
+    items: sound[];
+  };
+  newSounds: {
+    title: string;
+    items: sound[];
+  };
 }

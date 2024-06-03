@@ -11,6 +11,9 @@ import {
   verifyRefreshToken,
 } from "~/utils/token";
 import { fileNameGeneral, typeFile } from "~/utils";
+import env from "~/config/env";
+
+const isDev = env.BUILD_MODE !== "production";
 
 const userController = {
   signUp: async (req, res, next) => {
@@ -48,8 +51,8 @@ const userController = {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: false,
-        secure: false,
-        sameSite: "strict",
+        secure: !isDev,
+        sameSite: isDev ? "lax" : "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -78,8 +81,8 @@ const userController = {
 
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: !isDev,
+        sameSite: isDev ? "lax" : "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 

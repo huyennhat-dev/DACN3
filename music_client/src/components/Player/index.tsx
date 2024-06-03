@@ -7,24 +7,25 @@ import {
   setCurrentTime,
   setDuration,
   setInfoSoundPlayer,
-  setSongId,
+  setSoundPlay,
 } from "../../redux/features/audioSlice";
 import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
 import { env } from "../../configs/env";
 import { useAudio } from "../../context/AudioContext";
 import Lyric from "./Lyric";
+import { playlist, sound } from "../../utils/types";
 
 const Player = () => {
   const { audioRef } = useAudio();
-  const songId = useAppSelector((state) => state.audio.songId);
+  const songId = useAppSelector((state) => state.audio.sound._id!);
   const infoSoundPlayer = useAppSelector(
     (state) => state.audio.infoSoundPlayer
   );
   const volume = useAppSelector((state) => state.audio.volume);
   const isLoop = useAppSelector((state) => state.audio.isLoop);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
-  const playlistSong: any = useAppSelector((state) => state.audio.playlistSong);
+  const playlistSong: playlist = useAppSelector((state) => state.audio.playlistSong!);
   const currentIndexPlaylist = useAppSelector(
     (state) => state.audio.currentIndexPlaylist
   );
@@ -37,7 +38,7 @@ const Player = () => {
   useEffect(() => {
     (async () => {
       try {
-        if (songId === "") {
+        if (!songId) {
           return;
         } else {
           const token = getToken();
@@ -61,12 +62,12 @@ const Player = () => {
             });
         }
       } catch (err) {
-        console.log("xxx" + err);
+        console.log("error:" + err);
       }
     })();
   }, [songId]);
 
- 
+
   return (
     <>
       {songId && (
@@ -97,10 +98,10 @@ const Player = () => {
             dispatch(setCurrentTime(0));
             dispatch(changeIconPlay(false));
 
-            if (playlistSong !== undefined && playlistSong.length > 0) {
+            if (playlistSong !== undefined && playlistSong?.sounds?.length! > 0) {
               let currentIndex;
 
-              if (currentIndexPlaylist === playlistSong.length - 1) {
+              if (currentIndexPlaylist === playlistSong?.sounds?.length! - 1) {
                 currentIndex = 0;
               } else {
                 currentIndex = currentIndexPlaylist + 1;
@@ -108,7 +109,12 @@ const Player = () => {
 
               dispatch(setCurrentIndexPlaylist(currentIndex));
 
-              dispatch(setSongId(playlistSong[currentIndex].encodeId));
+              if (playlistSong && Array.isArray(playlistSong.sounds) && playlistSong.sounds[currentIndex]) {
+                const sound = playlistSong.sounds[currentIndex];
+                if (typeof sound === 'object' && '_id' in sound) {
+                  dispatch(setSoundPlay(sound));
+                }
+              }
 
               dispatch(changeIconPlay(true));
             }

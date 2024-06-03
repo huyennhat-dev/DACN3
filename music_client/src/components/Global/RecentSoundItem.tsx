@@ -3,11 +3,10 @@ import Play from "../Icons/Play";
 import { env } from "../../configs/env";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useAudio } from "../../context/AudioContext";
-import { message } from "antd";
 import {
     changeIconPlay,
     setAutoPlay,
-    setSongId,
+    setSoundPlay,
 } from "../../redux/features/audioSlice";
 import MusicWave from "../Icons/MusicWave";
 import { getToken } from "../../utils/tokenUtils";
@@ -15,7 +14,7 @@ import homeApi from "../../api/home.api";
 
 const RecentSoundItem = ({ data }: { data: any }) => {
     const dispatch = useAppDispatch();
-    const songId = useAppSelector((state) => state.audio.songId);
+    const songId = useAppSelector((state) => state.audio.sound._id);
     const { audioRef } = useAudio();
     const isPlay = useAppSelector((state) => state.audio.isPlay);
     const info = useAppSelector((state) => state.auth.userInfo);
@@ -26,7 +25,7 @@ const RecentSoundItem = ({ data }: { data: any }) => {
         if (audioRef && audioRef.current) {
             audioRef.current.play();
         }
-        dispatch(setSongId(data.sound._id!));
+        dispatch(setSoundPlay(data));
         dispatch(changeIconPlay(true));
         dispatch(setAutoPlay(true));
     };
@@ -49,7 +48,7 @@ const RecentSoundItem = ({ data }: { data: any }) => {
         }
         const token = getToken();
 
-        if ( songId != data.sound?._id && token) {
+        if (songId != data.sound?._id && token) {
             await homeApi.saveRecent({
                 type: data.sound ? "sound" : "playlist",
                 id: data.sound ? data.sound?._id! : data.playlist?._id,

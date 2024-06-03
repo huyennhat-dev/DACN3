@@ -17,6 +17,8 @@ import { getBalance } from "./utils";
 import ModalComponent from "./common/Modal";
 
 import ConnectWalletPopUp from "./components/Global/Pop/ConnectWalletPopUp";
+import { getPlaylist } from "./utils/storage";
+import { setPlaylistSong } from "./redux/features/audioSlice";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -50,9 +52,16 @@ function App() {
       dispatch(toggleLoading(false));
     }
   };
+
+  const getPlaylistSound = () => {
+    const playlist = JSON.parse(getPlaylist()!)
+    dispatch(setPlaylistSong(playlist))
+  }
+
   useEffect(() => {
     checkToken();
-  }, [dispatch]);
+    getPlaylistSound()
+  }, []);
 
 
   useEffect(() => {
@@ -83,7 +92,7 @@ function App() {
       <Player />
       {showModal && (
         <ModalComponent hideModal={() => setShowModal(false)}>
-          <ConnectWalletPopUp hideModal={() => setShowModal(false)}/>
+          <ConnectWalletPopUp hideModal={() => setShowModal(false)} />
         </ModalComponent>
       )}
     </>

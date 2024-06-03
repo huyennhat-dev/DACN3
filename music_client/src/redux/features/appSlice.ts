@@ -1,11 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { homeData, sound } from "../../utils/types";
 
 interface appState {
   isOpenSideBar: boolean;
+  homeData: homeData | undefined;
 }
 
 const initialState: appState = {
-    isOpenSideBar: false,
+  isOpenSideBar: false,
+  homeData: undefined,
 };
 
 const appSlice = createSlice({
@@ -15,8 +18,11 @@ const appSlice = createSlice({
     toggleSideBar: (state, action: PayloadAction<boolean>) => {
       state.isOpenSideBar = action.payload;
     },
+    setHomeData: (state, action: PayloadAction<homeData>) => {
+      state.homeData = action.payload;
+    },
   },
 });
 
-export const { toggleSideBar } = appSlice.actions;
+export const { toggleSideBar, setHomeData } = appSlice.actions;
 export default appSlice.reducer;

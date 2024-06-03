@@ -3,7 +3,7 @@ import { logout } from "../../redux/features/authSlice";
 import { useAppDispatch } from "../../hooks/redux";
 import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
-import { changeIconPlay, setAutoPlay, setSongId } from "../../redux/features/audioSlice";
+import { changeIconPlay, setAutoPlay, setSoundPlay } from "../../redux/features/audioSlice";
 import { useAudio } from "../../context/AudioContext";
 
 const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
@@ -30,7 +30,7 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
             }
             dispatch(changeIconPlay(false));
             dispatch(setAutoPlay(false));
-            dispatch(setSongId(""))
+            dispatch(setSoundPlay({}))
 
             hidePopover()
         } catch (error) {
