@@ -11,6 +11,7 @@ import deleteFile from "~/services/deleteFile";
 import userModel from "~/models/user";
 import { verifyAccessToken } from "~/utils/token";
 import purchaseModel from "~/models/purchase";
+import NodeID3 from "node-id3";
 
 const soundController = {
   create: async (req, res, next) => {
@@ -32,11 +33,25 @@ const soundController = {
         sound.split(",")[1],
         "base64"
       );
+
       fs.writeFileSync(
         path.join(__dirname, "../public/" + photoPath),
         photo.split(",")[1],
         "base64"
       );
+
+      const buffer = Buffer.from(sound, "base64");
+      const tags = NodeID3.read(buffer);
+
+      tags.title = name;
+      tags.artist = req.user.fullName;
+      tags.album = null;
+      tags.comment = name + "-" + req.user.fullName;
+      tags.year = new Date().getFullYear().toString();
+      tags.image = path.join(__dirname, "../public/" + photoPath);
+
+      NodeID3.write(tags, path.join(__dirname, "../public/" + mainSoundPath));
+
       if (lyric) {
         lyricPath =
           "uploads/lyrics/" + fileNameGeneral(fileName, typeFile(lyric));
@@ -469,9 +484,9 @@ const soundController = {
         buyer: uid,
       });
 
-      const modifierData = sounds.map((data)=>{
-        return data.sound 
-      })
+      const modifierData = sounds.map((data) => {
+        return data.sound;
+      });
 
       return res.status(200).json({
         statusCode: 200,

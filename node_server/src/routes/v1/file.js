@@ -1,24 +1,36 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import authMiddleware from "~/middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.get("/*", (req, res) => {
+router.get("/download/*",authMiddleware, (req, res) => {
   try {
-    const filePath = path.join(__dirname, "../../../" + req.params[0]);
-    return res.sendFile(filePath, (err) => {
-      if (err) {
-        console.error("Error sending file:", err);
-        return res.status(404).send("File not found");
-      }
-    });
+    const filename = req.params[0];
+    const filePath = path.join(__dirname, "../../public/"+filename);
+
+    return res.download(filePath);
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal server error");
   }
 });
 
+// router.get("/*", (req, res) => {
+//   try {
+//     const filePath = path.join(__dirname, "../../../" + req.params[0]);
+//     return res.sendFile(filePath, (err) => {
+//       if (err) {
+//         console.error("Error sending file:", err);
+//         return res.status(404).send("File not found");
+//       }
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send("Internal server error");
+//   }
+// });
 
 // router.get('/chunk', (req, res) => {
 //   const filePath = path.join(__dirname, "../../../uploads/sounds/main/1715841717151.mp3" ); // Using query parameter to get the file path

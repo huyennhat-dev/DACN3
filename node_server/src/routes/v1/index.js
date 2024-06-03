@@ -5,6 +5,7 @@ import { soundRouter } from "./sound";
 import { homeRouter } from "./home";
 import { playlistRouter } from "./playlist";
 import { historyRouter } from "./history";
+import { fileRouter } from "./file";
 
 const router = express.Router();
 
@@ -14,6 +15,9 @@ router.use("/sound", soundRouter);
 router.use("/home", homeRouter);
 router.use("/playlist", playlistRouter);
 router.use("/history", historyRouter);
+router.use("/file", fileRouter);
+
+
 
 
 export const apiV1 = router;
