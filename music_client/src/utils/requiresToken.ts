@@ -14,6 +14,7 @@ const requiresToken = (url: string) => {
     "/playlist/delete/:id",
     "/playlist/update/:id",
     "/sound/get-sounds-by-buyer",
+    "/file/download/:path",
   ];
 
   // Hàm chuyển đổi đường dẫn thành biểu thức chính quy (regex)
@@ -22,8 +23,9 @@ const requiresToken = (url: string) => {
     const escapedPath = path.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
     // Thay thế /:id bằng regex phù hợp để khớp với bất kỳ ký tự nào ngoại trừ dấu gạch chéo /
     const regexPath = escapedPath.replace(/\/:id/g, "/[^/]+");
+    const finalRegexPath = regexPath.replace(/\/:path/g, "/.*");
     // Trả về một đối tượng RegExp khớp với đường dẫn
-    return new RegExp(`^${regexPath}$`);
+    return new RegExp(`^${finalRegexPath}$`);
   };
 
   // Kiểm tra xem url có khớp với bất kỳ đường dẫn nào yêu cầu token hay không

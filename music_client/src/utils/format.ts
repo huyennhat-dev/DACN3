@@ -1,5 +1,5 @@
-import { formatDistanceToNow } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 
 export const formatTime = (sec_num: number): string => {
   let hours: number | string = Math.floor(sec_num / 3600);
@@ -28,9 +28,20 @@ export const formatCoin = (amount: number, currency = "EUR") => {
   }).format(amount);
 };
 
-
-
-export const formatRelativeTime = (dateString:string) => {
+export const formatRelativeTime = (dateString: string) => {
   const date = new Date(dateString);
-  return formatDistanceToNow(date, { addSuffix: true ,locale: vi});
+  return formatDistanceToNow(date, { addSuffix: true, locale: vi });
+};
+
+export const formatCountNumber = (num: number): string => {
+  if (num >= 1000000000) {
+    return (num / 1000000000).toFixed(1).replace(/\.0$/, "") + "B";
+  }
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K";
+  }
+  return num.toString();
 };

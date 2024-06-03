@@ -20,18 +20,20 @@ import transactionApi from "../../api/transaction.api";
 import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
 import homeApi from "../../api/home.api";
+import { handleImageError } from "../../utils";
+import axios from "axios";
+import fileApi from "../../api/file.api";
+import fileDownload from "js-file-download";
 
 const TrackItem = memo(({ sound }: { sound: sound }) => {
+  const { audioRef } = useAudio();
   const dispatch = useAppDispatch();
   const songId = useAppSelector((state) => state.audio.sound._id);
   const playlistSong = useAppSelector((state) => state.audio.playlistSong);
   const info = useAppSelector((state) => state.auth.userInfo);
-  const { audioRef } = useAudio();
-
-  const [isCoverHover, setCoverHover] = useState<boolean>(false);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
-
   const [openPopup, setOpenPopup] = useState<boolean>(false);
+  const [isCoverHover, setCoverHover] = useState<boolean>(false);
 
   const playSound = () => {
     if (audioRef && audioRef.current) {
@@ -50,79 +52,119 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
     dispatch(setAutoPlay(false));
   };
 
-  const handleClickPlaySound = async () => {
+  const playOrPauseSound = (isPlay: boolean, sound: sound, songId: string) => {
     if (isPlay) {
-      if (sound._id != songId) {
-        if (!sound.main_sound && info?.id != sound.user?._id)
+      if (sound._id !== songId) {
+        if (!sound.main_sound && info?.id !== sound.user?._id) {
           message.warning(
             "Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!"
           );
-        playSound();
-
-        const filteredSounds: sound[] =
-          playlistSong?.sounds?.filter(
-            (sound): sound is sound =>
-              typeof sound === "object" && "_id" in sound
-          ) || [];
-        const newSound: sound = sound; // Giả sử `sound` là một đối tượng sound hợp lệ
-
-        // Kiểm tra xem sound mới đã tồn tại trong danh sách chưa
-        const isSoundExists = filteredSounds.some(
-          (sound) => sound._id === newSound._id
-        );
-        if (!isSoundExists) {
-          const newPlayList: playlist = {
-            ...playlistSong,
-            sounds: [newSound, ...filteredSounds],
-          };
-          dispatch(setPlaylistSong(newPlayList));
         }
+        playSound();
       } else {
         pauseSound();
       }
     } else {
-      if (!sound.main_sound)
+      if (!sound.main_sound) {
         message.warning("Bản phải trả phí nếu muốn nghe đầy đủ bản nhạc này!");
+      }
       playSound();
     }
-    const token = getToken();
+  };
 
-    if (songId != sound._id && token) {
+  const updatePlaylist = (
+    sound: sound,
+    playlistSong: playlist,
+    dispatch: any
+  ) => {
+    const filteredSounds: sound[] =
+      playlistSong?.sounds?.filter(
+        (sound): sound is sound => typeof sound === "object" && "_id" in sound
+      ) || [];
+
+    const isSoundExists = filteredSounds.some(
+      (existingSound) => existingSound._id === sound._id
+    );
+
+    if (!isSoundExists) {
+      const newPlayList: playlist = {
+        ...playlistSong,
+        sounds: [sound, ...filteredSounds],
+      };
+      dispatch(setPlaylistSong(newPlayList));
+    }
+  };
+
+  const saveRecentSound = async (sound: sound, songId: string) => {
+    const token = getToken();
+    if (songId !== sound._id && token) {
       await homeApi.saveRecent({ type: "sound", id: sound._id! });
     }
   };
 
-  const handleBuySound = () => {
+  const handleClickPlaySound = async () => {
+    playOrPauseSound(isPlay, sound, songId!);
+
+    if (isPlay && sound._id !== songId) {
+      updatePlaylist(sound, playlistSong!, dispatch);
+    }
+
+    await saveRecentSound(sound, songId!);
+  };
+
+  const handleBuySound = async () => {
     if (!info?.id) return message.warning("Bạn chưa đăng nhập!");
 
     try {
-      transactionApi
-        .buySound(sound._id!)
-        .then((rs) => {
-          soundApi.getSound({ token: getToken()! }, songId!).then((rs: any) => {
-            dispatch(
-              setInfoSoundPlayer({
-                ...rs.sound,
-                main_sound:
-                  rs.sound.main_sound &&
-                  env.apiUrl + "/static/" + rs.sound.main_sound,
-                preview_sound:
-                  rs.sound.preview_sound &&
-                  env.apiUrl + "/static/" + rs.sound.preview_sound,
-                photo: env.apiUrl + "/static/" + rs.sound.photo,
-              })
-            );
-            message.success(rs.sound.message);
-          });
+      await transactionApi.buySound(sound._id!);
+
+      const token = getToken();
+      if (!token || !songId) {
+        throw new Error("Token or Song ID is missing");
+      }
+
+      const rs: any = await soundApi.getSound({ token }, songId);
+
+      dispatch(
+        setInfoSoundPlayer({
+          ...rs.sound,
+          main_sound: rs.sound.main_sound
+            && `${env.apiUrl}/static/${rs.sound.main_sound}`
+          ,
+          preview_sound: rs.sound.preview_sound
+            && `${env.apiUrl}/static/${rs.sound.preview_sound}`
+          ,
+          photo: `${env.apiUrl}/static/${rs.sound.photo}`,
         })
-        .catch((err: any) => {
-          message.error(err.response.sound.message);
-          console.log(err);
-        });
-    } catch (error) {
-      console.log(error);
+      );
+
+      message.success(rs.sound.message);
+    } catch (err: any) {
+      if (err.response && err.response.sound && err.response.sound.message) {
+        message.error(err.response.sound.message);
+      } else {
+        console.log(err);
+        message.error("An unexpected error occurred");
+      }
     }
   };
+
+  const handleDownLoadSound = async () => {
+    if (!info?.id) return message.warning("Bạn chưa đăng nhập!");
+
+    try {
+      if (!sound.main_sound) return message.warning("Bạn chưa mua bạn nhạc này!")
+      const fileName = sound.name + "." + sound.main_sound.split(".")[1]
+
+      const rs: any = await fileApi.download(sound.main_sound)
+      fileDownload(rs, fileName)
+      message.success("Tải thành công!")
+      setOpenPopup(!openPopup)
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
 
   return (
     <div
@@ -132,14 +174,14 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
       onMouseOut={() => {
         setCoverHover(false);
       }}
-      className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${
-        songId == sound._id && "bg-primary-100/20"
-      }`}
+      className={`flex flex-1 items-center  justify-start hover:bg-primary-100/20 px-2 py-1 rounded duration-100 ease-in-out ${songId == sound._id && "bg-primary-100/20"
+        }`}
     >
       <div className="relative w-14 h-14 cursor-pointer rounded mr-2">
         <img
           src={env.apiUrl + "/static/" + sound.photo}
           alt={sound.name}
+          onError={handleImageError}
           className=" w-14 h-14 object-cover rounded"
         />
         {(songId == sound._id || isCoverHover) && (
@@ -181,10 +223,13 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
             </p>
           </div>
           <Popover
+            open={openPopup}
             placement="rightTop"
             content={
               <TrackPopup
-              sound={sound}
+                sound={sound}
+                playSound={handleClickPlaySound}
+                downloadSound={handleDownLoadSound}
                 buySound={
                   sound.price && info?.id != sound.user?._id
                     ? handleBuySound
@@ -196,9 +241,8 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
           >
             <div
               onClick={() => setOpenPopup(!openPopup)}
-              className={` relative w-6 h-6 rounded-full hover:text-primary-300 hover:bg-primary-300/30 cursor-pointer flex items-center justify-center ${
-                isCoverHover ? "opacity-100" : "opacity-0"
-              }`}
+              className={` relative w-6 h-6 rounded-full hover:text-primary-300 hover:bg-primary-300/30 cursor-pointer flex items-center justify-center ${isCoverHover ? "opacity-100" : "opacity-0"
+                }`}
             >
               <IconDots className="rotate-90" size={20} />
             </div>

@@ -46,7 +46,7 @@ const UploadSound = () => {
         }
     };
 
-    const handleChangeSound = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeSound = async (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             const audio = new Audio();
