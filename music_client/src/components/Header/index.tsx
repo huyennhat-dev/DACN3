@@ -4,7 +4,7 @@ import ProfilePopUp from "./ProfilePopUp";
 import SearchForm from "./SearchForm";
 import Button from "../Global/Button";
 import ModalComponent from "../../common/Modal";
-import { useState } from "react";
+import { memo, useState } from "react";
 import SignUpPopUp from "./SignUpPopUp";
 import LoginPopUp from "./LoginPopUp";
 
@@ -74,4 +74,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default memo(Header);

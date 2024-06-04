@@ -69,7 +69,7 @@ const PlaylistTabContent = () => {
         className="h-full overflow-y-auto overflow-hidden hide-scroll"
         ref={containerRef}
       >
-        <div className="grid grid-cols-3 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-9 gap-2">
           <div className="relative w-full " style={{ paddingTop: "100%" }}>
             <div
               onClick={() => setShowModal(!showModal)}

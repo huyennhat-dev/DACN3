@@ -2,14 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import TrackItem from "./TrackItem";
 import Button from "./Button";
-import { setPlaylistSong } from "../../redux/features/audioSlice";
+import {
+  changeIconPlay,
+  setAutoPlay,
+  setPlaylistSong,
+  setSoundPlay,
+} from "../../redux/features/audioSlice";
 import { playlist, sound } from "../../utils/types";
+import { useAudio } from "../../context/AudioContext";
 
 interface Props {
   classes: string;
 }
 
 const PlaylistDrawer = ({ classes }: Props) => {
+  const { audioRef } = useAudio();
+
   const dispatch = useAppDispatch();
   const isOpenPlayList = useAppSelector((state) => state.audio.isOpenPlaylist);
   const playlistData: playlist = useAppSelector(
@@ -47,10 +55,22 @@ const PlaylistDrawer = ({ classes }: Props) => {
     slicePlaylist();
   }, [playlistData, soundPlay]);
 
-  const handleAddPlaylist = () => {
-    dispatch(
-      setPlaylistSong({ title: "Mới phát hành", sounds: newSounds?.items })
-    );
+  const playSound = (sound: sound) => {
+    if (audioRef && audioRef.current) {
+      audioRef.current.play();
+    }
+    dispatch(setSoundPlay(sound));
+    dispatch(changeIconPlay(true));
+    dispatch(setAutoPlay(true));
+  };
+
+  const handleAddPlaylist = (data: playlist) => {
+    const sounds: sound[] =
+      data?.sounds?.filter(
+        (sound): sound is sound => typeof sound === "object" && "_id" in sound
+      ) || [];
+    playSound(sounds![0]);
+    dispatch(setPlaylistSong(data));
   };
 
   useEffect(() => {
@@ -59,15 +79,15 @@ const PlaylistDrawer = ({ classes }: Props) => {
         behavior: "smooth",
         block: "start",
         inline: "nearest",
-
       });
     }
   }, [previousList]);
 
   return (
     <div
-      className={`absolute top-0 right-0 z-999  overflow-hidden transition-all duration-500 flex flex-col ${isOpenPlayList ? "w-100 px-5 " : "w-0 px-0"
-        } bg-white shadow ${classes}`}
+      className={`absolute top-0 right-0 z-999  overflow-hidden transition-all duration-500 flex flex-col ${
+        isOpenPlayList ? "w-100 px-5 " : "w-0 px-0"
+      } bg-white shadow ${classes}`}
     >
       <h5 className=" font-medium text-xl text-nowrap mt-5">Danh sách phát</h5>
       {playlistData?.sounds?.length! > 0 ? (
@@ -78,8 +98,9 @@ const PlaylistDrawer = ({ classes }: Props) => {
               <li
                 key={index}
                 ref={isLastItem ? lastElementRef : null}
-                className={`w-[calc(25rem-2.5rem)] flex-nowrap ${soundPlay._id !== item._id && "filter grayscale"
-                  }`}
+                className={`w-[calc(25rem-2.5rem)] flex-nowrap ${
+                  soundPlay._id !== item._id && "filter grayscale"
+                }`}
               >
                 <TrackItem sound={item} />
               </li>
@@ -103,13 +124,18 @@ const PlaylistDrawer = ({ classes }: Props) => {
           ))}
         </ul>
       ) : (
-        <div className="h-full flex flex-col items-center justify-center">
+        <div className="h-full flex flex-col items-center justify-center w-[calc(25rem-2.5rem)]">
           <div className="w-full text-center">
             <p className="my-2">
               Khám phá thêm các bản nhạc mới của Music Cloud
             </p>
             <Button
-              onclick={handleAddPlaylist}
+              onclick={() =>
+                handleAddPlaylist({
+                  title: "Mới phát hành",
+                  sounds: newSounds?.items,
+                })
+              }
               classes="px-4 py-2 text-white text-sm font-medium rounded-xl bg-primary-300"
               title="Phát nhạc mới nhất"
             />

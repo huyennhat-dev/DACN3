@@ -21,11 +21,14 @@ import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
 import homeApi from "../../api/home.api";
 import { handleImageError } from "../../utils";
-import axios from "axios";
 import fileApi from "../../api/file.api";
 import fileDownload from "js-file-download";
 
-const TrackItem = memo(({ sound }: { sound: sound }) => {
+interface Props {
+  sound: sound
+}
+
+const TrackItem = memo(({ sound }: Props) => {
   const { audioRef } = useAudio();
   const dispatch = useAppDispatch();
   const songId = useAppSelector((state) => state.audio.sound._id);
@@ -34,6 +37,10 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
   const isPlay = useAppSelector((state) => state.audio.isPlay);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const [isCoverHover, setCoverHover] = useState<boolean>(false);
+
+  const handleOpenPopup = (newVisible: boolean) => {
+    setOpenPopup(newVisible);
+  };
 
   const playSound = () => {
     if (audioRef && audioRef.current) {
@@ -159,7 +166,7 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
       const rs: any = await fileApi.download(sound.main_sound)
       fileDownload(rs, fileName)
       message.success("Tải thành công!")
-      setOpenPopup(!openPopup)
+      handleOpenPopup(false)
     } catch (err) {
       console.log(err)
     }
@@ -225,6 +232,7 @@ const TrackItem = memo(({ sound }: { sound: sound }) => {
           <Popover
             open={openPopup}
             placement="rightTop"
+            onOpenChange={handleOpenPopup}
             content={
               <TrackPopup
                 sound={sound}

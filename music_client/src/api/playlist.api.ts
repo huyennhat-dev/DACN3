@@ -10,17 +10,17 @@ const playlistApi = {
       { onUploadProgress: processFunc }
     );
   },
-  delete: (id: string) => {
-    const url = `/playlist/delete/${id}`;
-    return axiosClient.delete(url);
+  read: (id: string, params: params) => {
+    const url = `/playlist/read/${id}`;
+    return axiosClient.get(url, { params });
   },
   update: ({ data, processFunc }: { data: playlist; processFunc?: any }) => {
     const url = `/playlist/update/${data._id}`;
-    return axiosClient.put(
-      url,
-      { ...data },
-      { onUploadProgress: processFunc }
-    );
+    return axiosClient.put(url, { ...data }, { onUploadProgress: processFunc });
+  },
+  delete: (id: string) => {
+    const url = `/playlist/delete/${id}`;
+    return axiosClient.delete(url);
   },
   getPlaylistByOther: (params: params) => {
     const url = `/playlist/get-playlist-by-other`;

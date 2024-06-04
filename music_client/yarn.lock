@@ -2806,6 +2806,11 @@ warning@^4.0.3:
   dependencies:
     loose-envify "^1.0.0"
 
+wavesurfer.js@^7.7.15:
+  version "7.7.15"
+  resolved "https://registry.npmjs.org/wavesurfer.js/-/wavesurfer.js-7.7.15.tgz"
+  integrity sha512-qJE7sZ5qnFG9wBtU9+jBpYn7faWXZHEz1I25Xnf4EhGqqS2rFj/hxTtbIaETynalPajxC1xXd/9TnDHWO+mARA==
+
 web3-core@^4.3.0, web3-core@^4.3.2:
   version "4.3.2"
   resolved "https://registry.npmjs.org/web3-core/-/web3-core-4.3.2.tgz"

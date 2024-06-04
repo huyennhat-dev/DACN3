@@ -2,11 +2,13 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { homeData, sound } from "../../utils/types";
 
 interface appState {
+  title: string;
   isOpenSideBar: boolean;
   homeData: homeData | undefined;
 }
 
 const initialState: appState = {
+  title: "",
   isOpenSideBar: false,
   homeData: undefined,
 };

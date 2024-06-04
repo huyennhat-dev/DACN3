@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, memo } from "react";
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -19,7 +19,7 @@ export const SidebarContext = createContext<SidebarContextType | undefined>(
   undefined
 );
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC = memo(() => {
   const location = useLocation();
   const { pathname } = location;
   const dispatch = useAppDispatch();
@@ -34,9 +34,8 @@ const Sidebar: React.FC = () => {
         <div className="h-20 p-3 flex justify-center items-center">
           <img
             src="https://img.logoipsum.com/243.svg"
-            className={`overflow-hidden transition-all ${
-              isOpenSideBar ? "w-32" : "w-10 h-10"
-            } object-cover`}
+            className={`overflow-hidden transition-all ${isOpenSideBar ? "w-32" : "w-10 h-10"
+              } object-cover`}
             alt=""
           />
         </div>
@@ -75,6 +74,6 @@ const Sidebar: React.FC = () => {
       </nav>
     </aside>
   );
-};
+});
 
 export default Sidebar;

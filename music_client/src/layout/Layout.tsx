@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
 import { useAppSelector } from "../hooks/redux";
-import PlaylistDrawer from "../components/Global/PlaylistDrawer";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
   const songId = useAppSelector((state) => state.audio.sound._id)
@@ -20,8 +19,6 @@ const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
           </div>
         </div>
       </div>
-      <PlaylistDrawer classes={`${songId ? "h-[calc(100vh-5rem)]" : "h-screen"}`}/>
-
     </>
   );
 };

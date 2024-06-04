@@ -1,10 +1,12 @@
 import React, { useEffect, useId, useState } from "react";
-import { playlist } from "../../../utils/types";
+import { playlist, sound } from "../../../utils/types";
 import playlistApi from "../../../api/playlist.api";
 import { getToken } from "../../../utils/tokenUtils";
-import { useAppSelector } from "../../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
 import Button from "../Button";
 import { message } from "antd";
+import { setPlaylistSong } from "../../../redux/features/audioSlice";
+import soundApi from "../../../api/sound.api";
 
 const PopItem = ({
   data,
@@ -31,10 +33,15 @@ const PlayListPop = ({
   hidePopover: () => void
 
 }) => {
+  const dispatch = useAppDispatch()
   const [playlist, setPlaylist] = useState<playlist[]>([]);
   const uid = useAppSelector((state) => state.auth.userInfo?.id);
+  const playlistSong = useAppSelector((state) => state.audio.playlistSong);
   const [selectPlaylist, setSelectPlaylist] = useState<string>("")
   const getPlaylist = () => {
+
+
+
     playlistApi
       .getPlaylistByOther({ keyword: uid, token: getToken()! })
       .then((rs) => {
@@ -50,10 +57,38 @@ const PlayListPop = ({
     setSelectPlaylist(event.target.value)
   };
 
-  const handlePushSoundToPlaylist = () => {
+  const getDataWithSounds = async (data: string[]) => {
+    const rsArr: sound[] = await Promise.all(
+      data.map(async (item) => {
+        const response = await soundApi.getSound({ token: getToken()! }, item);
+        delete response.data.lyric;
+        return response.data;
+      })
+    );
+
+    return rsArr;
+  };
+
+  const handlePushSoundToPlaylist = async () => {
 
     if (data.length <= 0) return message.warning("Chọn tối thiểu 1 soud!")
     if (!selectPlaylist) return message.warning("Chọn một playlist")
+
+    if (selectPlaylist == playlistSong?._id) {
+      const arr = await getDataWithSounds(data)
+
+      const filteredSounds: sound[] =
+        playlistSong?.sounds?.filter(
+          (sound): sound is sound => typeof sound === "object" && "_id" in sound
+        ) || [];
+
+      const modifierData: playlist = {
+        ...playlistSong,
+        sounds: filteredSounds.concat(arr)
+      }
+
+      dispatch(setPlaylistSong(modifierData))
+    }
 
     playlistApi.update({ data: { sounds: data, _id: selectPlaylist } }).then(() => {
       message.success("Thêm vào playlist thành công!")

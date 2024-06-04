@@ -64,6 +64,7 @@ export interface playlist {
   sounds?: sound[] | string[];
   favourite?: number;
   status?: string;
+  updatedAt?:string
 }
 
 export interface processType {
@@ -89,4 +90,5 @@ export interface homeData {
     title: string;
     items: sound[];
   };
+  playlistHot: playlist[];
 }

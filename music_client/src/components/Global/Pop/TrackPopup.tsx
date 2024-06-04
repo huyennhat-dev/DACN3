@@ -19,8 +19,10 @@ import { sound } from "../../../utils/types";
 import { env } from "../../../configs/env";
 import { handleImageError } from "../../../utils";
 import { formatCountNumber } from "../../../utils/format";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useAppSelector } from "../../../hooks/redux";
+import { Popover } from "antd";
+import PlayListPop from "./PlayListPop";
 
 interface Props {
   sound: sound;
@@ -29,7 +31,6 @@ interface Props {
   blockSound?: () => void;
   playSound?: () => void;
   buySound?: (() => void) | null;
-  addToAlbum?: () => void;
   addToPlaylist?: () => void;
   removeToPlaylist?: () => void;
   addToFavourite?: () => void;
@@ -41,6 +42,18 @@ interface Props {
 const TrackPopup = memo((props: Props) => {
   const songId = useAppSelector((state) => state.audio.sound._id);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
+
+  const [openPlaylistPopup, setOpenPlaylistPopup] = useState<boolean>(false)
+
+  const hidePopover = () => {
+    setOpenPlaylistPopup(false);
+  };
+  const handleOpenPopup = (newVisible: boolean) => {
+    setOpenPlaylistPopup(newVisible);
+  };
+  const addToAlbum = () => {
+
+  }
 
   return (
     <div className="px-2 py-1 w-60">
@@ -145,15 +158,23 @@ const TrackPopup = memo((props: Props) => {
             <span>Xóa khỏi danh sách phát</span>
           </li>
         )}
-        {props.addToAlbum && (
+        <Popover
+          open={openPlaylistPopup}
+          onOpenChange={handleOpenPopup}
+          placement="leftTop"
+          content={
+            <PlayListPop data={[props.sound?._id!]} hidePopover={hidePopover} />
+          }
+          trigger="click"
+        >
+
           <li
-            onClick={props.addToAlbum}
             className="flex items-center justify-start gap-2 mb-2 cursor-pointer hover:text-primary-200"
           >
             <IconPlaylistAdd strokeWidth={1.5} size={20} />
             <span>Thêm vào playlist</span>
           </li>
-        )}
+        </Popover>
         {props.addToFavourite && (
           <li
             onClick={props.addToFavourite}

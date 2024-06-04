@@ -1,4 +1,4 @@
-import React, { useContext, ReactNode, startTransition } from "react";
+import React, { useContext, ReactNode, startTransition, memo } from "react";
 import { SidebarContext } from "./index";
 import { useNavigate } from "react-router-dom";
 
@@ -10,7 +10,7 @@ interface SidebarItemProps {
   alert?: boolean;
 }
 
-export const SidebarItem: React.FC<SidebarItemProps> = ({
+export const SidebarItem: React.FC<SidebarItemProps> = memo(({
   icon,
   title,
   link,
@@ -31,28 +31,26 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
     startTransition(() => navigate(link));
   };
 
+
   return (
     <li
       onClick={handleNavigate}
-      className={`relative flex items-center py-2 px-3 my-2 font-medium rounded-md cursor-pointer transition-colors group ${
-        active
+      className={`relative flex items-center py-2 px-3 my-2 font-medium rounded-md cursor-pointer transition-colors group ${active
           ? "bg-primary-50/30 text-primary-300"
           : "hover:bg-primary-50/20 text-gray-800"
-      }`}
+        }`}
     >
       {icon}
       <span
-        className={`overflow-hidden transition-all text-nowrap ${
-          isOpenSideBar ? "w-52 ml-3" : "w-0 h-0"
-        }`}
+        className={`overflow-hidden transition-all text-nowrap ${isOpenSideBar ? "w-52 ml-3" : "w-0 h-0"
+          }`}
       >
         {title}
       </span>
       {alert && (
         <div
-          className={`absolute right-2 w-2 h-2 rounded bg-primary-400 ${
-            isOpenSideBar ? "" : "top-2"
-          }`}
+          className={`absolute right-2 w-2 h-2 rounded bg-primary-400 ${isOpenSideBar ? "" : "top-2"
+            }`}
         />
       )}
 
@@ -65,4 +63,4 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
       )}
     </li>
   );
-};
+})

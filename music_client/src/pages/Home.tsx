@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import Banner from "../components/Global/Banner";
 import { setHomeData } from "../redux/features/appSlice";
 import { playlist, sound } from "../utils/types";
+import PlayListItem from "../components/Global/PlayListItem";
 
 
 
@@ -56,7 +57,7 @@ const HomePage = () => {
                 <h3 className="text-title-md ">{homeData?.recentSounds.title}</h3>
                 <Link to="/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
               </div>
-              <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
                 {homeData?.recentSounds.items.map((item: sound | playlist) => (
                   <RecentSoundItem key={item._id} data={item} />
                 ))}
@@ -69,7 +70,7 @@ const HomePage = () => {
             homeData.newSounds.items.length > 0 && (
               <div className="bg-white p-2 rounded mb-5">
                 <h3 className="text-title-md mb-2">{homeData.newSounds.title}</h3>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   {homeData.newSounds.items.map((item: any, index: number) => (
                     <TrackItem key={index} sound={item} />
                   ))}
@@ -101,30 +102,23 @@ const HomePage = () => {
             </div>
           )}
 
-          {/* {homeData?.slice(1) &&
-            homeData.slice(1).map((playlist, index) => (
+      
               <div
-                key={index}
-                className={`bg-white p-2 rounded ${index != homeData.slice(1).length - 1 && "mb-5"
-                  }`}
+                className={`bg-white p-2 rounded mb-5`}
               >
-                <h3 className="text-title-md mb-2">{playlist.title}</h3>
-                <div className="grid grid-cols-6 gap-5">
-                  {playlist.items.map((item, i) => (
+                <h3 className="text-title-md mb-2">Album Hot</h3>
+                <div className="grid grid-cols-2  md:grid-cols-4 lg:grid-cols-8 gap-5">
+                  {homeData?.playlistHot.map((item, i) => (
                     <PlayListItem
                       key={i}
-                      _id={item._id!}
-                      photo={item.photo!}
-                      title={item.name!}
-                      author={item.user?.fullName!}
-                      price={item.price!}
-                      hashTag={item.hashTag!}
-                      type={propTypes.sound}
+                      data={item}
                     />
                   ))}
                 </div>
               </div>
-            ))} */}
+  
+
+
         </div>
       </DefaultLayout>
     </>

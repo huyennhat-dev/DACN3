@@ -12,18 +12,19 @@ import {
   setTokenAsync,
 } from "./redux/features/authSlice";
 import { toggleLoading } from "./redux/features/loadingSlice";
-import Player from "./components/Player";
 import { getBalance } from "./utils";
 import ModalComponent from "./common/Modal";
 
 import ConnectWalletPopUp from "./components/Global/Pop/ConnectWalletPopUp";
 import { getPlaylist } from "./utils/storage";
 import { setPlaylistSong } from "./redux/features/audioSlice";
+import Player from "./components/Player";
+import PlaylistDrawer from "./components/Global/PlaylistDrawer";
 
 function App() {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
-
+  const songId = useAppSelector((state) => state.audio.sound._id);
   const isLoading = useAppSelector((state) => state.loading.isLoading);
   const uInfo = useAppSelector((state) => state.auth.userInfo);
 
@@ -49,26 +50,29 @@ function App() {
     } catch (error) {
       console.error("Error while checking token:", error);
     } finally {
-      dispatch(toggleLoading(false));
+      setTimeout(() => {
+        dispatch(toggleLoading(false));
+      }, 500);
     }
   };
 
   const getPlaylistSound = () => {
-    const playlist = JSON.parse(getPlaylist()!)
-    dispatch(setPlaylistSong(playlist))
-  }
+    const playlist = JSON.parse(getPlaylist()!);
+    dispatch(setPlaylistSong(playlist));
+  };
 
   useEffect(() => {
     checkToken();
-    getPlaylistSound()
+    getPlaylistSound();
   }, []);
-
 
   useEffect(() => {
     if (uInfo && !uInfo.wallet_address) {
       setShowModal(true);
     }
   }, [uInfo]);
+
+  console.log("restate");
 
   return (
     <>
@@ -82,14 +86,19 @@ function App() {
               element={
                 <>
                   <PageTitle title={route.pageTitle} />
-                  {<route.component />}
+                  {route.component}
                 </>
               }
             />
           ))}
         </Routes>
       </Suspense>
-      <Player />
+      {!isLoading && <Player />}
+      {!isLoading && (
+        <PlaylistDrawer
+          classes={`${songId ? "h-[calc(100vh-5rem)]" : "h-screen"}`}
+        />
+      )}
       {showModal && (
         <ModalComponent hideModal={() => setShowModal(false)}>
           <ConnectWalletPopUp hideModal={() => setShowModal(false)} />

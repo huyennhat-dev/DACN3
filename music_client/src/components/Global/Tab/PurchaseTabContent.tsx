@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useQuery from '../../../hooks/useQuery';
-import { useNavigate } from 'react-router-dom';
 import { sound } from '../../../utils/types';
 import soundApi from '../../../api/sound.api';
 import { TabList } from '../../../pages/Library';
@@ -9,7 +8,6 @@ import TrackItem from '../TrackItem';
 const PurchaseTabContent = () => {
     const query = useQuery();
     const tab = query.get('tab');
-    const navigate = useNavigate();
     const limit = 20;
 
     const [sounds, setSounds] = useState<sound[]>([]);
@@ -73,7 +71,7 @@ const PurchaseTabContent = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 ">
                 {sounds.map((item) => (
                     <div key={item._id} className="flex gap-2">
-                        <TrackItem key={item._id} data={item} />
+                        <TrackItem key={item._id} sound={item} />
                     </div>
                 ))}
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import Controls from "./Control";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import {
@@ -14,9 +14,10 @@ import { getToken } from "../../utils/tokenUtils";
 import { env } from "../../configs/env";
 import { useAudio } from "../../context/AudioContext";
 import Lyric from "./Lyric";
-import { playlist, sound } from "../../utils/types";
+import { playlist } from "../../utils/types";
 
-const Player = () => {
+
+const Player = memo(() => {
   const { audioRef } = useAudio();
   const songId = useAppSelector((state) => state.audio.sound._id!);
   const infoSoundPlayer = useAppSelector(
@@ -29,7 +30,6 @@ const Player = () => {
   const currentIndexPlaylist = useAppSelector(
     (state) => state.audio.currentIndexPlaylist
   );
-
   const dispatch = useAppDispatch();
 
 
@@ -66,6 +66,7 @@ const Player = () => {
       }
     })();
   }, [songId]);
+
 
 
   return (
@@ -125,6 +126,6 @@ const Player = () => {
       <Lyric auRef={audioRef.current} />
     </>
   );
-};
+})
 
 export default Player;
