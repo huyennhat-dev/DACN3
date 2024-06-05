@@ -18,6 +18,10 @@ const homeApi = {
     const url = "/history/delete/" + id;
     return axiosClient.delete(url);
   },
+  search: (params: params) => {
+    const url = "/home/search";
+    return axiosClient.get(url,{params});
+  },
 };
 
 export default homeApi;

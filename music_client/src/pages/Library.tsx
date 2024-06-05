@@ -1,4 +1,3 @@
-import DefaultLayout from "../layout/Layout";
 import { Tabs, TabsProps } from "antd";
 import SoundTabContent from "../components/Global/Tab/SoundTabContent";
 import PlaylistTabContent from "../components/Global/Tab/PlaylistTabContent";
@@ -49,7 +48,6 @@ const Library = () => {
     };
     return (
         <>
-            <DefaultLayout>
                 <div className="my-music mr-5 h-full">
                     <div className="flex flex-col bg-white p-2 pb-5 rounded mb-5 h-full">
                         <h3 className="text-title-md w-full px-5 my-3">Thư viện của bạn</h3>
@@ -62,7 +60,6 @@ const Library = () => {
                         />
                     </div>
                 </div>
-            </DefaultLayout>
         </>
     );
 };

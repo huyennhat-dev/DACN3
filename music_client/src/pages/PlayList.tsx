@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import DefaultLayout from "../layout/Layout";
 import { useParams } from "react-router-dom";
 import playlistApi from "../api/playlist.api";
 import { getToken } from "../utils/tokenUtils";
@@ -30,7 +29,6 @@ const PlayListPage = (props: Props) => {
 
     return (
         <>
-            <DefaultLayout>
                 <div className="mr-5">
                     <div className="bg-white p-5 rounded mb-5">
                         <div className="grid grid-cols-3 gap-2">
@@ -99,7 +97,6 @@ const PlayListPage = (props: Props) => {
                         </div>
                     </div>
                 </div>
-            </DefaultLayout>
         </>
     );
 };

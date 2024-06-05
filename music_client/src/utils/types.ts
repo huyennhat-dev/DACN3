@@ -1,3 +1,4 @@
+
 export interface SvgProps {
   setColor: string;
   setWidth: string;
@@ -11,6 +12,8 @@ export interface userType {
   password?: string;
   photo?: string;
   balance?: number;
+  follower?:userType[]
+  following?:userType[]
   wallet_address?: string;
   description?: string;
 }
@@ -94,4 +97,10 @@ export interface homeData {
     title: string;
     items: playlist[];
   };
+}
+
+
+export interface searchData{
+  sounds:sound[],
+  authors:userType[]
 }

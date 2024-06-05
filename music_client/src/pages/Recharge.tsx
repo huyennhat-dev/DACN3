@@ -1,5 +1,4 @@
 import { startTransition, useState } from "react";
-import DefaultLayout from "../layout/Layout";
 import { CoinDepositList } from "../api/_mock";
 import { formatCoin } from "../utils/format";
 import { Button, message } from "antd";
@@ -67,7 +66,6 @@ const RechargePage = () => {
 
   return (
     <>
-      <DefaultLayout>
         <div className="mr-5 ">
           <div className=" bg-white p-2 rounded  flex flex-col justify-between">
             <div className="text-center">
@@ -118,7 +116,6 @@ const RechargePage = () => {
             </div>
           </div>
         </div>
-      </DefaultLayout>
     </>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import DefaultLayout from "../layout/Layout";
 import { Tabs, TabsProps } from "antd";
 import homeApi from "../api/home.api";
 import RecentSoundItem from "../components/Global/RecentSoundItem";
@@ -88,14 +87,12 @@ const History = () => {
   ];
   return (
     <div>
-      <DefaultLayout>
         <div className="mr-5 flex-1 h-full">
           <div className="bg-white p-2 pb-5 rounded mb-5 h-full">
             <h3 className="text-title-md w-full px-5 my-5">Nghe gần đây</h3>
             <Tabs tabPosition="left" defaultActiveKey="1" items={items} />
           </div>
         </div>
-      </DefaultLayout>
     </div>
   );
 };

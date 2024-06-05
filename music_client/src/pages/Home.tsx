@@ -1,5 +1,4 @@
 import { startTransition, useCallback, useEffect, useState } from "react";
-import DefaultLayout from "../layout/Layout";
 import { Link, useNavigate } from "react-router-dom";
 import homeApi from "../api/home.api";
 import TrackItem from "../components/Global/TrackItem";
@@ -42,7 +41,6 @@ const HomePage = () => {
 
   return (
     <>
-      <DefaultLayout>
         <div className="mr-5">
           <Banner />
 
@@ -119,7 +117,6 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </DefaultLayout>
     </>
   );
 };

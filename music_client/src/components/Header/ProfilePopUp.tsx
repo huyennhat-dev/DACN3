@@ -43,7 +43,7 @@ const ProfilePopUp = () => {
               className="m-auto rounded-full object-cover w-11 h-1w-11"
             />
           </div>
-          <div>
+          <div className="hidden sm:block">
             <p className="font-semibold">{info?.fullName}</p>
             <p className="text-xs text-[#e19435]">
               {formatCoin(balance, "EUR")}

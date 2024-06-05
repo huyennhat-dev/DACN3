@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useState } from "react";
-import DefaultLayout from "../layout/Layout";
 import ImgCrop from "antd-img-crop";
 import { Button, Input, Select, Upload, message } from "antd";
 import { IconUpload } from "@tabler/icons-react";
@@ -140,163 +139,161 @@ const UploadSound = () => {
 
     return (
         <>
-            <DefaultLayout>
-                {processData.length > 0 && (
-                    <div className="mr-5 mb-5">
+            {processData.length > 0 && (
+                <div className="mr-5 mb-5">
 
-                        {processData.map((item, index) => (
-                            <div key={index} className="process-item mb-1">
-                                <UploadProcessBar
-                                    name={item.name}
-                                    photo={item.photo}
-                                    process={item.process}
-                                    status={item.status}
-                                    onClick={() => handleDeleteProcess(item.id!)}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                )}
-                <div className="mr-5 h-full">
-                    <div className=" bg-white py-2 px-6 rounded grid grid-cols-1 md:grid-cols-2 gap-3 text-grey-600">
-                        <div className="text-start p-3">
-                            <div className="w-full ">
-                                <p className="text-grey-600 my-3">
-                                    Chọn thumbnail cho bản nhạc
-                                </p>
-                                <label
-                                    htmlFor="upload-photo"
-                                    className="cursor-pointer inline-block  w-50 h-50"
-                                >
-                                    {uploadData.photo ? (
-                                        <img
-                                            className="rounded w-50 h-50 object-cover"
-                                            src={uploadData.photo}
-                                            alt=""
-                                        />
-                                    ) : (
-                                        <div className="rounded-lg w-50 h-50 border-grey-500/30 border-[1.5px] flex items-center justify-center">
-                                            <IconUpload
-                                                strokeWidth={1.5}
-                                                size={50}
-                                                className="text-grey-500"
-                                            />
-                                        </div>
-                                    )}
-                                </label>
-                                <ImgCrop rotationSlider showGrid aspect={1} quality={1}>
-                                    <Upload
-                                        onChange={handleChangeImage}
-                                        className="hidden"
-                                        id="upload-photo"
-                                        accept="image/*"
-                                    >
-                                        <div>chon anh</div>
-                                    </Upload>
-                                </ImgCrop>
-                            </div>
-                            <div className="w-full my-6 flex items-center justify-start gap-2">
-                                <div>
-                                    <p className="mb-2">Chọn file nhạc:</p>
-                                    <label htmlFor="sound">
-                                        <div className="px-3 py-[2px] border-[1.5px] border-grey-500/30 rounded text-sm cursor-pointer hover:border-primary-50/50">
-                                            {audioSrc ? "Chọn file khác" : "Click chọn file"}
-                                        </div>
-                                    </label>
-                                    <input
-                                        type="file"
-                                        name="sound"
-                                        id="sound"
-                                        accept="audio/*"
-                                        onChange={handleChangeSound}
-                                        className="hidden"
-                                    />
-                                </div>
-
-                                {audioSrc && <audio controls src={audioSrc} />}
-                            </div>
-                            <div className="w-full my-6 flex items-center justify-start gap-2">
-                                <div>
-                                    <p className="mb-2">Chọn file lyric:</p>
-                                    <label htmlFor="lyric">
-                                        <div className="px-3 py-[2px] border-[1.5px] border-grey-500/30 rounded text-sm cursor-pointer hover:border-primary-50/50">
-                                            {lyricSrc ? "Chọn file khác" : "Click chọn file"}
-                                        </div>
-                                    </label>
-                                    <input
-                                        type="file"
-                                        name="lyric"
-                                        id="lyric"
-                                        onChange={handleChangeLyric}
-                                        className="hidden"
-                                    />
-                                </div>
-                            </div>
-                            {lyricSrc && (
-                                <div className="w-full border-[1.5px] p-2 rounded overflow-y-auto overflow-x-hidden">
-                                    <pre className=" overflow-x-hidden ">{lyricSrc}</pre>
-                                </div>
-                            )}
+                    {processData.map((item, index) => (
+                        <div key={index} className="process-item mb-1">
+                            <UploadProcessBar
+                                name={item.name}
+                                photo={item.photo}
+                                process={item.process}
+                                status={item.status}
+                                onClick={() => handleDeleteProcess(item.id!)}
+                            />
                         </div>
-                        <div className="text-start p-3">
-                            <div className="w-full my-3">
-                                <label htmlFor="sound-name">Tiêu đề bản nhạc:</label>
-                                <Input
-                                    type="text"
-                                    id="sound-name"
-                                    value={uploadData.name || ""}
-                                    onChange={(e) => handleUpdateState(e.target.value, "name")}
-                                    placeholder="Nhập tiêu đề"
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
-                                />
-                            </div>
-                            <div className="w-full my-3">
-                                <label htmlFor="sound-price">
-                                    Giá bạn muốn (
-                                    <span className="italic">
-                                        để trống nó nếu bạn muốn chia sẻ miễn phí
-                                    </span>
-                                    ):
+                    ))}
+                </div>
+            )}
+            <div className="mr-5 h-full">
+                <div className=" bg-white py-2 px-6 rounded grid grid-cols-1 md:grid-cols-2 gap-3 text-grey-600">
+                    <div className="text-start p-3">
+                        <div className="w-full ">
+                            <p className="text-grey-600 my-3">
+                                Chọn thumbnail cho bản nhạc
+                            </p>
+                            <label
+                                htmlFor="upload-photo"
+                                className="cursor-pointer inline-block  w-50 h-50"
+                            >
+                                {uploadData.photo ? (
+                                    <img
+                                        className="rounded w-50 h-50 object-cover"
+                                        src={uploadData.photo}
+                                        alt=""
+                                    />
+                                ) : (
+                                    <div className="rounded-lg w-50 h-50 border-grey-500/30 border-[1.5px] flex items-center justify-center">
+                                        <IconUpload
+                                            strokeWidth={1.5}
+                                            size={50}
+                                            className="text-grey-500"
+                                        />
+                                    </div>
+                                )}
+                            </label>
+                            <ImgCrop rotationSlider showGrid aspect={1} quality={1}>
+                                <Upload
+                                    onChange={handleChangeImage}
+                                    className="hidden"
+                                    id="upload-photo"
+                                    accept="image/*"
+                                >
+                                    <div>chon anh</div>
+                                </Upload>
+                            </ImgCrop>
+                        </div>
+                        <div className="w-full my-6 flex items-center justify-start gap-2">
+                            <div>
+                                <p className="mb-2">Chọn file nhạc:</p>
+                                <label htmlFor="sound">
+                                    <div className="px-3 py-[2px] border-[1.5px] border-grey-500/30 rounded text-sm cursor-pointer hover:border-primary-50/50">
+                                        {audioSrc ? "Chọn file khác" : "Click chọn file"}
+                                    </div>
                                 </label>
-                                <Input
-                                    min={0}
-                                    id="sound-price"
-                                    type="number"
-                                    value={uploadData.price || 0}
-                                    onChange={(e) =>
-                                        handleUpdateState(Number(e.target.value), "price")
-                                    }
-                                    placeholder="Nhập tiêu đề"
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                                <input
+                                    type="file"
+                                    name="sound"
+                                    id="sound"
+                                    accept="audio/*"
+                                    onChange={handleChangeSound}
+                                    className="hidden"
                                 />
                             </div>
 
-                            <div className="w-full my-3">
-                                <label htmlFor="sound-tag">Hash Tag:</label>
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: "100%" }}
-                                    value={uploadData.hashTag}
-                                    placeholder="Hash tag"
-                                    onChange={(value) => {
-                                        setUploadData((prev) => ({
-                                            ...prev,
-                                            hashTag: value,
-                                        }));
-                                    }}
-                                    options={hashTagOptions}
-                                    className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                            {audioSrc && <audio controls src={audioSrc} />}
+                        </div>
+                        <div className="w-full my-6 flex items-center justify-start gap-2">
+                            <div>
+                                <p className="mb-2">Chọn file lyric:</p>
+                                <label htmlFor="lyric">
+                                    <div className="px-3 py-[2px] border-[1.5px] border-grey-500/30 rounded text-sm cursor-pointer hover:border-primary-50/50">
+                                        {lyricSrc ? "Chọn file khác" : "Click chọn file"}
+                                    </div>
+                                </label>
+                                <input
+                                    type="file"
+                                    name="lyric"
+                                    id="lyric"
+                                    onChange={handleChangeLyric}
+                                    className="hidden"
                                 />
                             </div>
-                            <div className="w-full text-center my-3">
-                                <Button onClick={handleUpload} ghost danger type="primary">
-                                    Tải lên
-                                </Button>
+                        </div>
+                        {lyricSrc && (
+                            <div className="w-full border-[1.5px] p-2 rounded overflow-y-auto overflow-x-hidden">
+                                <pre className=" overflow-x-hidden ">{lyricSrc}</pre>
                             </div>
+                        )}
+                    </div>
+                    <div className="text-start p-3">
+                        <div className="w-full my-3">
+                            <label htmlFor="sound-name">Tiêu đề bản nhạc:</label>
+                            <Input
+                                type="text"
+                                id="sound-name"
+                                value={uploadData.name || ""}
+                                onChange={(e) => handleUpdateState(e.target.value, "name")}
+                                placeholder="Nhập tiêu đề"
+                                className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                            />
+                        </div>
+                        <div className="w-full my-3">
+                            <label htmlFor="sound-price">
+                                Giá bạn muốn (
+                                <span className="italic">
+                                    để trống nó nếu bạn muốn chia sẻ miễn phí
+                                </span>
+                                ):
+                            </label>
+                            <Input
+                                min={0}
+                                id="sound-price"
+                                type="number"
+                                value={uploadData.price || 0}
+                                onChange={(e) =>
+                                    handleUpdateState(Number(e.target.value), "price")
+                                }
+                                placeholder="Nhập tiêu đề"
+                                className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                            />
+                        </div>
+
+                        <div className="w-full my-3">
+                            <label htmlFor="sound-tag">Hash Tag:</label>
+                            <Select
+                                mode="multiple"
+                                style={{ width: "100%" }}
+                                value={uploadData.hashTag}
+                                placeholder="Hash tag"
+                                onChange={(value) => {
+                                    setUploadData((prev) => ({
+                                        ...prev,
+                                        hashTag: value,
+                                    }));
+                                }}
+                                options={hashTagOptions}
+                                className="focus:border-primary-50 my-2 hover:border-primary-50 active:border-primary-200"
+                            />
+                        </div>
+                        <div className="w-full text-center my-3">
+                            <Button onClick={handleUpload} ghost danger type="primary">
+                                Tải lên
+                            </Button>
                         </div>
                     </div>
                 </div>
-            </DefaultLayout>
+            </div>
         </>
     );
 };

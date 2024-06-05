@@ -18,8 +18,7 @@ import ModalComponent from "./common/Modal";
 import ConnectWalletPopUp from "./components/Global/Pop/ConnectWalletPopUp";
 import { getPlaylist } from "./utils/storage";
 import { setPlaylistSong } from "./redux/features/audioSlice";
-import Player from "./components/Player";
-import PlaylistDrawer from "./components/Global/PlaylistDrawer";
+import DefaultLayout from "./layout/Layout";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -76,29 +75,28 @@ function App() {
 
   return (
     <>
-      {isLoading && <Loader />}
-      <Suspense fallback={<Loader />}>
-        <Routes>
-          {routes.map((route) => (
-            <Route
-              key={route.url}
-              path={route.url}
-              element={
-                <>
-                  <PageTitle title={route.pageTitle} />
-                  {route.component}
-                </>
-              }
-            />
-          ))}
-        </Routes>
-      </Suspense>
-      {!isLoading && <Player />}
-      {!isLoading && (
-        <PlaylistDrawer
-          classes={`${songId ? "h-[calc(100vh-5rem)]" : "h-screen"}`}
-        />
-      )}
+      {/* {isLoading && <Loader />} */}
+      <DefaultLayout>
+
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            {routes.map((route) => (
+              <Route
+                key={route.url}
+                path={route.url}
+                element={
+                  <>
+                    <PageTitle title={route.pageTitle} />
+                    {route.component}
+                  </>
+                }
+              />
+            ))}
+          </Routes>
+        </Suspense>
+      </DefaultLayout>
+
+    
       {showModal && (
         <ModalComponent hideModal={() => setShowModal(false)}>
           <ConnectWalletPopUp hideModal={() => setShowModal(false)} />
