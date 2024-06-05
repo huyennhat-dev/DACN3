@@ -34,17 +34,10 @@ const PlaylistDrawer = ({ classes }: Props) => {
     let secondArray: sound[] = [];
 
     if (playlistData && playlistData.sounds) {
-      const sounds: sound[] =
-        playlistData.sounds.filter(
-          (sound): sound is sound => typeof sound === "object" && "_id" in sound
-        ) || [];
-
-      // Tìm chỉ số của phần tử có _id bằng với soundPlay._id
       const index =
-        sounds.findIndex((sound) => sound._id === soundPlay._id) + 1;
-
-      firstArray = sounds.slice(0, index);
-      secondArray = sounds.slice(index);
+        playlistData.sounds.findIndex((sound) => sound._id === soundPlay._id) + 1;
+      firstArray = playlistData.sounds.slice(0, index);
+      secondArray = playlistData.sounds.slice(index);
     }
 
     setPreviousList(firstArray);
@@ -64,13 +57,9 @@ const PlaylistDrawer = ({ classes }: Props) => {
     dispatch(setAutoPlay(true));
   };
 
-  const handleAddPlaylist = (data: playlist) => {
-    const sounds: sound[] =
-      data?.sounds?.filter(
-        (sound): sound is sound => typeof sound === "object" && "_id" in sound
-      ) || [];
-    playSound(sounds![0]);
-    dispatch(setPlaylistSong(data));
+  const handleAddPlaylist = (playlist: playlist) => {
+    playSound(playlist.sounds![0]);
+    dispatch(setPlaylistSong(playlist));
   };
 
   useEffect(() => {
@@ -85,9 +74,8 @@ const PlaylistDrawer = ({ classes }: Props) => {
 
   return (
     <div
-      className={`absolute top-0 right-0 z-999  overflow-hidden transition-all duration-500 flex flex-col ${
-        isOpenPlayList ? "w-100 px-5 " : "w-0 px-0"
-      } bg-white shadow ${classes}`}
+      className={`absolute top-0 right-0 z-999  overflow-hidden transition-all duration-500 flex flex-col ${isOpenPlayList ? "w-100 px-5 " : "w-0 px-0"
+        } bg-white shadow ${classes}`}
     >
       <h5 className=" font-medium text-xl text-nowrap mt-5">Danh sách phát</h5>
       {playlistData?.sounds?.length! > 0 ? (
@@ -98,9 +86,8 @@ const PlaylistDrawer = ({ classes }: Props) => {
               <li
                 key={index}
                 ref={isLastItem ? lastElementRef : null}
-                className={`w-[calc(25rem-2.5rem)] flex-nowrap ${
-                  soundPlay._id !== item._id && "filter grayscale"
-                }`}
+                className={`w-[calc(25rem-2.5rem)] flex-nowrap ${soundPlay._id !== item._id && "filter grayscale"
+                  }`}
               >
                 <TrackItem sound={item} />
               </li>

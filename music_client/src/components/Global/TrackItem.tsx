@@ -79,24 +79,15 @@ const TrackItem = memo(({ sound }: Props) => {
     }
   };
 
-  const updatePlaylist = (
-    sound: sound,
-    playlistSong: playlist,
-    dispatch: any
-  ) => {
-    const filteredSounds: sound[] =
-      playlistSong?.sounds?.filter(
-        (sound): sound is sound => typeof sound === "object" && "_id" in sound
-      ) || [];
-
-    const isSoundExists = filteredSounds.some(
+  const updatePlaylist = (sound: sound) => {
+    const isSoundExists = playlistSong?.sounds?.some(
       (existingSound) => existingSound._id === sound._id
     );
 
-    if (!isSoundExists) {
+    if (!isSoundExists && playlistSong?.sounds) {
       const newPlayList: playlist = {
         ...playlistSong,
-        sounds: [sound, ...filteredSounds],
+        sounds: [sound, ...playlistSong?.sounds],
       };
       dispatch(setPlaylistSong(newPlayList));
     }
@@ -113,7 +104,7 @@ const TrackItem = memo(({ sound }: Props) => {
     playOrPauseSound(isPlay, sound, songId!);
 
     if (isPlay && sound._id !== songId) {
-      updatePlaylist(sound, playlistSong!, dispatch);
+      updatePlaylist(sound);
     }
 
     await saveRecentSound(sound, songId!);
@@ -199,7 +190,11 @@ const TrackItem = memo(({ sound }: Props) => {
             {!(songId == sound._id && isPlay) ? (
               <Play setColor="white" setHeight="20px" setWidth="20px" />
             ) : (
-              <MusicWave color="#fff" classes="top-[66%] left-[26%] " />
+              <div className="relative min-w-8 min-h-8">
+
+                <MusicWave color="#fff" classes="h-full w-full bottom-2" />
+              </div>
+
             )}
           </div>
         )}

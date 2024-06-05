@@ -61,10 +61,10 @@ export interface playlist {
   user?: userType;
   title?: string;
   photo?: string;
-  sounds?: sound[] | string[];
+  sounds?: sound[];
   favourite?: number;
   status?: string;
-  updatedAt?:string
+  updatedAt?: string;
 }
 
 export interface processType {
@@ -90,5 +90,8 @@ export interface homeData {
     title: string;
     items: sound[];
   };
-  playlistHot: playlist[];
+  hotPlaylist: {
+    title: string;
+    items: playlist[];
+  };
 }

@@ -91,28 +91,23 @@ body {
 
 .music_wave span {
   height: 5px;
-  position: absolute;
-  animation: bodong 0.55s infinite ease;
+  animation: bodong 0.7s infinite ease;
 }
 
 .music_wave span:first-child {
-  left: 0px;
   animation-delay: .3s;
 }
 
 .music_wave span:nth-child(2) {
-  left: 7px;
   animation-delay: .4s;
 
 }
 
 .music_wave span:nth-child(3) {
-  left: 14px;
   animation-delay: .6s;
 }
 
 .music_wave span:nth-child(4) {
-  left: 21px;
   animation-delay: .8s;
 }
 

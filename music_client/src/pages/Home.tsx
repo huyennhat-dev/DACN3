@@ -12,14 +12,12 @@ import { setHomeData } from "../redux/features/appSlice";
 import { playlist, sound } from "../utils/types";
 import PlayListItem from "../components/Global/PlayListItem";
 
-
-
 const HomePage = () => {
-  const dispatch = useAppDispatch()
-  const userinfo = useAppSelector((state) => state.auth.userInfo)
+  const dispatch = useAppDispatch();
+  const userinfo = useAppSelector((state) => state.auth.userInfo);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const homeData = useAppSelector((state) => state.app.homeData)
+  const homeData = useAppSelector((state) => state.app.homeData);
 
   const getHomeData = useCallback(() => {
     console.log("start");
@@ -29,7 +27,7 @@ const HomePage = () => {
         .getHome({ token: getToken()! })
         .then((rs: any) => {
           setLoading(false);
-          dispatch(setHomeData(rs.data))
+          dispatch(setHomeData(rs.data));
         })
         .catch((err) => {
           console.log(err);
@@ -38,38 +36,48 @@ const HomePage = () => {
     });
   }, []);
 
-
   useEffect(() => {
     getHomeData();
   }, []);
-
 
   return (
     <>
       <DefaultLayout>
         <div className="mr-5">
-
           <Banner />
 
-          {(userinfo?.id && homeData && homeData?.recentSounds.items.length > 0) && (
-            <div className="bg-white p-2 rounded mb-5">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-title-md ">{homeData?.recentSounds.title}</h3>
-                <Link to="/history" className="text-sm mb-2 hover:text-primary-100">Xem tất cả</Link>
+          {userinfo?.id &&
+            homeData &&
+            homeData?.recentSounds.items.length > 0 && (
+              <div className="bg-white p-2 rounded mb-5">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-title-md ">
+                    {homeData?.recentSounds.title}
+                  </h3>
+                  <Link
+                    to="/history"
+                    className="text-sm mb-2 hover:text-primary-100"
+                  >
+                    Xem tất cả
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
+                  {homeData?.recentSounds.items.map(
+                    (item: sound | playlist) => (
+                      <RecentSoundItem key={item._id} data={item} />
+                    )
+                  )}
+                </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2">
-                {homeData?.recentSounds.items.map((item: sound | playlist) => (
-                  <RecentSoundItem key={item._id} data={item} />
-                ))}
-              </div>
-            </div>
-          )}
+            )}
 
           {!loading ? (
             homeData &&
             homeData.newSounds.items.length > 0 && (
               <div className="bg-white p-2 rounded mb-5">
-                <h3 className="text-title-md mb-2">{homeData.newSounds.title}</h3>
+                <h3 className="text-title-md mb-2">
+                  {homeData.newSounds.title}
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                   {homeData.newSounds.items.map((item: any, index: number) => (
                     <TrackItem key={index} sound={item} />
@@ -102,23 +110,14 @@ const HomePage = () => {
             </div>
           )}
 
-      
-              <div
-                className={`bg-white p-2 rounded mb-5`}
-              >
-                <h3 className="text-title-md mb-2">Album Hot</h3>
-                <div className="grid grid-cols-2  md:grid-cols-4 lg:grid-cols-8 gap-5">
-                  {homeData?.playlistHot.map((item, i) => (
-                    <PlayListItem
-                      key={i}
-                      data={item}
-                    />
-                  ))}
-                </div>
-              </div>
-  
-
-
+          <div className={`bg-white p-2 rounded mb-5`}>
+            <h3 className="text-title-md mb-2">{homeData?.hotPlaylist.title}</h3>
+            <div className="grid grid-cols-2  md:grid-cols-4 lg:grid-cols-8 gap-5">
+              {homeData?.hotPlaylist.items.map((item) => (
+                <PlayListItem key={item._id} playlist={item} />
+              ))}
+            </div>
+          </div>
         </div>
       </DefaultLayout>
     </>

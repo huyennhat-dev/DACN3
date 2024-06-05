@@ -78,8 +78,8 @@ const PlaylistTabContent = () => {
               <IconPlus className="absolute top-[50%] translate-y-[-50%]" strokeWidth={1.5} size={30} />
             </div>
           </div>
-          {playlist.map((item) => (
-            <PlayListItem key={item._id} data={item} onDelete={() => handleDelete(item._id!)} />
+          {playlist.map((item,index) => (
+            <PlayListItem key={item._id||index} playlist={item} onDelete={() => handleDelete(item._id!)} />
           ))}
         </div>
       </div>
