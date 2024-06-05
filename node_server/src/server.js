@@ -13,11 +13,11 @@ import fs from 'fs'
 connectDB();
 
 const app = express();
-app.use("/api/v1/static", express.static(path.join(__dirname, "public")));
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '500mb' }));
 app.use(cookieParser());
 app.use("/api/v1/", apiV1);
+app.use("/api/v1/static", express.static(path.join(__dirname, "public")));
 app.use(errorHandlingMiddleware);
 
 

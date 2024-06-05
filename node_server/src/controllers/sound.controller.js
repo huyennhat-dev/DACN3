@@ -215,7 +215,7 @@ const soundController = {
 
       const sound = await soundModel.findById(soundId).populate({
         path: "user",
-        select: "-username -password -createdAt -updatedAt -sounds -purchases",
+         select: "fullName photo wallet_address",
       });
       if (!sound) return next(new ApiError(400, "Không tìm thấy dữ liệu!"));
 
@@ -273,98 +273,7 @@ const soundController = {
     }
   },
 
-  search: async (req, res, next) => {
-    try {
-      let modifierSounds;
 
-      const { page = 1, limit = 1000, keyword = "", token } = req.query;
-
-      const skip = (page - 1) * limit;
-      const searchCondition = {
-        status: true,
-        $or: [
-          { name: { $regex: keyword, $options: "i" } },
-          { slug: { $regex: slug(keyword), $options: "i" } },
-          { hashTag: { $regex: keyword, $options: "i" } },
-        ],
-      };
-
-      const totalSound = await soundModel.countDocuments(searchCondition);
-      const sounds = await soundModel
-        .find(searchCondition)
-        .populate({
-          path: "user",
-          select:
-            "-username -password -createdAt -updatedAt -sounds -purchases",
-        })
-        .collation({ locale: "vi", strength: 2 })
-        .skip(skip)
-        .limit(limit);
-
-      if (token) {
-        const uid = verifyAccessToken(token)?.id;
-
-        if (!uid) {
-          return next(new ApiError(403, "Access token không hợp lệ."));
-        }
-
-        const user = await userModel
-          .findById(uid)
-          .select("-username -password -sounds");
-
-        const purchases = user.purchases;
-
-        modifierSounds = sounds.map((item) => {
-          if (item.price > 0 && !purchases.includes(item._id)) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-      } else {
-        modifierSounds = sounds.map((item) => {
-          if (item.price > 0) {
-            item.main_sound = undefined;
-          }
-          return item;
-        });
-      }
-
-      const authors = await userModel
-        .find({
-          status: true,
-          fullName: { $regex: slug(keyword), $options: "i" },
-        })
-        .collation({ locale: "vi", strength: 2 })
-        .select("-username -password -purchases -createdAt -updatedAt")
-        .skip(skip)
-        .limit(limit);
-
-      const totalAuthor = await userModel.countDocuments({
-        status: true,
-        fullName: { $regex: slug(keyword), $options: "i" },
-      });
-      return res.status(200).json({
-        statusCode: 200,
-        data: {
-          sounds: {
-            data: modifierSounds,
-            page,
-            limit,
-            total: totalSound,
-          },
-          authors: {
-            data: authors,
-            page,
-            limit,
-            total: totalAuthor,
-          },
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
-    }
-  },
 
   delete: async (req, res, next) => {
     try {
@@ -430,7 +339,7 @@ const soundController = {
         const user = await userModel
           .findById(uid)
           .populate({ path: "purchases" })
-          .select("-username -password -sounds");
+          .select("-username -password -sounds -follower -following");
 
         const purchases = user.purchases?.map((data) => data.sound.toString());
 

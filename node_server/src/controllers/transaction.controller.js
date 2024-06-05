@@ -63,7 +63,7 @@ const transactionController = {
 
       const sound = await soundModel.findById(soundId).populate({
         path: "user",
-        select: "-username -password -playlist -sounds -purchases",
+         select: "-username -password -follower -following -playlist -sounds -purchases",
       });
 
       if (balance < sound.price) {
@@ -73,7 +73,7 @@ const transactionController = {
       const user = await userModel
         .findById(uid)
         .populate({ path: "purchases" })
-        .select("-username -password -playlist -sounds");
+        .select("-username -password -playlist -sounds -follower -following");
 
       const purchasesIdList = [];
       user.purchases.map((data) => {

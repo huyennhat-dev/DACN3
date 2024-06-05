@@ -53,12 +53,15 @@ const playlistController = {
         {
           path: "user",
           select:
-            "-username -password -sounds -purchases -playlist -createdAt -updatedAt",
+            "fullName photo wallet_address",
         },
         {
           path: "sounds",
-          select:
-            "-username -password -sounds -purchases -playlist -createdAt -updatedAt",
+          populate:{
+            path:"user",
+            select:
+            "fullName photo wallet_address",
+          }
         },
       ]);
 
@@ -214,7 +217,11 @@ const playlistController = {
         .populate({
           path: "user",
           select:
-            "-username -password -createdAt -updatedAt -sounds -purchases",
+            "fullName photo wallet_address",
+        })
+        .populate({
+          path: "sounds",
+          select: "photo",
         })
         .skip(startIndex)
         .limit(limit)

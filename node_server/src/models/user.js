@@ -24,6 +24,20 @@ const userSchema = new mongoose.Schema(
     photo: String,
     description: String,
     wallet_address: String,
+    follower: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
     sounds: [
       {
         type: mongoose.Schema.Types.ObjectId,

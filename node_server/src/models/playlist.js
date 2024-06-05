@@ -23,7 +23,7 @@ const playlistSchema = new mongoose.Schema(
         required: true,
       },
     ],
-    favourite: Number,
+    favourite: { type: Number, default: 0},
     status: {
       type: String,
       enum: ["private", "public"],
