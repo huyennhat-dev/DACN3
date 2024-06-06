@@ -23,6 +23,7 @@ const SearchForm = () => {
   const keyword = query.get("key");
   const [searchValue, setSearchValue] = useState<string>(keyword ?? "");
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   // const [searchHistoryData, setSearchHistoryData] = useState<history[]>([]);
   const [searchData, setSearchData] = useState<searchData>(initialSearchData);
 
@@ -39,7 +40,7 @@ const SearchForm = () => {
   //   }
   // }, []);
 
-  const debouncedSearchValue = useDebounce(searchValue, 300);
+  const debouncedSearchValue = useDebounce(searchValue, 250);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
@@ -47,8 +48,8 @@ const SearchForm = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       let modifierData: searchData = initialSearchData;
-
       if (debouncedSearchValue) {
         try {
           const rs = await homeApi.search({
@@ -56,6 +57,7 @@ const SearchForm = () => {
             limit: 5,
             token: getToken()!,
           });
+          setLoading(false);
           modifierData = {
             authors: rs.data.authors.data,
             sounds: rs.data.sounds.data,
@@ -96,8 +98,10 @@ const SearchForm = () => {
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
 
-    if (searchValue)
+    if (searchValue) {
+      setShowSuggestion(false);
       startTransition(() => navigate(`/search?key=${searchValue}`));
+    }
   };
 
   useEffect(() => {
@@ -108,10 +112,11 @@ const SearchForm = () => {
     <>
       <form
         onSubmit={handleOnSubmit}
-        onFocus={() => setShowSuggestion(!showSuggestion)}
+        onFocus={() => setShowSuggestion(true)}
         onBlur={toggleShowSearchSuggestion}
-        className={`relative rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center ${showSuggestion ? "rounded-b-none " : "bg-prprimary/15 "
-          } `}
+        className={`relative rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center ${
+          showSuggestion ? "rounded-b-none " : "bg-prprimary/15 "
+        } `}
       >
         <IconSearch className={`${showSuggestion && "text-primary-200"}`} />
         <input
@@ -135,49 +140,57 @@ const SearchForm = () => {
 
             {(searchData?.authors?.length! > 0 ||
               searchData?.sounds?.length! > 0) && (
-                <div className="p-3 pb-2">
-                  <hr className="h-[1.5px]" />
-                  <h4 className="font-medium my-1">Gợi ý kết quả</h4>
-                  {searchData?.authors?.length! > 0 &&
-                    searchData?.authors.map((item) => (
-                      <div key={item._id} className="flex gap-2 my-1 p-2 hover:bg-primary-50/20 rounded cursor-pointer">
-                        <div className="rounded-full w-14 h-14 bg-primary-50/30">
-                          <img
-                            src={item.photo}
-                            alt={item.fullName}
-                            className="rounded-full w-14 h-14"
-                          />
-                        </div>
-                        <div className="flex flex-col items-start justify-center">
-                          <h6 className="line-clamp-1 overflow-hidden font-medium">{item.fullName}</h6>
-                          <span className="text-xs">
-                            Producer •
-                            <span className="mx-1">
-                              {formatCountNumber(
-                                item.follower ? item.follower?.length! : 0
-                              )}
-                            </span>
-                            quan tâm
+              <div className="p-3 pb-2">
+                <hr className="h-[1.5px]" />
+                <h4 className="font-medium my-1">Gợi ý kết quả</h4>
+                {searchData?.authors?.length! > 0 &&
+                  searchData?.authors.map((item) => (
+                    <div
+                      key={item._id}
+                      className="flex gap-2 my-1 p-2 hover:bg-primary-50/20 rounded cursor-pointer"
+                    >
+                      <div className="rounded-full w-14 h-14 bg-primary-50/30">
+                        <img
+                          src={item.photo}
+                          alt={item.fullName}
+                          className="rounded-full w-14 h-14"
+                        />
+                      </div>
+                      <div className="flex flex-col items-start justify-center">
+                        <h6 className="line-clamp-1 overflow-hidden font-medium">
+                          {item.fullName}
+                        </h6>
+                        <span className="text-xs">
+                          Producer •
+                          <span className="mx-1">
+                            {formatCountNumber(Number(item.follower) || 0)}
                           </span>
-                        </div>
+                          quan tâm
+                        </span>
                       </div>
-                    ))}
-                  {searchData?.sounds?.length! > 0 &&
-                    searchData?.sounds.map((item) => (
-                      <div key={item._id} className="my-1">
-                        <TrackItem sound={item} />
-                      </div>
-                    ))}
-                </div>
-              )}
-            {
-              (searchData?.authors?.length! <= 0 &&
-                searchData?.sounds?.length! <= 0 && searchValue) && (
+                    </div>
+                  ))}
+                {searchData?.sounds?.length! > 0 &&
+                  searchData?.sounds.map((item) => (
+                    <div key={item._id} className="my-1">
+                      <TrackItem sound={item} />
+                    </div>
+                  ))}
+              </div>
+            )}
+            {searchData?.authors?.length! <= 0 &&
+              searchData?.sounds?.length! <= 0 &&
+              searchValue &&
+              !loading && (
                 <div className="p-3 ">
                   <p className="my-1">Không tìm tháy kết quả phù hợp</p>
                 </div>
-              )
-            }
+              )}
+            {loading && searchValue && (
+              <div className="p-3 ">
+                <p className="my-1">Đang tải ...</p>
+              </div>
+            )}
           </div>
         )}
       </form>

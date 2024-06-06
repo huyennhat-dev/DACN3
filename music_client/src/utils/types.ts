@@ -12,8 +12,8 @@ export interface userType {
   password?: string;
   photo?: string;
   balance?: number;
-  follower?:userType[]
-  following?:userType[]
+  follower?:number|userType[]
+  following?:number|userType[]
   wallet_address?: string;
   description?: string;
 }
@@ -102,5 +102,6 @@ export interface homeData {
 
 export interface searchData{
   sounds:sound[],
-  authors:userType[]
+  authors:userType[],
+  playlist?:playlist[]
 }
