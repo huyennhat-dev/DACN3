@@ -1,29 +1,30 @@
 import mongoose from "mongoose";
 
-
 const commentSchema = new mongoose.Schema({
   sound: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'Sound' 
+    ref: "Sound",
   },
   user: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
+    ref: "User",
   },
-  parent_id: {
-    type: Schema.Types.ObjectId,
-    ref: 'Comment', 
-    default: null
+  parentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Comment",
+    default: null,
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
-
+  timestamp: {
+    type: Number,
+    required: true,
+  },
 });
-
 
 const commentModel = mongoose.model("Comment", commentSchema);
 
