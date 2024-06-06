@@ -23,6 +23,7 @@ import homeApi from "../../api/home.api";
 import { handleImageError } from "../../utils";
 import fileApi from "../../api/file.api";
 import fileDownload from "js-file-download";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   sound: sound
@@ -31,6 +32,7 @@ interface Props {
 const TrackItem = memo(({ sound }: Props) => {
   const { audioRef } = useAudio();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
   const songId = useAppSelector((state) => state.audio.sound._id);
   const playlistSong = useAppSelector((state) => state.audio.playlistSong);
   const info = useAppSelector((state) => state.auth.userInfo);
@@ -163,6 +165,9 @@ const TrackItem = memo(({ sound }: Props) => {
     }
   };
 
+  const handleNavigateToSoundPage = (id:string)=>{
+   return navigate(`/sound/${id}`)
+  }
 
   return (
     <div
@@ -204,7 +209,7 @@ const TrackItem = memo(({ sound }: Props) => {
         <div className="flex items-center justify-between">
           <h5
             title={sound.name}
-            onClick={handleClickPlaySound}
+            onClick={()=>handleNavigateToSoundPage(`${sound.slug}-${sound._id}`)}
             className="line-clamp-1 overflow-hidden font-medium cursor-pointer hover:text-primary-300"
           >
             {sound.name}

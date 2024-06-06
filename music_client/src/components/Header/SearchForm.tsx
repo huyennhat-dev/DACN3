@@ -104,9 +104,7 @@ const SearchForm = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(keyword);
-  }, [searchData]);
+
 
   return (
     <>

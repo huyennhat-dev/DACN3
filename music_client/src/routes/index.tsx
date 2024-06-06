@@ -20,7 +20,7 @@ export const routes = [
   },
   {
     pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",
-    url: "/sound/:id",
+    url: "/sound/:path",
     component: <SoundPage /> ,
   },
   {

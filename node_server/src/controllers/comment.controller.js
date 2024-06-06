@@ -7,11 +7,11 @@ const commentController = {
   create: async (req, res, next) => {
     try {
       const uid = req.user.id;
-      const { soundId, parentId, content, timestamp } = req.body;
+      const { sound, parent_id, content, timestamp } = req.body;
       await performCRUD(commentModel, "create", {
         user: uid,
-        sound: soundId,
-        parentId,
+        sound,
+        parent_id:parent_id?parent_id:undefined,
         content,
         timestamp,
       });
@@ -40,6 +40,7 @@ const commentController = {
       const recentSound = await commentModel
         .find({ sound: req.params.id })
         .populate("user")
+        .populate("parent_id")
         .skip(startIndex)
         .limit(limit)
         .sort({ createdAt: -1 });

@@ -71,7 +71,7 @@ function App() {
     }
   }, [uInfo]);
 
-  console.log("restate");
+  
 
   return (
     <>

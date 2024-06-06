@@ -15,6 +15,8 @@ const requiresToken = (url: string) => {
     "/playlist/update/:id",
     "/sound/get-sounds-by-buyer",
     "/file/download/:path",
+    "/comment/create",
+    "/comment/delete/:id"
   ];
 
   // Hàm chuyển đổi đường dẫn thành biểu thức chính quy (regex)

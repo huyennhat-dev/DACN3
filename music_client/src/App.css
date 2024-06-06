@@ -225,3 +225,8 @@ body {
 .modal-content {
   transition: transform 0.3s ease-in-out;
 }
+
+.expandable {
+  transition: height 0.3s ease, padding 0.3s ease;
+  overflow: hidden;
+}
