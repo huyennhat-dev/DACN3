@@ -9,30 +9,54 @@ contract("MusicWallet", (accounts) => {
     musicWalletInstance = await MusicWallet.new({ from: accounts[0] });
   });
 
-  // it("should deposit ether into the contract", async () => {
-  //   const initialBalance = await musicWalletInstance.getBalance();
+  it("should deposit ether into the contract", async () => {
+    const initialBalance = await musicWalletInstance.getBalance();
 
-  //   // Perform a deposit of 1 ether
-  //   await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether") });
+    // Perform a deposit of 1 ether
+    await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether"), from: accounts[0] });
 
-  //   const newBalance = await musicWalletInstance.getBalance();
+    const newBalance = await musicWalletInstance.getBalance();
 
-  //   assert.equal(newBalance - initialBalance, web3.utils.toWei("1", "ether"), "Deposit amount is not correct");
-  // });
+    assert.equal(newBalance - initialBalance, web3.utils.toWei("1", "ether"), "Deposit amount is not correct");
+  });
 
-  it("should transfer ether to another address", async () => {
-    // Deposit ether into the contract
-    await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether") });
+  it("should withdraw ether from the contract", async () => {
+    // Deposit 1 ether first
+    await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether"), from: accounts[0] });
 
-    const recipientAddress = accounts[1];
-    const amountToSend = web3.utils.toWei("0.5", "ether");
+    const initialBalance = await musicWalletInstance.getBalance();
 
-    // Perform a transfer
-    await musicWalletInstance.transfer(recipientAddress, amountToSend);
+    // Withdraw 0.5 ether
+    await musicWalletInstance.withdraw(web3.utils.toWei("0.5", "ether"), { from: accounts[0] });
 
-    // Check recipient's balance
-    const recipientBalance = await web3.eth.getBalance(recipientAddress);
+    const newBalance = await musicWalletInstance.getBalance();
 
-    assert.equal(recipientBalance, amountToSend, "Recipient did not receive the correct amount of ether");
+    assert.equal(initialBalance - newBalance, web3.utils.toWei("0.5", "ether"), "Withdraw amount is not correct");
+  });
+
+  it("should fail to withdraw more than the balance", async () => {
+    // Deposit 1 ether first
+    await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether"), from: accounts[0] });
+
+    // Try to withdraw 2 ether, which should fail
+    try {
+      await musicWalletInstance.withdraw(web3.utils.toWei("2", "ether"), { from: accounts[0] });
+      assert.fail("Withdrawal of more than balance should fail");
+    } catch (error) {
+      assert.include(error.message, "Insufficient balance", "Expected Insufficient balance error but got another error");
+    }
+  });
+
+  it("should fail to withdraw zero ether", async () => {
+    // Deposit 1 ether first
+    await musicWalletInstance.deposit({ value: web3.utils.toWei("1", "ether"), from: accounts[0] });
+
+    // Try to withdraw 0 ether, which should fail
+    try {
+      await musicWalletInstance.withdraw(web3.utils.toWei("0", "ether"), { from: accounts[0] });
+      assert.fail("Withdrawal of zero amount should fail");
+    } catch (error) {
+      assert.include(error.message, "Withdrawal amount must be greater than zero", "Expected Withdrawal amount must be greater than zero error but got another error");
+    }
   });
 });

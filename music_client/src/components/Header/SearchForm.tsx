@@ -111,10 +111,8 @@ const SearchForm = () => {
       <form
         onSubmit={handleOnSubmit}
         onFocus={() => setShowSuggestion(true)}
-        onBlur={toggleShowSearchSuggestion}
-        className={`relative rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center ${
-          showSuggestion ? "rounded-b-none " : "bg-prprimary/15 "
-        } `}
+        onBlur={() => setShowSuggestion(false)}
+        className={`relative rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center `}
       >
         <IconSearch className={`${showSuggestion && "text-primary-200"}`} />
         <input

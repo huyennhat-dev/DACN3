@@ -1,3 +1,4 @@
+import { populate } from "dotenv";
 import commentModel from "~/models/comment";
 import userModel from "~/models/user";
 
@@ -7,17 +8,17 @@ const commentController = {
   create: async (req, res, next) => {
     try {
       const uid = req.user.id;
-      const { sound, parent_id, content, timestamp } = req.body;
-      await performCRUD(commentModel, "create", {
+      const { sound, parent, content, timestamp } = req.body;
+      const comment = await performCRUD(commentModel, "create", {
         user: uid,
         sound,
-        parent_id:parent_id?parent_id:undefined,
+        parent: parent ? parent : undefined,
         content,
         timestamp,
       });
       return res
         .status(200)
-        .json({ statusCode: 200, message: "Thêm thành công" });
+        .json({ statusCode: 200, message: "Thêm thành công", data: comment });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
@@ -37,15 +38,48 @@ const commentController = {
     try {
       const { page = 1, limit = 1000 } = req.query;
       const startIndex = (page - 1) * limit;
-      const recentSound = await commentModel
-        .find({ sound: req.params.id })
-        .populate("user")
-        .populate("parent_id")
+      const comments = await commentModel
+        .findBySound(req.params.id)
+        .populate({ path: "user", select: "fullName photo wallet_address" })
+        .populate({
+          path: "parent",
+          select:"sound user",
+          populate: { path: "user", select: "fullName photo wallet_address" },
+        })
         .skip(startIndex)
         .limit(limit)
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .lean();
 
-      return res.status(200).json({ statusCode: 200, data: recentSound });
+      const totalComments = await commentModel.countDocuments({
+        sound: req.params.id,
+      });
+
+      // Xây dựng cấu trúc cây
+      const commentMap = {};
+      comments.forEach((comment) => {
+        comment.replies = [];
+        commentMap[comment._id] = comment;
+      });
+
+      const rootComments = [];
+      comments.forEach((comment) => {
+        if (comment.parent?._id) {
+          if (commentMap[comment.parent._id]) {
+            commentMap[comment.parent._id].replies.push(comment);
+          }
+        } else {
+          rootComments.push(comment);
+        }
+      });
+
+      return res.status(200).json({
+        statusCode: 200,
+        data: rootComments,
+        page: page,
+        limit: limit,
+        total: totalComments,
+      });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));

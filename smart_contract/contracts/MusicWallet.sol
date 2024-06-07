@@ -7,6 +7,7 @@ contract MusicWallet {
 
     event Deposit(address indexed user, uint256 amount);
     event Transfer(address indexed from, address indexed to, uint256 amount);
+    event Withdraw(address indexed user, uint256 amount);
 
     function deposit() public payable {
         require(msg.value > 0, "Deposit amount must be greater than zero");
@@ -26,6 +27,15 @@ contract MusicWallet {
         balances[to] += amount;
         payable(to).transfer(amount);
         emit Transfer(msg.sender, to, amount);
+    }
+
+    function withdraw(uint256 amount) public {
+        require(amount > 0, "Withdrawal amount must be greater than zero");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        balances[msg.sender] -= amount;
+        payable(msg.sender).transfer(amount);
+        emit Withdraw(msg.sender, amount);
     }
 
     function balanceOf(address user) public view returns (uint256) {

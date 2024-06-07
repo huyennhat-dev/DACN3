@@ -12,7 +12,7 @@ const commentSchema = new mongoose.Schema(
       required: true,
       ref: "User",
     },
-    parent_id: {
+    parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
       default: null,
@@ -20,6 +20,8 @@ const commentSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
+      minlength: 1,
+      maxlength: 255,
     },
     timestamp: {
       type: Number,
@@ -30,6 +32,11 @@ const commentSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+commentSchema.statics.findBySound = function (soundId) {
+  return this.find({ sound: soundId });
+};
 
 const commentModel = mongoose.model("Comment", commentSchema);
 

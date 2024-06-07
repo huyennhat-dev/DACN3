@@ -107,9 +107,10 @@ export interface searchData {
 export interface comment {
   _id?: string;
   sound: string | sound;
-  user: string|userType;
+  user:  userType|string ;
   content: string;
-  parent_id?: string;
+  parent?: string;
   timestamp: number;
-  createdAt?:string
+  createdAt?: string;
+  replies?: comment[];
 }

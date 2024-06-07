@@ -9,6 +9,7 @@ const RechargePage = lazy(() => import("../pages/Recharge"));
 const UploadSoundPage = lazy(() => import("../pages/UploadSound"));
 const PlaylistPage = lazy(() => import("../pages/PlayList"));
 const SoundPage = lazy(() => import("../pages/Sound"));
+const ProfilePage = lazy(() => import("../pages/Profile"));
 
 
 
@@ -52,6 +53,11 @@ export const routes = [
     pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",
     url: "/search",
     component: <SearchPage />,
+  },
+  {
+    pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",
+    url: "/profile/:id",
+    component: <ProfilePage />,
   },
   {
     pageTitle: " Dashboard | TailAdmin - Tailwind CSS Admin Dashboard Template",

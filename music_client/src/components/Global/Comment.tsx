@@ -1,96 +1,105 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { comment, userType } from "../../utils/types";
+import { comment, sound, userType } from "../../utils/types";
 import { handleImageError } from "../../utils";
 import { formatRelativeTime, formatTime } from "../../utils/format";
-import { IconSend2 } from "@tabler/icons-react";
-import { useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useAudio } from "../../context/AudioContext";
+import { changeIconPlay, setSoundPlay } from "../../redux/features/audioSlice";
+import { useState } from "react";
 
 type Props = {
     comment: comment;
-
+    sound: sound;
+    replyClick: () => void;
 };
 
-const CommentItem = ({ comment }: Props) => {
+const CommentItem = ({ comment, sound, replyClick }: Props) => {
+    const { audioRef } = useAudio();
+    const dispatch = useAppDispatch();
+
     const info = useAppSelector((state) => state.auth.userInfo);
     const isUserType = (user: string | userType): user is userType => {
         return (user as userType).photo !== undefined;
     };
- 
+
+    const [isReply, setIsReply] = useState<boolean>(false);
+
+    const handleSoundTimestampClick = () => {
+        dispatch(setSoundPlay(sound));
+
+        if (audioRef.current) {
+            audioRef.current!.currentTime = comment.timestamp;
+            audioRef.current.play();
+            dispatch(changeIconPlay(true));
+        }
+    };
+
+    const handleReplyClick = () => {
+        if (!isReply) replyClick();
+        setIsReply(!isReply);
+    };
+
     return (
-        <div
-            className={`p-2 my-1 flex gap-2 items-start`}
-        >
-            <div className="w-10 h-10 rounded-full bg-primary-50/40">
-                <img
-                    src={isUserType(comment.user) ? comment.user.photo : info?.photo}
-                    onError={handleImageError}
-                    alt={
-                        isUserType(comment.user) ? comment.user?.fullName : info?.fullName
-                    }
-                />
-            </div>
-            <div className="flex-1 transition-all expandable">
-                <div className="flex justify-between items-center">
-                    <p>
-                        <span className="font-medium mr-1">
-                            {isUserType(comment.user) ? comment.user.fullName : ""}
-                        </span>{" "}
-                        at
-                        <span className="font-medium text-primary-50 ml-2">
-                            {formatTime(comment.timestamp)}
-                        </span>
-                    </p>
-                    <p>
-                        <span className="text-sm">
-                            {comment.createdAt&&formatRelativeTime(comment.createdAt!)||"vừa xong"}
-                        </span>
-                    </p>
+        <>
+            <div
+                className={` p-2 my-1 flex gap-2 items-start ${comment.parent && "ml-12"
+                    }`}
+            >
+                <div className="w-10 h-10 rounded-full bg-primary-50/40">
+                    <img
+                        src={isUserType(comment.user) ? comment.user.photo : info?.photo}
+                        onError={handleImageError}
+                        alt={
+                            isUserType(comment.user) ? comment.user?.fullName : info?.fullName
+                        }
+                    />
                 </div>
-                <p className="my-1">{comment.content}</p>
-                {/* <div onClick={() => setIsReply(!isReply)} className="cursor-pointer">
-                    <p>{isReply ? "Hủy" : "Trả lời"}</p>
-                </div>
-                {isReply && (
-                    <form
-                        onSubmit={handleSubmit}
-                        className="mt-2 flex items-center gap-3"
+                <div className="flex-1 transition-all expandable">
+                    <div className="flex justify-between items-center">
+                        <p>
+                            <span className="font-medium mr-1">
+                                {isUserType(comment.user) ? comment.user.fullName : ""}
+                            </span>
+                            <span
+                                onClick={handleSoundTimestampClick}
+                                className="font-medium text-primary-50 ml-2 text-sm cursor-pointer"
+                            >
+                                {formatTime(comment.timestamp)}
+                            </span>
+                        </p>
+                        <p>
+                            <span className="text-sm">
+                                {(comment.createdAt &&
+                                    formatRelativeTime(comment.createdAt!)) ||
+                                    "vừa xong"}
+                            </span>
+                        </p>
+                    </div>
+                    <p className="text-sm">
+                        {comment.parent && isUserType(comment.user) && (
+                            <span className="font-semibold text-primary-50 mr-1">
+                                @{comment.user.fullName}
+                            </span>
+                        )}
+                        {comment.content}
+                    </p>
+                    <div
+                        onClick={handleReplyClick}
+                        className="cursor-pointer font-medium text-sm float-right"
                     >
-                        <div className="w-10 h-10 rounded-full bg-primary-50/40">
-                            <img
-                                src={info?.photo}
-                                onError={handleImageError}
-                                alt={info?.fullName}
-                            />
-                        </div>
-                        <div className="flex-1 text-base ">
-                            <input
-                                type="text"
-                                value={replyValue.content ?? ""}
-                                onChange={(e) =>
-                                    setReplyValue({
-                                        ...replyValue,
-                                        timestamp: audioRef.current?.currentTime!,
-                                        content: e.target.value,
-                                        parent_id:comment._id
-                                    })
-                                }
-                                placeholder="Nhập bình luận của bạn"
-                                minLength={0}
-                                maxLength={100}
-                                className="outline-none p-2 w-full bg-slate-100 rounded-md"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="w-10 h-10 rounded-full border border-primary-100 hover:text-primary-100 flex items-center justify-center cursor-pointer"
-                        >
-                            <IconSend2 strokeWidth={1.5} />
-                        </button>
-                    </form>
-                )} */}
+                        <p>{isReply ? "Hủy" : "Trả lời"}</p>
+                    </div>
+                </div>
             </div>
-        </div>
+            {comment.replies?.length! > 0 &&
+                comment.replies?.map((replyItem) => (
+                    <CommentItem
+                        key={replyItem._id}
+                        comment={replyItem}
+                        sound={sound!}
+                        replyClick={replyClick}
+                    />
+                ))}
+        </>
     );
 };
 

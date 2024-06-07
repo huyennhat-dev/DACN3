@@ -25,7 +25,7 @@ const RecentSoundItem = ({ data }: { data: any }) => {
         if (audioRef && audioRef.current) {
             audioRef.current.play();
         }
-        dispatch(setSoundPlay(data));
+        dispatch(setSoundPlay(data.sound));
         dispatch(changeIconPlay(true));
         dispatch(setAutoPlay(true));
     };

@@ -46,17 +46,9 @@ const History = () => {
   const tabContent = ({ data }: { data: any }) => {
     return (
       <>
-        <div className="grid grid-cols-8 gap-4">
+        <div className="grid grid-cols-4 lg:grid-cols-8 gap-4">
           {data.items.map((item: any, index: number) => (
-            <div className="relative">
               <RecentSoundItem key={index} data={item} />
-              <div
-                onClick={() => handleDelete(item?._id)}
-                className="absolute top-1 z-99 right-1 cursor-pointer text-primary-100/70 hover:text-primary-100 hover:font-medium"
-              >
-                <IconTrash strokeWidth={1.5} size={20} />
-              </div>
-            </div>
           ))}
         </div>
       </>
