@@ -4,6 +4,7 @@ import PlaylistTabContent from "../components/Global/Tab/PlaylistTabContent";
 import { useNavigate } from "react-router-dom";
 import useQuery from "../hooks/useQuery";
 import PurchaseTabContent from "../components/Global/Tab/PurchaseTabContent";
+import { useEffect } from "react";
 
 // Định nghĩa enum TabList để quản lý các tab một cách rõ ràng
 export enum TabList {
@@ -46,6 +47,9 @@ const Library = () => {
         query.set('tab', newTab); // Đặt giá trị mới cho tham số 'tab'
         navigate({ search: query.toString() }); // Điều hướng với URL mới
     };
+
+
+    
     return (
         <>
                 <div className="my-music mr-5 h-full">

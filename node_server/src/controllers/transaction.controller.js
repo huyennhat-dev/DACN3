@@ -18,6 +18,7 @@ const transactionController = {
         await performCRUD(TransactionModel, "create", {
           user: req.user.id,
           transaction_hash: transaction.hash,
+          action: "deposit",
           status: "completed",
         });
 
@@ -50,6 +51,37 @@ const transactionController = {
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
     }
   },
+  withDraw: async (req, res, next) => {
+    try {
+      const { txHash } = req.body;
+      const receipt = await web3.eth.getTransactionReceipt(txHash);
+
+      if (receipt) {
+        const transaction = await web3.eth.getTransaction(txHash);
+        await performCRUD(TransactionModel, "create", {
+          user: req.user.id,
+          transaction_hash: transaction.hash,
+          action: "withdraw",
+          status: "completed",
+        });
+
+        return res
+          .status(201)
+          .json({ statusCode: 201, message: "Rút tiền thành công!" });
+      }
+      return;
+    } catch (error) {
+      if (error.message.includes("Transaction not found")) {
+        return next(
+          new ApiError(
+            401,
+            "Giao dịch không được tìm thấy hoặc chưa được khai thác."
+          )
+        );
+      }
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
   buySound: async (req, res, next) => {
     try {
       const uid = req.user.id;
@@ -63,7 +95,8 @@ const transactionController = {
 
       const sound = await soundModel.findById(soundId).populate({
         path: "user",
-         select: "-username -password -follower -following -playlist -sounds -purchases",
+        select:
+          "-username -password -follower -following -playlist -sounds -purchases",
       });
 
       if (balance < sound.price) {
@@ -116,13 +149,33 @@ const transactionController = {
       await performCRUD(TransactionModel, "create", {
         user: uid,
         transaction_hash: rs.transactionHash,
-        action: "buySound",
+        action: "transaction",
         status: "completed",
       });
 
       return res
         .status(200)
         .json({ statusCode: 200, message: "Giao dịch thành công!" });
+    } catch (error) {
+      console.log(error);
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
+  getTransaction: async (req, res, next) => {
+    try {
+      const uid = req.user.id;
+      const { keyword = "deposit", page = 1, limit = 1000 } = req.query;
+      const startIndex = (page - 1) * limit;
+
+      const transactions = await TransactionModel.find({
+        user: uid,
+        action: keyword,
+      })
+        .skip(startIndex)
+        .limit(limit)
+        .sort({ createdAt: -1 });
+
+      return res.status(201).json({ statusCode: 201, data: transactions });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));

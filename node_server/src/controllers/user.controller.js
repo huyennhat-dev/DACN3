@@ -12,10 +12,23 @@ import {
 } from "~/utils/token";
 import { fileNameGeneral, typeFile } from "~/utils";
 import env from "~/config/env";
+import path from "path";
+import deleteFile from "~/services/deleteFile";
 
 const isDev = env.BUILD_MODE !== "production";
 
 const userController = {
+  getUser: async (req, res, next) => {
+    try {
+      const uid = req.params.id;
+      const user = await userModel
+        .findById(uid)
+        .select("fullName photo description wallet_address");
+      return res.status(201).json({ statusCode: 201, data: user });
+    } catch (error) {
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
   signUp: async (req, res, next) => {
     try {
       const { username, password, fullName, wallet_address } = req.body;
@@ -96,12 +109,12 @@ const userController = {
   update: async (req, res, next) => {
     try {
       const {
-        crr_password,
-        new_password,
-        wallet_address,
-        description,
-        balance,
         photo,
+        fullName,
+        description,
+        new_password,
+        current_password,
+        wallet_address,
       } = req.body;
       const user = await userModel.findById(req.user.id);
 
@@ -110,10 +123,10 @@ const userController = {
       }
       let hashedPassword;
 
-      const updateData = { wallet_address, description };
+      const updateData = { wallet_address, description, fullName };
 
-      if (crr_password && new_password) {
-        if (!(await user.comparePassword(crr_password))) {
+      if (current_password && new_password) {
+        if (!(await user.comparePassword(current_password))) {
           return next(new ApiError(401, "Mật khẩu không đúng."));
         }
 
@@ -125,22 +138,16 @@ const userController = {
         const fileName = Date.now();
         const photoPath =
           "uploads/images/" + fileNameGeneral(fileName, typeFile(photo));
-        fs.writeFileSync(photoPath, photo.split(",")[1], "base64");
+        fs.writeFileSync(
+          path.join(__dirname, "../public/" + photoPath),
+          photo.split(",")[1],
+          "base64"
+        );
         updateData.photo = photoPath;
         if (user.photo) deleteFile(user.photo);
       }
 
       let userAfterUpdate;
-
-      if (balance) {
-        if (parseInt(balance) + user.balance < 0) {
-          return next(new ApiError(400, "Tiền trong ví của bạn không đủ!"));
-        }
-        userAfterUpdate = await performCRUD(userModel, "update", {
-          id: req.user.id,
-          $inc: { balance },
-        });
-      }
 
       userAfterUpdate = await performCRUD(userModel, "update", {
         id: req.user.id,
@@ -156,13 +163,11 @@ const userController = {
       };
 
       const accessToken = generateAccessToken(userPayload);
-      const refreshToken = generateAccessToken(userPayload);
 
-      return res
-        .status(200)
-        .json({ statusCode: 200, accessToken, refreshToken });
+      return res.status(200).json({ statusCode: 200, accessToken });
     } catch (error) {
       console.log(error);
+      return next(new ApiError(500, "Có lỗi xảy ra!"));
     }
   },
   refreshToken: async (req, res, next) => {

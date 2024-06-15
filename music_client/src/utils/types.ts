@@ -107,10 +107,18 @@ export interface searchData {
 export interface comment {
   _id?: string;
   sound: string | sound;
-  user:  userType|string ;
+  user: userType | string;
   content: string;
   parent?: string;
   timestamp: number;
   createdAt?: string;
   replies?: comment[];
+}
+
+export interface transaction {
+  _id:string,
+  transaction_hash: string;
+  action: string;
+  status: string;
+  createdAt: string;
 }

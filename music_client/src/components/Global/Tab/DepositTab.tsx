@@ -1,17 +1,18 @@
 import { startTransition, useState } from "react";
-import { CoinDepositList } from "../api/_mock";
-import { formatCoin } from "../utils/format";
+import { CoinDepositList } from "../../../api/_mock";
+import { formatCoin } from "../../../utils/format";
 import { Button, message } from "antd";
 import Web3 from "web3";
-import { walletApi } from "../contracts/walletApi";
-import { env } from "../configs/env";
-import { web3 } from "../contracts";
-import transactionApi from "../api/transaction.api";
-import { useAppDispatch } from "../hooks/redux";
-import { updateBalance } from "../redux/features/authSlice";
+import { walletApi } from "../../../contracts/walletApi";
+import { env } from "../../../configs/env";
+import { web3 } from "../../../contracts";
+import transactionApi from "../../../api/transaction.api";
+import { useAppDispatch, useAppSelector } from "../../../hooks/redux";
+import { updateBalance } from "../../../redux/features/authSlice";
 
-const RechargePage = () => {
+const DepositTab = () => {
   const dispatch = useAppDispatch();
+  const wallet_address = useAppSelector((state) => state.auth.userInfo?.wallet_address);
 
   const [deposit, setDeposit] = useState<{
     denominations: number;
@@ -19,15 +20,12 @@ const RechargePage = () => {
   }>({ denominations: 0, value: 0 });
 
   const handleSendDeposit = async (amount: number) => {
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
 
     const amountInWei =
       "0x" + Number(Web3.utils.toWei(amount, "ether")).toString(16);
     const transactionParameters = {
       to: env.contractAddress,
-      from: accounts[0],
+      from: wallet_address,
       value: amountInWei,
       data: new web3.eth.Contract(walletApi, env.contractAddress).methods
         .deposit()
@@ -66,7 +64,7 @@ const RechargePage = () => {
 
   return (
     <>
-        <div className="mr-5 ">
+        <div className="mr-5 overflow-auto hide-scroll h-full">
           <div className=" bg-white p-2 rounded  flex flex-col justify-between">
             <div className="text-center">
               <h5 className="text-xl my-3 font-medium">
@@ -120,4 +118,4 @@ const RechargePage = () => {
   );
 };
 
-export default RechargePage;
+export default DepositTab;

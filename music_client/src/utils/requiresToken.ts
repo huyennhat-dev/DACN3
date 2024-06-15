@@ -4,8 +4,10 @@ const requiresToken = (url: string) => {
   const tokenRequiredPaths: string[] = [
     "/user/update",
     "/transition/deposit",
+    "/transition/withdraw",
     "/transition/balance",
     "/transition/buy-sound",
+    "/transition/get-all",
     "/sound/create",
     "/history",
     "/history/create",
@@ -16,7 +18,7 @@ const requiresToken = (url: string) => {
     "/sound/get-sounds-by-buyer",
     "/file/download/:path",
     "/comment/create",
-    "/comment/delete/:id"
+    "/comment/delete/:id",
   ];
 
   // Hàm chuyển đổi đường dẫn thành biểu thức chính quy (regex)

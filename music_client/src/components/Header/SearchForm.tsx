@@ -10,10 +10,11 @@ import useDebounce from "../../hooks/useDebounce";
 import { searchData } from "../../utils/types";
 import homeApi from "../../api/home.api";
 import { getToken } from "../../utils/tokenUtils";
-import { deepEqual } from "../../utils";
+import { deepEqual, handleImageError } from "../../utils";
 import useQuery from "../../hooks/useQuery";
 import { formatCountNumber } from "../../utils/format";
 import TrackItem from "../Global/TrackItem";
+import { env } from "../../configs/env";
 
 const initialSearchData: searchData = { authors: [], sounds: [] };
 
@@ -24,21 +25,7 @@ const SearchForm = () => {
   const [searchValue, setSearchValue] = useState<string>(keyword ?? "");
   const [showSuggestion, setShowSuggestion] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  // const [searchHistoryData, setSearchHistoryData] = useState<history[]>([]);
   const [searchData, setSearchData] = useState<searchData>(initialSearchData);
-
-  // useEffect(() => {
-  //   try {
-  //     let data = JSON.parse(getSearchHistory()!).reverse();
-  //     if (!Array.isArray(data)) {
-  //       saveSearchHistory(JSON.stringify([]));
-  //       data = [];
-  //     }
-  //     setSearchHistoryData(data);
-  //   } catch (error) {
-  //     saveSearchHistory(JSON.stringify([]));
-  //   }
-  // }, []);
 
   const debouncedSearchValue = useDebounce(searchValue, 250);
 
@@ -75,26 +62,6 @@ const SearchForm = () => {
     fetchData();
   }, [debouncedSearchValue]);
 
-  const toggleShowSearchSuggestion = () => {
-    setTimeout(() => {
-      return setShowSuggestion(!showSuggestion);
-    }, 150);
-  };
-
-  // const handleSaveSearchHistory = (history: history) => {
-  //   const data = JSON.parse(getSearchHistory()!);
-  //   const newHistoryData: history[] = [...data];
-  //   newHistoryData.push(history);
-  //   setSearchHistoryData(newHistoryData.reverse());
-  //   saveSearchHistory(JSON.stringify(newHistoryData));
-  // };
-
-  // const handleRemoveHistory = () => {
-  //   setShowSuggestion(true);
-  //   clearSearchHistory();
-  //   setSearchHistoryData([]);
-  // };
-
   const handleOnSubmit = (e: any) => {
     e.preventDefault();
 
@@ -104,15 +71,12 @@ const SearchForm = () => {
     }
   };
 
-
-
   return (
     <>
       <form
         onSubmit={handleOnSubmit}
         onFocus={() => setShowSuggestion(true)}
-        onBlur={() => setShowSuggestion(false)}
-        className={`relative rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center `}
+        className={`relative z-999999 rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center `}
       >
         <IconSearch className={`${showSuggestion && "text-primary-200"}`} />
         <input
@@ -122,20 +86,9 @@ const SearchForm = () => {
           className="outline-none w-full bg-transparent text-black ml-2 "
           placeholder="Tìm kiếm bản nhạc, tác giả ..."
         />
-        {showSuggestion && (
-          <div className="absolute z-999999 rounded-b left-0 right-0 top-[40px] bg-white">
-            {/* <div className="flex items-center justify-between font-medium mb-2">
-              <h4 className="">Tìm kiếm gần đây</h4>
-              <h4
-                onClick={handleRemoveHistory}
-                className=" cursor-pointer hover:text-primary-200"
-              >
-                Xóa
-              </h4>
-            </div> */}
-
-            {(searchData?.authors?.length! > 0 ||
-              searchData?.sounds?.length! > 0) && (
+        {showSuggestion && <div className="absolute z-999999 rounded-b left-0 right-0 top-[40px] bg-white">
+          {(searchData?.authors?.length! > 0 ||
+            searchData?.sounds?.length! > 0) && (
               <div className="p-3 pb-2">
                 <hr className="h-[1.5px]" />
                 <h4 className="font-medium my-1">Gợi ý kết quả</h4>
@@ -147,8 +100,9 @@ const SearchForm = () => {
                     >
                       <div className="rounded-full w-14 h-14 bg-primary-50/30">
                         <img
-                          src={item.photo}
+                          src={env.apiUrl + "/static/" +item.photo}
                           alt={item.fullName}
+                          onError={handleImageError}
                           className="rounded-full w-14 h-14"
                         />
                       </div>
@@ -174,22 +128,23 @@ const SearchForm = () => {
                   ))}
               </div>
             )}
-            {searchData?.authors?.length! <= 0 &&
-              searchData?.sounds?.length! <= 0 &&
-              searchValue &&
-              !loading && (
-                <div className="p-3 ">
-                  <p className="my-1">Không tìm tháy kết quả phù hợp</p>
-                </div>
-              )}
-            {loading && searchValue && (
+          {searchData?.authors?.length! <= 0 &&
+            searchData?.sounds?.length! <= 0 &&
+            searchValue &&
+            !loading && (
               <div className="p-3 ">
-                <p className="my-1">Đang tải ...</p>
+                <p className="my-1">Không tìm tháy kết quả phù hợp</p>
               </div>
             )}
-          </div>
-        )}
+          {loading && searchValue && (
+            <div className="p-3 ">
+              <p className="my-1">Đang tải ...</p>
+            </div>
+          )}
+        </div>}
       </form>
+      {showSuggestion && <div onClick={() => setShowSuggestion(false)} className=" absolute z-[99999] left-0 top-0 bottom-0 right-0 h-[calc(100vh-5rem)] w-screen"></div>}
+
     </>
   );
 };

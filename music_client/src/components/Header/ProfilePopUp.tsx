@@ -4,6 +4,7 @@ import { useAppSelector } from "../../hooks/redux";
 import { formatCoin } from "../../utils/format";
 import { Popover } from "antd";
 import ProfileMenu from "./ProfileMenu";
+import { env } from "../../configs/env";
 
 declare global {
   interface Window {
@@ -38,7 +39,7 @@ const ProfilePopUp = () => {
         <div className="flex items-center gap-2 cursor-pointer">
           <div className="w-11 h-1w-11 rounded-full bg-primary00 flex cursor-pointer">
             <img
-              src={info?.photo}
+              src={env.apiUrl+"/static/"+info?.photo}
               alt=""
               className="m-auto rounded-full object-cover w-11 h-1w-11"
             />

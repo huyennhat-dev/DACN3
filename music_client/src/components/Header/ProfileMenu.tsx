@@ -11,19 +11,18 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
     const dispatch = useAppDispatch()
 
     const { audioRef } = useAudio();
-    const uid = useAppSelector((state) => state.auth.userInfo?.id)
     const handleNavigateRechargingCoin = () => {
         hidePopover()
-        startTransition(() => navigate("/recharge"))
+        startTransition(() => navigate("/account?tab=deposit"))
     };
 
-    const handleNavigateUpload = () => {
+    const handleNavigateUpload = () => {    
         hidePopover()
         startTransition(() => navigate("/upload-sound"))
     }
     const handleNavigateProfile = () => {
         hidePopover()
-        startTransition(() => navigate("/profile/" + uid))
+        startTransition(() => navigate("/account/"))
     }
 
     const handleLogout = () => {

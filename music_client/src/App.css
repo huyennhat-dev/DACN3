@@ -179,7 +179,9 @@ body {
 
 }
 
-
+:where(.css-dev-only-do-not-override-17seli4).ant-tabs .ant-tabs-content {
+  height: 100%;
+}
 
 .ant-tabs-ink-bar {
   background-color: #fa3d6a !important;
@@ -217,7 +219,7 @@ body {
   }
 }
 
-
+:where(.css-dev-only-do-not-override-14pbixb).ant-tabs .ant-tabs-content,
 .my-music .ant-tabs-content.ant-tabs-content-top,
 .my-music .ant-tabs-tabpane.ant-tabs-tabpane-active {
   height: 100%;

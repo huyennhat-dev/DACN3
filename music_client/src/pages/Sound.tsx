@@ -244,7 +244,7 @@ const SoundPage = () => {
               <div className="flex gap-2 items-center">
                 <div className="rounded-full w-15 h-15 bg-primary-50/40">
                   <img
-                    src={sound?.user?.photo}
+                    src={env.apiUrl + "/static/" +sound?.user?.photo}
                     onError={handleImageError}
                     alt={sound?.name}
                     className="w-15 rounded-full h-15"
@@ -289,9 +289,10 @@ const SoundPage = () => {
             >
               <div className="w-10 h-10 rounded-full bg-primary-50/40">
                 <img
-                  src={info?.photo}
+                  src={env.apiUrl+"/static/"+info?.photo}
                   onError={handleImageError}
                   alt={info?.fullName}
+                  className="rounded-full"
                 />
               </div>
               <div className="flex-1 text-base bg-slate-100 flex items-center rounded px-2">

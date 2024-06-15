@@ -1,8 +1,13 @@
+import { params } from "../utils/types";
 import axiosClient from "./axiosClient";
 
 const transactionApi = {
   deposit: (data: { txHash: string }) => {
     const url = "/transition/deposit";
+    return axiosClient.post(url, { ...data });
+  },
+  withDraw: (data: { txHash: string }) => {
+    const url = "/transition/withdraw";
     return axiosClient.post(url, { ...data });
   },
   balance: () => {
@@ -12,6 +17,10 @@ const transactionApi = {
   buySound: (soundId: string) => {
     const url = "/transition/buy-sound";
     return axiosClient.post(url, { soundId });
+  },
+  getTransactions: (params:params) => {
+    const url = "/transition/get-all";
+    return axiosClient.get(url, { params });
   },
 };
 

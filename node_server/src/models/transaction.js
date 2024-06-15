@@ -14,7 +14,7 @@ const transactionSchema = new mongoose.Schema(
     },
     action:{
       type: String,
-      enum: ["deposit", "buySound", "withdraw"],
+      enum: ["deposit", "transaction", "withdraw"],
       default: "deposit",
     },
     status: {

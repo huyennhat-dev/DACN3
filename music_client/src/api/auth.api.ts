@@ -6,17 +6,21 @@ const authApi = {
     const url = "/user/login";
     return axiosClient.post(url, { ...data });
   },
-    logout: () => {
-      const url = "/logout";
-      return axiosClient.post(url);
-    },
+  logout: () => {
+    const url = "/logout";
+    return axiosClient.post(url);
+  },
   register: (data: userType) => {
     const url = "/user/sign-up";
     return axiosClient.post(url, { ...data });
   },
-  update: (data: userType) => {
+  update: (data: any) => {
     const url = "/user/update";
     return axiosClient.put(url, { ...data });
+  },
+  getUser: (id: string) => {
+    const url = "/user/" + id;
+    return axiosClient.get(url);
   },
   refreshToken: () => {
     const url = "/user/refresh-token";
