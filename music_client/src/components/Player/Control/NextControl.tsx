@@ -8,7 +8,7 @@ import {
 } from "../../../redux/features/audioSlice";
 import { playlist, sound } from "../../../utils/types";
 
-const NextControl: React.FC = () => {
+const NextControl = ({ color }: { color?: string }) => {
   const dispatch = useAppDispatch();
 
   const currentIndexPlaylist = useAppSelector(
@@ -57,7 +57,7 @@ const NextControl: React.FC = () => {
       className="mx-2 my-0 style__buttons"
       title="Next Song"
     >
-      <IconNext setColor="#485565" setWidth="16px" setHeight="16px" />
+      <IconNext setColor={`${color || "#485565"}`} setWidth="16px" setHeight="16px" />
     </button>
   );
 };

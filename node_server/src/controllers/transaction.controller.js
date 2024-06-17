@@ -175,7 +175,12 @@ const transactionController = {
         .limit(limit)
         .sort({ createdAt: -1 });
 
-      return res.status(201).json({ statusCode: 201, data: transactions });
+        const total = await TransactionModel.countDocuments({
+          user: uid,
+          action: keyword,
+        })
+
+      return res.status(201).json({ statusCode: 201, data: transactions,total });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));

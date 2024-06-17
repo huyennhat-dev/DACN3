@@ -54,12 +54,7 @@ const Sidebar: React.FC = memo(() => {
               active={pathname == "/"}
               icon={<IconBrandEdge stroke={1.5} />}
             />
-            <SidebarItem
-              title="Bảng xếp hạng"
-              link="/chart"
-              active={pathname == "/chart"}
-              icon={<IconTimeline stroke={1.5} />}
-            />
+         
           </ul>
         </SidebarContext.Provider>
 

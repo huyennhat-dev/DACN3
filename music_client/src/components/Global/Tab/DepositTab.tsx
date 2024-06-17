@@ -67,7 +67,7 @@ const DepositTab = () => {
         <div className="mr-5 overflow-auto hide-scroll h-full">
           <div className=" bg-white p-2 rounded  flex flex-col justify-between">
             <div className="text-center">
-              <h5 className="text-xl my-3 font-medium">
+              <h5 className="text-lg md:text-xl my-3 font-medium">
                 Chọn số tiền bạn muốn nạp
               </h5>
 
@@ -97,7 +97,7 @@ const DepositTab = () => {
               <span className="mx-1">thì bạn phải có</span>
               <strong>0.1 ETH</strong>)
             </p>
-            <div className="border-t-[1px] py-5  grid grid-cols-3 border-grey-300 gap-3">
+            <div className="border-t-[1px] py-5  grid grid-cols-1 md:grid-cols-3 border-grey-300 gap-3">
               <div></div>
               <div></div>
               <div className="flex items-center justify-around">

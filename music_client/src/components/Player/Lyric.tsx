@@ -65,19 +65,19 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
         ref={lyrRef}
       >
         <div
-          className=" absolute top-0 bottom-0 left-0 right-0 z-[-1]"
+          className={`absolute top-0 bottom-0 left-0 right-0 z-[-1]  `}
           style={{
             backgroundImage: `url(${infoSoundPlayer.photo})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
-            filter: "blur(30px)",
+            filter: "blur(25px)",
           }}
         />
         <div className="bg-black/45 absolute z-0 top-0 right-0 left-0 bottom-0"></div>
         {/* Close Button */}
         <button
-          className="p-2 mx-3 my-3 bg-transparent rounded-[25%] transition-all duration-200 hover:bg-primary-100/30 z-999999 absolute top-6 right-6"
+          className="p-2 mx-3 my-3 bg-transparent rounded-[25%] transition-all duration-200 hover:bg-primary-100/30 z-999999 absolute top-2 right-2 md:top-6 md:right-6"
           title="Close"
           onClick={handleCloseLyric}
         >
@@ -85,8 +85,8 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
         </button>
         {/* End Close Button */}
 
-        <div className="relative z-999 flex justify-center overflow-y-auto px-20 py-20 gap-20 flex-1">
-          <div className="flex items-center">
+        <div className="relative z-999 md:flex text-center justify-center overflow-y-auto p-2 md:p-20 gap-20 flex-1 hide-scroll">
+          <div className="flex items-center mt-20 md:mt-0 justify-center">
             <div className="relative">
             <img
               src={infoSoundPlayer.photo}
@@ -117,7 +117,9 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
                           currentTime <= e.endTime &&
                           "origin-[center_left]")
                       }
-                      onDoubleClick={() => {
+
+                      
+                      onClick={() => {
                         if (auRef) {
                           auRef.currentTime = e.startTime;
                           if (!isPlay) {
@@ -144,7 +146,7 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
               )
 
             ) : (
-              <div className="flex-1 flex items-center ">
+              <div className="flex-1 flex items-center justify-center">
                 <p>Không có lời bài hát</p>
               </div>
             )}
@@ -153,7 +155,7 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
         </div>
         <div className="w-full h-40 relative z-999 ">
           <div className="w-full text-center text-white/80">
-            <p className="text-title-md font-medium  overflow-hidden text-nowrap px-10">
+            <p className="text-title-md font-medium line-clamp-1  overflow-hidden  px-10">
               {infoSoundPlayer.name}
             </p>
             <p className="text-sm my-2 ">
@@ -168,12 +170,11 @@ const Lyric: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
               <div className="w-full ">
                 <SongSliderControl auRef={auRef} color="#fff" />
                 <div className="flex justify-center items-center">
-                  <RepeatControl />
-
-                  <PreviousControl />
-                  <PlayControl auRef={auRef} />
-                  <NextControl />
-                  <ShuffleControl />
+                  <RepeatControl  color="#fff"/>
+                  <PreviousControl  color="#fff"/>
+                  <PlayControl auRef={auRef} color="#fff"/>
+                  <NextControl  color="#fff"/>
+                  <ShuffleControl  color="#fff"/>
                 </div>
               </div>
             </div>

@@ -28,7 +28,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-999 flex h-20 min-h-20 w-full gap-2 drop-shadow-1 items-center justify-between pr-12">
+      <header className="sticky top-0 z-999 flex h-20 min-h-20 w-full gap-2 drop-shadow-1 items-center justify-between px-2 md:px-0 md:pr-12">
         <div className="flex flex-1 max-w-150 items-center justify-start gap-2">
           <SearchForm />
         </div>

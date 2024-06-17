@@ -53,11 +53,9 @@ const ProfilePage = (props: Props) => {
     navigate({ search: query.toString() }); // Điều hướng với URL mới
   };
 
-
-
   return (
-    <div className="my-music mr-5 h-full">
-      <div className="flex flex-col bg-white p-2 pb-5 rounded mb-5 h-full">
+    <div className="my-music md:mr-5 h-full">
+      <div className="flex flex-col bg-white md:p-2 pb-5 rounded mb-5 h-full">
         <h3 className="text-title-md w-full px-5 my-3">Tài khoản của bạn</h3>
         <Tabs
           onChange={(val) => changeTab(val)}

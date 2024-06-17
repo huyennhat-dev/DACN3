@@ -4,7 +4,7 @@ import IconPause from "../../Icons/Pause"
 import { useAppSelector, useAppDispatch } from "../../../hooks/redux"
 import { changeIconPlay } from "../../../redux/features/audioSlice"
 
-const PlayControl: React.FC<{ auRef: HTMLAudioElement | null | undefined }> = ({ auRef }) => {
+const PlayControl = ({ auRef, color }: { color?: string, auRef: HTMLAudioElement | null | undefined }) => {
 
   const isPlay = useAppSelector((state) => state.audio.isPlay)
   const dispatch = useAppDispatch()
@@ -30,8 +30,8 @@ const PlayControl: React.FC<{ auRef: HTMLAudioElement | null | undefined }> = ({
     >
       {
         isPlay
-          ? <IconPause setColor="#485565" setWidth="24px" setHeight="24px" />
-          : <IconPlay setColor="#485565" setWidth="24px" setHeight="24px" />
+          ? <IconPause setColor={`${color || "#485565"}`} setWidth="24px" setHeight="24px" />
+          : <IconPlay setColor={`${color || "#485565"}`} setWidth="24px" setHeight="24px" />
       }
     </button>
   )

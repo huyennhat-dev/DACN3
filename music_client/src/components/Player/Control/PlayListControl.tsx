@@ -2,7 +2,7 @@ import { IconPlaylist } from '@tabler/icons-react'
 import { useAppDispatch, useAppSelector } from '../../../hooks/redux'
 import { setOpenPlaylist } from '../../../redux/features/audioSlice'
 
-const PlayListControl = () => {
+const PlayListControl = ({ color }: { color?: string }) => {
 
     const isOpenPlaylist = useAppSelector((state) => state.audio.isOpenPlaylist)
     const dispatch = useAppDispatch()
@@ -26,7 +26,7 @@ const PlayListControl = () => {
                     </button>
                     :
                     <button className="mx-2 my-0 style__buttons" title="Repeat">
-                        <IconPlaylist color='#485565' />
+                        <IconPlaylist  color={`${color || "#485565"}`} />
                     </button>
             }
         </div>

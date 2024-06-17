@@ -5,6 +5,7 @@ import { formatCoin } from "../../utils/format";
 import { Popover } from "antd";
 import ProfileMenu from "./ProfileMenu";
 import { env } from "../../configs/env";
+import { handleImageError } from "../../utils";
 
 declare global {
   interface Window {
@@ -41,6 +42,7 @@ const ProfilePopUp = () => {
             <img
               src={env.apiUrl+"/static/"+info?.photo}
               alt=""
+              onError={handleImageError}
               className="m-auto rounded-full object-cover w-11 h-1w-11"
             />
           </div>

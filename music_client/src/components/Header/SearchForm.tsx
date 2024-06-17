@@ -10,7 +10,7 @@ import useDebounce from "../../hooks/useDebounce";
 import { searchData } from "../../utils/types";
 import homeApi from "../../api/home.api";
 import { getToken } from "../../utils/tokenUtils";
-import { deepEqual, handleImageError } from "../../utils";
+import { createSlug, deepEqual, handleImageError } from "../../utils";
 import useQuery from "../../hooks/useQuery";
 import { formatCountNumber } from "../../utils/format";
 import TrackItem from "../Global/TrackItem";
@@ -76,7 +76,7 @@ const SearchForm = () => {
       <form
         onSubmit={handleOnSubmit}
         onFocus={() => setShowSuggestion(true)}
-        className={`relative z-999999 rounded-md px-3 py-2 flex-1 ml-10 text-primary00 flex items-center `}
+        className={`relative z-999999 rounded-md px-3 py-2 flex-1 md:ml-10  flex items-center `}
       >
         <IconSearch className={`${showSuggestion && "text-primary-200"}`} />
         <input
@@ -96,6 +96,7 @@ const SearchForm = () => {
                   searchData?.authors.map((item) => (
                     <div
                       key={item._id}
+                      onClick={()=>navigate(`author/${createSlug(item.fullName||"")}/${item._id}`)}
                       className="flex gap-2 my-1 p-2 hover:bg-primary-50/20 rounded cursor-pointer"
                     >
                       <div className="rounded-full w-14 h-14 bg-primary-50/30">

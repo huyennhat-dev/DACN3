@@ -8,6 +8,7 @@ import PlayListItem from "../components/Global/PlayListItem";
 import { handleImageError } from "../utils";
 import { formatCountdown } from "antd/es/statistic/utils";
 import { formatCountNumber } from "../utils/format";
+import { env } from "../configs/env";
 
 const initialSearchData: searchData = { authors: [], sounds: [], playlist: [] };
 
@@ -39,16 +40,14 @@ const SearchPage = () => {
 
   return (
     <>
-      <div className="bg-white p-5 rounded mb-5 mr-5">
+      <div className="bg-white p-5 rounded mb-5 md:mr-5">
         <h1 className="text-title-lg font-medium" >Kết quả tìm kiếm</h1>
         {searchData.sounds?.length > 0 && (
           <div>
             <h2 className="my-3 font-medium text-xl">Bản nhạc</h2>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
               {searchData.sounds?.map((item) => (
-                <div key={item._id} className="border-b-[0.5px] border-primary-50/40 rounded">
-                  <TrackItem sound={item} />
-                </div>
+                  <TrackItem key={item._id} sound={item} />
               ))}
             </div>
           </div>
@@ -56,7 +55,7 @@ const SearchPage = () => {
         {searchData.playlist && searchData.playlist.length! > 0 && (
           <div>
             <h2 className="my-3 font-medium text-xl">Playlist/Album</h2>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 md:grid-cols-8 gap-2">
               {searchData.playlist?.map((item) => (
                 <div key={item._id}>
                   <PlayListItem playlist={item} />
@@ -68,12 +67,12 @@ const SearchPage = () => {
         {searchData.authors?.length > 0 && (
           <div>
             <h2 className="my-3 font-medium text-xl">Nghệ sĩ/Producer</h2>
-            <div className="grid grid-cols-6 gap-5">
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-5">
               {searchData.authors?.map((item) => (
                 <div key={item._id} className="text-center">
                   <div className="rounded-full w-full  overflow-hidden bg-primary-50/20 cursor-pointer">
                     <img
-                      src={item.photo}
+                      src={env.apiUrl+"/static/"+ item.photo}
                       onError={handleImageError}
                       alt={item.fullName}
                       className="rounded-full w-full  hover:scale-105 transition-all duration-200"

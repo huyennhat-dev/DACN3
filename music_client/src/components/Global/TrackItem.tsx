@@ -23,14 +23,18 @@ import homeApi from "../../api/home.api";
 import { handleImageError } from "../../utils";
 import fileApi from "../../api/file.api";
 import fileDownload from "js-file-download";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Props {
-  sound: sound
+  sound: sound,
+  removeToPlaylist?: () => void
 }
 
-const TrackItem = memo(({ sound }: Props) => {
+const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
   const { audioRef } = useAudio();
+  const location = useLocation()
+  const { pathname } = location;
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const songId = useAppSelector((state) => state.audio.sound._id);
@@ -124,24 +128,23 @@ const TrackItem = memo(({ sound }: Props) => {
       }
 
       const rs: any = await soundApi.getSound({ token }, songId);
-
       dispatch(
         setInfoSoundPlayer({
-          ...rs.sound,
-          main_sound: rs.sound.main_sound
-            && `${env.apiUrl}/static/${rs.sound.main_sound}`
+          ...rs.data,
+          main_sound: rs.data.main_sound
+            && `${env.apiUrl}/static/${rs.data.main_sound}`
           ,
-          preview_sound: rs.sound.preview_sound
-            && `${env.apiUrl}/static/${rs.sound.preview_sound}`
+          preview_sound: rs.data.preview_sound
+            && `${env.apiUrl}/static/${rs.data.preview_sound}`
           ,
-          photo: `${env.apiUrl}/static/${rs.sound.photo}`,
+          photo: `${env.apiUrl}/static/${rs.data.photo}`,
         })
       );
 
-      message.success(rs.sound.message);
+      message.success("Mua thành công");
     } catch (err: any) {
-      if (err.response && err.response.sound && err.response.sound.message) {
-        message.error(err.response.sound.message);
+      if (err.response && err.response.data && err.response.data.message) {
+        message.error(err.response.data.message);
       } else {
         console.log(err);
         message.error("An unexpected error occurred");
@@ -165,8 +168,19 @@ const TrackItem = memo(({ sound }: Props) => {
     }
   };
 
-  const handleNavigateToSoundPage = (id:string)=>{
-   return navigate(`/sound/${id}`)
+  const handleNavigateToSoundPage = (id: string) => {
+    return navigate(`/sound/${id}`)
+  }
+
+  const handleAddToPlaylist = () => {
+    if (playlistSong) {
+      const newPlaylist: playlist = {
+        ...playlistSong,
+        sounds: [...playlistSong?.sounds!.filter((s) => s._id != sound._id), sound]
+      }
+      dispatch(setPlaylistSong(newPlaylist))
+      message.success("Thêm thành công!")
+    }
   }
 
   return (
@@ -196,7 +210,6 @@ const TrackItem = memo(({ sound }: Props) => {
               <Play setColor="white" setHeight="20px" setWidth="20px" />
             ) : (
               <div className="relative min-w-8 min-h-8">
-
                 <MusicWave color="#fff" classes="h-full w-full bottom-2" />
               </div>
 
@@ -209,8 +222,8 @@ const TrackItem = memo(({ sound }: Props) => {
         <div className="flex items-center justify-between">
           <h5
             title={sound.name}
-            onClick={()=>handleNavigateToSoundPage(`${sound.slug}-${sound._id}`)}
-            className="line-clamp-1 overflow-hidden font-medium cursor-pointer hover:text-primary-300"
+            onClick={() => handleNavigateToSoundPage(`${sound.slug}-${sound._id}`)}
+            className="line-clamp-1 overflow-hidden text-sm md:text-base font-medium cursor-pointer hover:text-primary-300"
           >
             {sound.name}
           </h5>
@@ -238,8 +251,10 @@ const TrackItem = memo(({ sound }: Props) => {
                 sound={sound}
                 playSound={handleClickPlaySound}
                 downloadSound={handleDownLoadSound}
+                removeToPlaylist={removeToPlaylist}
+                addToPlaylist={handleAddToPlaylist}
                 buySound={
-                  sound.price && info?.id != sound.user?._id
+                  sound.price && info?.id != sound.user?._id && !pathname.includes("/library")
                     ? handleBuySound
                     : null
                 }

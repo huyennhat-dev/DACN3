@@ -72,16 +72,16 @@ const WithDrawlTab = (props: Props) => {
   return (
     <>
       <div className="mr-5 overflow-auto hide-scroll h-full">
-        <div className=" bg-white p-2 rounded  flex flex-col justify-between">
+        <div className=" bg-white md:p-2 rounded  flex flex-col justify-between">
           <div className="flex flex-col justify-center items-center">
-            <h5 className="text-xl my-3 font-medium">
+            <h5 className="text-lg md:text-xl my-3 font-medium">
               Số dư hiện tại của bạn là:
               <span className="font-bold ml-2 text-[#e19435]">
                 {formatCoin(balance)}
               </span>
             </h5>
 
-            <div className="w-100 text-start mb-3 mt-3">
+            <div className="w-full md:w-100 text-start mb-3 mt-3">
               <label htmlFor="balance-input" className="mb-2">Nhập số tiền bạn muốn rút</label>
               <input
                 min={0}
@@ -97,20 +97,20 @@ const WithDrawlTab = (props: Props) => {
               />
               <p className="text-xs">= {amount / 1000} ETH</p>
             </div>
-            <div className="w-100 text-start mb-6">
+            <div className="w-full md:w-100 text-start mb-6">
               <label htmlFor="wallet-input" className="mb-2 w-full">Địa chỉ ví</label>
               <input
                 type="text"
                 name="wallet"
                 id="wallet-input"
                 placeholder="Địa chỉ ví"
-                defaultValue={wallet_address?.toUpperCase()}
+                defaultValue={`${wallet_address?.slice(0,8)?.toUpperCase()}...${wallet_address?.slice(-8)?.toUpperCase()}`}
                 disabled
                 className="shadow appearance-none border rounded w-full py-2 px-3 mt-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 
               />
             </div>
-            <div className="w-100 text-start">
+            <div className="w-full md:w-100 text-start">
               <Button
                 onclick={handleSubmit}
                 title="Xác nhận"

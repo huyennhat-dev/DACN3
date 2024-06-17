@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from "../../../hooks/redux"
 import { setSoundPlay, setCurrentIndexPlaylist, changeIconPlay } from "../../../redux/features/audioSlice"
 import { playlist } from "../../../utils/types"
 
-const PreviousControl: React.FC = () => {
+const PreviousControl = ({ color }: { color?: string }) => {
 
   const currentIndexPlaylist = useAppSelector((state) => state.audio.currentIndexPlaylist)
   const playlistSong: playlist = useAppSelector((state) => state.audio.playlistSong!)
@@ -40,7 +40,7 @@ const PreviousControl: React.FC = () => {
       onClick={handleNextSong}
       className="mx-2 my-0 style__buttons" title="Previous Song"
     >
-      <IconPrevious setColor="#485565" setWidth="16px" setHeight="16px" />
+      <IconPrevious setColor={`${color || "#485565"}`} setWidth="16px" setHeight="16px" />
     </button>
   )
 }

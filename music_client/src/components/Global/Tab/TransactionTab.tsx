@@ -16,28 +16,32 @@ export enum TabList {
 }
 
 const TabItem = ({ item }: { item: transaction }) => {
-  const [isCopy, setIsCopy] = useState<boolean>(false)
+  const [isCopy, setIsCopy] = useState<boolean>(false);
   const handleCopy = (value: string) => {
     navigator.clipboard.writeText(value).then(() => {
       message.success("Đã copy vào bộ nhớ tạm!");
-      setIsCopy(true)
+      setIsCopy(true);
     });
   };
   return (
     <div className="my-2 rounded border border-grey-400 p-2 hover:bg-primary-50/10 cursor-pointer">
       <div className="flex items-center">
         <p className="flex-1 font-semibold ">
-          Tx_hash: {item.transaction_hash}
+          Tx_hash: {`${item.transaction_hash.slice(0,10)}...${item.transaction_hash.slice(-10)}`}
         </p>
         <div onClick={() => handleCopy(item.transaction_hash)}>
-          {isCopy ? <IconCopyCheckFilled size={16} color="green" /> : <IconCopy size={16} />}
+          {isCopy ? (
+            <IconCopyCheckFilled size={16} color="green" />
+          ) : (
+            <IconCopy size={16} />
+          )}
         </div>
       </div>
-      <p className={`text-xs mt-1`}>
+      <p className={`text-xs mt-1 flex flex-col md:flex-row md:gap-5`}>
         <span>
           action: <b>{item.action}</b>
         </span>
-        <span className="mx-5">
+        <span>
           status:
           <span
             className={` ml-2 font-semibold ${item.status == "completed" && "text-success-400"
@@ -59,44 +63,46 @@ const TabItem = ({ item }: { item: transaction }) => {
 };
 
 const TabContent = ({ type }: { type: string }) => {
+  const query = useQuery();
+  const navigate = useNavigate();
+  const page = query.get("page") || 1;
   const limit = 100;
   const [total, setTotal] = useState<number>(0);
   const [data, setData] = useState<transaction[]>([]);
 
+  const getTransactions = async () => {
+    const rs:any = await transactionApi.getTransactions({
+      keyword: type,
+      page: Number(page),
+      limit,
+    });
+    setData(rs.data);
+    setTotal(rs.total)
+  };
   useEffect(() => {
-    const getTransactions = async () => {
-      const rs = await transactionApi.getTransactions({
-        keyword: type,
-        page: 1,
-        limit,
-      });
-      setData(rs.data);
-    };
-
     getTransactions();
-  }, [type]);
+  }, [type, page]);
 
-  const onChangePage: PaginationProps["onChange"] = (
-    current,
-    pageSize
-  ) => {
-    console.log(current, pageSize);
+  const onChangePage: PaginationProps["onChange"] = (current) => {
+    query.set("page", current.toString());
+    navigate({ search: query.toString() });
+
   };
   return (
-    <div className="mr-5  w-full h-full overflow-auto hide-scroll">
+    <div className="md:mr-5 w-full h-full overflow-auto hide-scroll  pr-2 md:pr-0">
       {data.map((item) => (
         <TabItem key={item._id} item={item} />
       ))}
 
-      {data.length > 0 && (
+      {total>limit && (
         <div className=" w-full text-center float-end mt-2">
           <Pagination
             className="mx-auto border-primary-50"
             pageSize={limit}
             showSizeChanger={false}
             onChange={onChangePage}
-            defaultCurrent={1}
-            total={200}
+            defaultCurrent={Number(page)}
+            total={total}
           />
         </div>
       )}
@@ -129,8 +135,9 @@ const TransactionTab = (props: Props) => {
     },
   ];
   const changeTab = (newTab: string) => {
-    query.set("type", newTab); // Đặt giá trị mới cho tham số 'tab'
-    navigate({ search: query.toString() }); // Điều hướng với URL mới
+    query.set('type', newTab);
+    query.set('page', "1");
+    navigate({ search: query.toString() });
   };
   return (
     <Tabs

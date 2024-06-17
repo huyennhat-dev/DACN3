@@ -34,8 +34,8 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
             dispatch(changeIconPlay(false));
             dispatch(setAutoPlay(false));
             dispatch(setSoundPlay({}))
-
             hidePopover()
+            navigate("/")
         } catch (error) {
             console.log(error);
         }

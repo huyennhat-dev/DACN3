@@ -155,7 +155,7 @@ const UploadSound = () => {
                     ))}
                 </div>
             )}
-            <div className="mr-5 h-full">
+            <div className="md:mr-5 h-full">
                 <div className=" bg-white py-2 px-6 rounded grid grid-cols-1 md:grid-cols-2 gap-3 text-grey-600">
                     <div className="text-start p-3">
                         <div className="w-full ">

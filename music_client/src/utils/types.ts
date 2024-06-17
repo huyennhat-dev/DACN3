@@ -11,8 +11,8 @@ export interface userType {
   password?: string;
   photo?: string;
   balance?: number;
-  follower?: number | userType[];
-  following?: number | userType[];
+  follower?: number ;
+  following?: number ;
   wallet_address?: string;
   description?: string;
 }

@@ -51,9 +51,6 @@ const TrackPopup = memo((props: Props) => {
   const handleOpenPopup = (newVisible: boolean) => {
     setOpenPlaylistPopup(newVisible);
   };
-  const addToAlbum = () => {
-
-  }
 
   return (
     <div className="px-2 py-1 w-60">
@@ -140,7 +137,7 @@ const TrackPopup = memo((props: Props) => {
             <span>Mua bản nhạc</span>
           </li>
         )}
-        {props.addToPlaylist && (
+        {props.addToPlaylist && !props.removeToPlaylist && (
           <li
             onClick={props.addToPlaylist}
             className="flex items-center justify-start gap-2 mb-2 cursor-pointer hover:text-primary-200"

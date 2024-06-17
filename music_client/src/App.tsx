@@ -19,12 +19,11 @@ import ConnectWalletPopUp from "./components/Global/Pop/ConnectWalletPopUp";
 import { getPlaylist } from "./utils/storage";
 import { setPlaylistSong } from "./redux/features/audioSlice";
 import DefaultLayout from "./layout/Layout";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
-  const songId = useAppSelector((state) => state.audio.sound._id);
-  const isLoading = useAppSelector((state) => state.loading.isLoading);
   const uInfo = useAppSelector((state) => state.auth.userInfo);
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -71,7 +70,7 @@ function App() {
     }
   }, [uInfo]);
 
-  
+
 
   return (
     <>
@@ -85,10 +84,17 @@ function App() {
                 key={route.url}
                 path={route.url}
                 element={
-                  <>
-                    <PageTitle title={route.pageTitle} />
-                    {route.component}
-                  </>
+                  route.protected ? (
+                    <ProtectedRoute>
+                      <PageTitle title={route.pageTitle} />
+                      {route.component}
+                    </ProtectedRoute>
+                  ) : (
+                    <>
+                      <PageTitle title={route.pageTitle} />
+                      {route.component}
+                    </>
+                  )
                 }
               />
             ))}
@@ -96,7 +102,7 @@ function App() {
         </Suspense>
       </DefaultLayout>
 
-    
+
       {showModal && (
         <ModalComponent hideModal={() => setShowModal(false)}>
           <ConnectWalletPopUp hideModal={() => setShowModal(false)} />

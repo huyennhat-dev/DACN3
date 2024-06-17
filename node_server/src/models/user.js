@@ -23,7 +23,10 @@ const userSchema = new mongoose.Schema(
     },
     photo: String,
     description: String,
-    wallet_address: String,
+    wallet_address: {
+      type:String,
+      unique: true,
+    },
     follower: [
       {
         type: mongoose.Schema.Types.ObjectId,

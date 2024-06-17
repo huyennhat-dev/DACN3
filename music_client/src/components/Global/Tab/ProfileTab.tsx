@@ -23,6 +23,7 @@ type updateType = {
 const ProfileTab = () => {
   const uid = useAppSelector((state) => state.auth.userInfo?.id);
   const [isChangePassword, setIsChangePassword] = useState<boolean>(false);
+  const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
   const [userData, setUserData] = useState<userType>();
   const [errorData, setErrorData] = useState<updateType>({
     photo: "",
@@ -104,6 +105,11 @@ const ProfileTab = () => {
   const dispatch = useAppDispatch()
 
   const handleSubmit = () => {
+
+    if (!updateData.fullName || !updateData.wallet_address) {
+      return message.warning("Thông tin quan trọng không được bỏ trống!")
+    }
+
     authApi.update({ ...updateData }).then((rs: any) => {
       dispatch(setToken({ token: rs.accessToken }))
       message.success("Cập nhật thành công!");
@@ -161,7 +167,7 @@ const ProfileTab = () => {
               type="text"
               id="wallet-address"
               name="wallet-address"
-              value={updateData.wallet_address || ""}
+              value={updateData.wallet_address.toUpperCase() || ""}
               onChange={(e) =>
                 handleUpdateState(e.target.value, "wallet_address")
               }
@@ -171,12 +177,15 @@ const ProfileTab = () => {
           </div>
           <div className="w-full my-3">
             <label htmlFor="description">Mô tả ngắn</label>
-            <textarea
+            <input
+              type="text"
               id="description"
               name="description"
               value={updateData.description || ""}
+              minLength={0}
+              maxLength={50}
               onChange={(e) => handleUpdateState(e.target.value, "description")}
-              className="shadow h-[35px] appearance-none border rounded w-full py-2 px-3 my-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow hide-scroll appearance-none border rounded w-full py-2 px-3 my-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
         </div>
@@ -196,7 +205,7 @@ const ProfileTab = () => {
             <div className="w-full my-3">
               <label htmlFor="current-password">Mật khẩu hiện tại</label>
               <input
-                type="password"
+                type={`${isShowPassword ? "text" : "password"}`}
                 id="current-password"
                 name="current-password"
                 value={updateData.current_password || ""}
@@ -212,7 +221,7 @@ const ProfileTab = () => {
             <div className="w-full my-3">
               <label htmlFor="new-password">Mật khẩu mới</label>
               <input
-                type="password"
+                type={`${isShowPassword ? "text" : "password"}`}
                 id="new-password"
                 name="new-password"
                 value={updateData.new_password || ""}
@@ -228,7 +237,7 @@ const ProfileTab = () => {
             <div className="w-full my-3">
               <label htmlFor="confirm-new-password">Xác nhận khẩu mới</label>
               <input
-                type="password"
+                type={`${isShowPassword ? "text" : "password"}`}
                 id="confirm-new-password"
                 name="confirm-new-password"
                 onChange={(e) => handleConfirmPassword(e.target.value)}
@@ -242,6 +251,20 @@ const ProfileTab = () => {
               )}
             </div>
           )}
+
+          {isChangePassword &&
+            <div className="w-full my-3  ">
+              <input
+                type="checkbox"
+                checked={isShowPassword}
+                onChange={() => setIsShowPassword(!isShowPassword)}
+                id="isShowPassword"
+                name="isShowPassword"
+                className="mr-2 cursor-pointer"
+              />
+              <label htmlFor="isShowPassword">Hiển thị mật khẩu</label>
+            </div>
+          }
         </div>
       </div>
       <div className="w-full text-center my-3">

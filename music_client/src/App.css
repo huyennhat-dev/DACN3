@@ -10,7 +10,7 @@ body {
   -ms-user-select: none;
   /* Internet Explorer/Edge */
 }
-
+.show-scroll::-webkit-scrollbar,
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -219,11 +219,12 @@ body {
   }
 }
 
-:where(.css-dev-only-do-not-override-14pbixb).ant-tabs .ant-tabs-content,
+.ant-tabs .ant-tabs-content,
 .my-music .ant-tabs-content.ant-tabs-content-top,
 .my-music .ant-tabs-tabpane.ant-tabs-tabpane-active {
   height: 100%;
 }
+
 .modal-content {
   transition: transform 0.3s ease-in-out;
 }
@@ -231,4 +232,38 @@ body {
 .expandable {
   transition: height 0.3s ease, padding 0.3s ease;
   overflow: hidden;
+}
+
+
+.bg-animate {
+  animation: transformAnimate 5s forwards infinite ease-in-out;
+}
+
+@keyframes transformAnimate {
+  0% {
+    transform: translate(0%, 0%);
+    scale: 1;
+  }
+
+  20% {
+    transform: translate(2%, 2%);
+    scale: 1.05;
+  }
+  40% {
+    transform: translate(-2%, 2%);
+    scale: 1.05;
+  }
+
+  60% {
+    transform: translate(-2%, -2%);
+    scale: 1.05;
+  }
+  80% {
+    transform: translate(2%, -2%);
+    scale: 1.05;
+  }
+  100% {
+    transform: translate(0%, 0%);
+    scale: 1;
+  }
 }

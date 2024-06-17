@@ -1,6 +1,7 @@
 import React from "react"
 import { useAppSelector } from "../../../hooks/redux"
 import { Link } from "react-router-dom"
+import { createSlug } from "../../../utils"
 
 const TrackInfo: React.FC = () => {
 
@@ -18,13 +19,13 @@ const TrackInfo: React.FC = () => {
 
       {/* Info */}
       <div className="flex flex-col justify-center h-[46px] ml-3">
-        <div className="font-medium text-xs text-primary-300 truncate cursor-default text-wrap line-clamp-2">
+        <div className="font-medium text-xs truncate cursor-default text-wrap line-clamp-2 overflow-hidden">
           {info.name}
         </div>
-        <div className=" text-primary-300/70 text-xs ">
+        <div className=" hover:text-primary-100 text-xs ">
           <Link
             className="hover:underline"
-            to={""}
+            to={`/author/${createSlug(info.user?.fullName || "")}/${info.user?._id}`}
           >
             {info.user?.fullName}
           </Link>

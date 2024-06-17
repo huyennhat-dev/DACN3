@@ -204,9 +204,9 @@ const SoundPage = () => {
 
   return (
     <>
-      <div className="bg-white p-5 rounded mb-5 mr-5  ">
+      <div className="bg-white p-5 rounded mb-5 md:mr-5  ">
         <div className="max-w-[1280px] mx-auto">
-          <div className="relative rounded overflow-hidden flex">
+          <div className="relative rounded overflow-hidden md:flex">
             <div className="flex-1 flex flex-col justify-between">
               <div className="flex-1">
                 <div className="flex items-center w-full">
@@ -225,7 +225,7 @@ const SoundPage = () => {
                       </div>
                     )}
                   </div>
-                  <h1 className="flex-1 text-title-md font-medium ">
+                  <h1 className="flex-1 text-title-sm md:text-title-md font-medium ">
                     {sound?.name}
                   </h1>
                 </div>
@@ -241,13 +241,13 @@ const SoundPage = () => {
                 </p>
               </div>
               <div className="flex-1"></div>
-              <div className="flex gap-2 items-center">
-                <div className="rounded-full w-15 h-15 bg-primary-50/40">
+              <div className="flex gap-2 items-center md:my-0 my-3">
+                <div className="rounded-full w-10 md:w-15 h-10 md:h-15 bg-primary-50/40">
                   <img
                     src={env.apiUrl + "/static/" +sound?.user?.photo}
                     onError={handleImageError}
                     alt={sound?.name}
-                    className="w-15 rounded-full h-15"
+                    className="w-10 md:w-15 rounded-full h-10 md:h-15"
                   />
                 </div>
                 <div>
@@ -268,7 +268,7 @@ const SoundPage = () => {
                 </div>
               </div>
             </div>
-            <div className="w-80 h-80 rounded">
+            <div className="w-80 h-80 rounded mx-auto">
               <img
                 src={env.apiUrl + "/static/" + sound?.photo}
                 onError={handleImageError}
@@ -279,8 +279,8 @@ const SoundPage = () => {
           </div>
         </div>
       </div>
-      <div className="bg-white p-5 rounded mb-5 mr-5">
-        <div className="grid grid-cols-3">
+      <div className="bg-white p-5 rounded  md:mr-5">
+        <div className="grid md:grid-cols-3">
           <div className="col-span-2">
             <div className="flex gap-2 items-center justify-start p-2"></div>
             <form

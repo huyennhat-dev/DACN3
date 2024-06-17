@@ -58,7 +58,7 @@ const History = () => {
   const items: TabsProps["items"] = [
     {
       key: "1",
-      label: "Tải lên",
+      label: "Sound",
       children: tabContent({
         data: {
           type: "sound",
@@ -78,14 +78,12 @@ const History = () => {
     },
   ];
   return (
-    <div>
         <div className="mr-5 flex-1 h-full">
           <div className="bg-white p-2 pb-5 rounded mb-5 h-full">
             <h3 className="text-title-md w-full px-5 my-5">Nghe gần đây</h3>
             <Tabs tabPosition="left" defaultActiveKey="1" items={items} />
           </div>
         </div>
-    </div>
   );
 };
 

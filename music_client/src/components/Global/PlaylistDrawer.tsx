@@ -35,7 +35,8 @@ const PlaylistDrawer = ({ classes }: Props) => {
 
     if (playlistData && playlistData.sounds) {
       const index =
-        playlistData.sounds.findIndex((sound) => sound._id === soundPlay._id) + 1;
+        playlistData.sounds.findIndex((sound) => sound._id === soundPlay._id) +
+        1;
       firstArray = playlistData.sounds.slice(0, index);
       secondArray = playlistData.sounds.slice(index);
     }
@@ -72,6 +73,15 @@ const PlaylistDrawer = ({ classes }: Props) => {
     }
   }, [previousList]);
 
+  const handleRemoveSound = (soundId: string) => {
+
+    const newPlaylist: playlist = {
+      ...playlistData,
+      sounds: playlistData.sounds?.filter((sound) => sound._id != soundId)
+    }
+    dispatch(setPlaylistSong(newPlaylist))
+  };
+
   return (
     <div
       className={`absolute top-0 right-0 z-999  overflow-hidden transition-all duration-500 flex flex-col ${isOpenPlayList ? "w-100 px-5 " : "w-0 px-0"
@@ -86,10 +96,13 @@ const PlaylistDrawer = ({ classes }: Props) => {
               <li
                 key={index}
                 ref={isLastItem ? lastElementRef : null}
-                className={`w-[calc(25rem-2.5rem)] flex-nowrap ${soundPlay._id !== item._id && "filter grayscale"
+                className={`w-[calc(25rem-2.5rem)] my-1 flex-nowrap ${soundPlay._id !== item._id && "filter grayscale"
                   }`}
               >
-                <TrackItem sound={item} />
+                <TrackItem
+                  sound={item}
+                  removeToPlaylist={() => handleRemoveSound(item._id!)}
+                />
               </li>
             );
           })}
@@ -105,8 +118,8 @@ const PlaylistDrawer = ({ classes }: Props) => {
             </li>
           )}
           {nextList.map((item: sound, index) => (
-            <li key={index} className="flex-nowrap w-[calc(25rem-2.5rem)]">
-              <TrackItem sound={item} />
+            <li key={index} className="flex-nowrap my-1 w-[calc(25rem-2.5rem)]">
+              <TrackItem sound={item} removeToPlaylist={() => handleRemoveSound(item._id!)} />
             </li>
           ))}
         </ul>

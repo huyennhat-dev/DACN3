@@ -3,33 +3,33 @@ import IconRepeat from "../../Icons/Repeat"
 import { useAppDispatch, useAppSelector } from "../../../hooks/redux"
 import { setLoop } from "../../../redux/features/audioSlice"
 
-const RepeatControl: React.FC = () => {
+const RepeatControl = ({ color }: { color?: string }) => {
 
   const isLoop = useAppSelector((state) => state.audio.isLoop)
   const dispatch = useAppDispatch()
 
   const handleRepeat = () => {
-    if(isLoop) {
+    if (isLoop) {
       dispatch(setLoop(false))
     } else {
       dispatch(setLoop(true))
     }
   }
 
-  return(
+  return (
     <div
       onClick={handleRepeat}
     >
       {
         isLoop
-        ?
-        <button className="mx-2 my-0 style__buttons" title="Repeat">
-          <IconRepeat setColor="#673AB7" setWidth="16px" setHeight="16px" />
-        </button>
-        :
-        <button className="mx-2 my-0 style__buttons" title="Repeat">
-          <IconRepeat setColor="#485565" setWidth="16px" setHeight="16px" />
-        </button>
+          ?
+          <button className="mx-2 my-0 style__buttons" title="Repeat">
+            <IconRepeat setColor="#673AB7" setWidth="16px" setHeight="16px" />
+          </button>
+          :
+          <button className="mx-2 my-0 style__buttons" title="Repeat">
+            <IconRepeat setColor={`${color || "#485565"}`} setWidth="16px" setHeight="16px" />
+          </button>
       }
     </div>
   )

@@ -49,7 +49,6 @@ const userController = {
         fullName,
         password: hashedPassword,
         wallet_address: wallet_address ?? null,
-        photo: randomCatAvatar(),
       });
 
       const userPayload = {
@@ -116,6 +115,7 @@ const userController = {
         current_password,
         wallet_address,
       } = req.body;
+
       const user = await userModel.findById(req.user.id);
 
       if (!user) {
@@ -123,14 +123,29 @@ const userController = {
       }
       let hashedPassword;
 
-      const updateData = { wallet_address, description, fullName };
+      const updateData = {};
+
+      if (fullName && fullName != user.fullName) {
+        updateData.fullName = fullName.trim();
+      }
+
+      if (description && description != user.description) {
+        updateData.description = description.trim();
+      }
+      
+      if (wallet_address && wallet_address != user.wallet_address) {
+        const checked = await userModel.findOne({ wallet_address });
+        if (checked)
+          return next(new ApiError(401, "Địa chỉ ví đã được sử dụng."));
+        updateData.wallet_address = wallet_address;
+      }
 
       if (current_password && new_password) {
         if (!(await user.comparePassword(current_password))) {
           return next(new ApiError(401, "Mật khẩu không đúng."));
         }
 
-        hashedPassword = await bcrypt.hash(new_password, 10);
+        hashedPassword = await bcrypt.hash(new_password.tim(), 10);
         updateData.password = hashedPassword;
       }
 

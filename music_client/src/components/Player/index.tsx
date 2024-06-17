@@ -16,7 +16,6 @@ import { useAudio } from "../../context/AudioContext";
 import Lyric from "./Lyric";
 import { playlist } from "../../utils/types";
 
-
 const Player = memo(() => {
   const { audioRef } = useAudio();
   const songId = useAppSelector((state) => state.audio.sound._id!);
@@ -26,14 +25,13 @@ const Player = memo(() => {
   const volume = useAppSelector((state) => state.audio.volume);
   const isLoop = useAppSelector((state) => state.audio.isLoop);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
-  const playlistSong: playlist = useAppSelector((state) => state.audio.playlistSong!);
+  const playlistSong: playlist = useAppSelector(
+    (state) => state.audio.playlistSong!
+  );
   const currentIndexPlaylist = useAppSelector(
     (state) => state.audio.currentIndexPlaylist
   );
   const dispatch = useAppDispatch();
-
-
-
 
   useEffect(() => {
     (async () => {
@@ -49,8 +47,12 @@ const Player = memo(() => {
               dispatch(
                 setInfoSoundPlayer({
                   ...rs.data,
-                  main_sound: rs.data.main_sound && (env.apiUrl + "/static/" + rs.data.main_sound),
-                  preview_sound: rs.data.preview_sound && (env.apiUrl + "/static/" + rs.data.preview_sound),
+                  main_sound:
+                    rs.data.main_sound &&
+                    env.apiUrl + "/static/" + rs.data.main_sound,
+                  preview_sound:
+                    rs.data.preview_sound &&
+                    env.apiUrl + "/static/" + rs.data.preview_sound,
                   photo: env.apiUrl + "/static/" + rs.data.photo,
                 })
               );
@@ -67,8 +69,6 @@ const Player = memo(() => {
     })();
   }, [songId]);
 
-
-
   return (
     <>
       {songId && (
@@ -76,7 +76,6 @@ const Player = memo(() => {
           <Controls auRef={audioRef.current} />
         </div>
       )}
-
       <audio
         ref={audioRef}
         src={infoSoundPlayer.main_sound || infoSoundPlayer.preview_sound}
@@ -99,7 +98,10 @@ const Player = memo(() => {
             dispatch(setCurrentTime(0));
             dispatch(changeIconPlay(false));
 
-            if (playlistSong !== undefined && playlistSong?.sounds?.length! > 0) {
+            if (
+              playlistSong !== undefined &&
+              playlistSong?.sounds?.length! > 1
+            ) {
               let currentIndex;
 
               if (currentIndexPlaylist === playlistSong?.sounds?.length! - 1) {
@@ -110,9 +112,13 @@ const Player = memo(() => {
 
               dispatch(setCurrentIndexPlaylist(currentIndex));
 
-              if (playlistSong && Array.isArray(playlistSong.sounds) && playlistSong.sounds[currentIndex]) {
+              if (
+                playlistSong &&
+                Array.isArray(playlistSong.sounds) &&
+                playlistSong.sounds[currentIndex]
+              ) {
                 const sound = playlistSong.sounds[currentIndex];
-                if (typeof sound === 'object' && '_id' in sound) {
+                if (typeof sound === "object" && "_id" in sound) {
                   dispatch(setSoundPlay(sound));
                 }
               }
@@ -126,6 +132,6 @@ const Player = memo(() => {
       <Lyric auRef={audioRef.current} />
     </>
   );
-})
+});
 
 export default Player;
