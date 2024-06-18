@@ -7,6 +7,7 @@ import { playlistRouter } from "./playlist";
 import { historyRouter } from "./history";
 import { fileRouter } from "./file";
 import { commentRouter } from "./comment";
+import { notificationRouter } from "./notification";
 
 const router = express.Router();
 
@@ -18,5 +19,6 @@ router.use("/playlist", playlistRouter);
 router.use("/history", historyRouter);
 router.use("/file", fileRouter);
 router.use("/comment", commentRouter);
+router.use("/notification", notificationRouter);
 
 export const apiV1 = router;

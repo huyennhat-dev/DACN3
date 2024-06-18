@@ -1,4 +1,7 @@
+import playlistModel from "~/models/playlist";
+import soundModel from "~/models/sound";
 import userModel from "~/models/user";
+import ApiError from "~/utils/ApiError";
 
 const { default: historyModel } = require("~/models/history");
 const { default: performCRUD } = require("~/services/performCRUD");
@@ -13,12 +16,20 @@ const historyController = {
       };
 
       if (type == "sound") {
+        const isSound = await soundModel.findById(id);
+        if (!isSound)
+          return next(
+            new ApiError(401, "Đã xảy ra lỗi. Vui lòng thử lại sau.")
+          );
         findConditions.sound = id;
       } else if (type == "playlist") {
+        const isPlaylist = await playlistModel.findById(id);
+        if (!isPlaylist)
+          return next(
+            new ApiError(401, "Đã xảy ra lỗi. Vui lòng thử lại sau.")
+          );
         findConditions.playlist = id;
       }
-      console.log(findConditions)
-
       await historyModel.findOneAndDelete(findConditions);
       await performCRUD(historyModel, "create", { ...findConditions });
       return res

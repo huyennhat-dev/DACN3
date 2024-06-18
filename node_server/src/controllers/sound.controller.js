@@ -12,6 +12,8 @@ import userModel from "~/models/user";
 import { verifyAccessToken } from "~/utils/token";
 import purchaseModel from "~/models/purchase";
 import NodeID3 from "node-id3";
+import playlistModel from "~/models/playlist";
+import historyModel from "~/models/history";
 
 const soundController = {
   create: async (req, res, next) => {
@@ -215,7 +217,7 @@ const soundController = {
 
       const sound = await soundModel.findById(soundId).populate({
         path: "user",
-         select: "fullName photo wallet_address",
+        select: "fullName photo wallet_address",
       });
       if (!sound) return next(new ApiError(400, "Không tìm thấy dữ liệu!"));
 
@@ -273,20 +275,33 @@ const soundController = {
     }
   },
 
-
-
   delete: async (req, res, next) => {
     try {
       const uid = req.user.id;
       const soundId = req.params.id;
 
       const soundData = await soundModel.findById(soundId);
+      const checkBuyer = await purchaseModel.findOne({ sound: soundId });
+
+      if (checkBuyer) {
+        return next(
+          new ApiError(401, `${soundData.name} đã có người mua, không thể xóa!`)
+        );
+      }
 
       await performCRUD(soundModel, "delete", { id: soundId });
       await performCRUD(userModel, "update", {
         id: uid,
         $pull: { sounds: soundId },
       });
+
+      await playlistModel.updateMany(
+        { sounds: soundId },
+        { $pull: { sounds: soundId } }
+      );
+
+      await playlistModel.deleteMany({ sound: soundId });
+      await historyModel.deleteMany({ sound: soundId });
 
       const oldPhotoPath = soundData.photo;
       const oldLyricPath = soundData.lyric;
