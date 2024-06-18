@@ -1,3 +1,4 @@
+import { message } from "antd";
 export interface SvgProps {
   setColor: string;
   setWidth: string;
@@ -11,8 +12,8 @@ export interface userType {
   password?: string;
   photo?: string;
   balance?: number;
-  follower?: number ;
-  following?: number ;
+  follower?: number;
+  following?: number;
   wallet_address?: string;
   description?: string;
 }
@@ -116,9 +117,20 @@ export interface comment {
 }
 
 export interface transaction {
-  _id:string,
+  _id: string;
   transaction_hash: string;
   action: string;
   status: string;
   createdAt: string;
+}
+
+export interface notify {
+  _id?: string;
+  user?: userType;
+  content?: {
+    title: String;
+    message: String;
+  };
+  active?: boolean;
+  createdAt?:string
 }

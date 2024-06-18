@@ -182,7 +182,7 @@ const UploadSound = () => {
                                     </div>
                                 )}
                             </label>
-                            <ImgCrop rotationSlider showGrid aspect={1} quality={1}>
+                            <ImgCrop rotationSlider  showGrid aspect={1} quality={2}>
                                 <Upload
                                     onChange={handleChangeImage}
                                     className="hidden"

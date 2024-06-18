@@ -1,6 +1,6 @@
 import { memo, useState } from "react";
 import Play from "../Icons/Play";
-import { playlist, sound } from "../../utils/types";
+import { notify, playlist, sound } from "../../utils/types";
 import { env } from "../../configs/env";
 import { formatCoin, formatRelativeTime } from "../../utils/format";
 import { IconDots } from "@tabler/icons-react";
@@ -24,6 +24,8 @@ import { handleImageError } from "../../utils";
 import fileApi from "../../api/file.api";
 import fileDownload from "js-file-download";
 import { useLocation, useNavigate } from "react-router-dom";
+import { socket } from "../../utils/socket";
+import notiApi from "../../api/noti.api";
 
 interface Props {
   sound: sound,
@@ -37,7 +39,7 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
-  const songId = useAppSelector((state) => state.audio.sound._id);
+  const songId = useAppSelector((state) => state.audio.sound?._id);
   const playlistSong = useAppSelector((state) => state.audio.playlistSong);
   const info = useAppSelector((state) => state.auth.userInfo);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
@@ -102,7 +104,9 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
   const saveRecentSound = async (sound: sound, songId: string) => {
     const token = getToken();
     if (songId !== sound._id && token) {
-      await homeApi.saveRecent({ type: "sound", id: sound._id! });
+      const rs = await soundApi.getSound({}, sound._id!)
+      if (rs)
+        await homeApi.saveRecent({ type: "sound", id: sound._id! });
     }
   };
 
@@ -116,32 +120,49 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
     await saveRecentSound(sound, songId!);
   };
 
+  const handlePushNoti = async (sound: sound) => {
+
+    const notiData: notify = {
+      user: sound.user!,
+      content: {
+        title: `${sound.name} đã bán`,
+        message: `${info?.fullName} đã mua ${sound.name}`
+      }
+    }
+
+    const rs = await notiApi.create(notiData)
+    socket.emit("new-notify", rs.data);
+
+  }
+
   const handleBuySound = async () => {
     if (!info?.id) return message.warning("Bạn chưa đăng nhập!");
 
     try {
       await transactionApi.buySound(sound._id!);
-
+      handlePushNoti(sound)
+      message.success("Mua thành công");
       const token = getToken();
-      if (!token || !songId) {
-        throw new Error("Token or Song ID is missing");
+
+
+      if (token && songId) {
+
+        const rs: any = await soundApi.getSound({ token }, songId);
+        dispatch(
+          setInfoSoundPlayer({
+            ...rs.data,
+            main_sound: rs.data.main_sound
+              && `${env.apiUrl}/static/${rs.data.main_sound}`
+            ,
+            preview_sound: rs.data.preview_sound
+              && `${env.apiUrl}/static/${rs.data.preview_sound}`
+            ,
+            photo: `${env.apiUrl}/static/${rs.data.photo}`,
+          })
+        );
       }
 
-      const rs: any = await soundApi.getSound({ token }, songId);
-      dispatch(
-        setInfoSoundPlayer({
-          ...rs.data,
-          main_sound: rs.data.main_sound
-            && `${env.apiUrl}/static/${rs.data.main_sound}`
-          ,
-          preview_sound: rs.data.preview_sound
-            && `${env.apiUrl}/static/${rs.data.preview_sound}`
-          ,
-          photo: `${env.apiUrl}/static/${rs.data.photo}`,
-        })
-      );
 
-      message.success("Mua thành công");
     } catch (err: any) {
       if (err.response && err.response.data && err.response.data.message) {
         message.error(err.response.data.message);

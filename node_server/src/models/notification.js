@@ -2,11 +2,14 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
   {
-    message: String,
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+    },
+    content: {
+      title: String,
+      message: String,
     },
     active: {
       type: Boolean,

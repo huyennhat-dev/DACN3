@@ -7,6 +7,10 @@ import ModalComponent from "../../common/Modal";
 import { memo, useState } from "react";
 import SignUpPopUp from "./SignUpPopUp";
 import LoginPopUp from "./LoginPopUp";
+import NotificationComponent from "../Notification";
+import Logo from "../Icons/Logo";
+import { IconMusic } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 enum ModalAction {
   Login,
@@ -14,6 +18,7 @@ enum ModalAction {
 }
 
 const Header = () => {
+  const navigate = useNavigate()
   const authState = useAppSelector((state) => state.auth.userInfo);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -29,6 +34,12 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-999 flex h-20 min-h-20 w-full gap-2 drop-shadow-1 items-center justify-between px-2 md:px-0 md:pr-12">
+        <div  
+        onClick={()=>navigate("/")}
+        className="block md:hidden w-10 h-10">
+          <Logo isFull={true} />
+        </div>
+
         <div className="flex flex-1 max-w-150 items-center justify-start gap-2">
           <SearchForm />
         </div>
@@ -50,6 +61,11 @@ const Header = () => {
               title="Đăng ký"
             />
           )}
+
+          <div onClick={()=>navigate("library")} className="flex md:hidden w-10 h-10  items-center justify-center">
+            <IconMusic stroke={1.5} />
+          </div>
+          {authState?.id && <NotificationComponent />}
           {authState?.id && <ProfilePopUp />}
         </div>
       </header>

@@ -35,7 +35,7 @@ const PlaylistDrawer = ({ classes }: Props) => {
 
     if (playlistData && playlistData.sounds) {
       const index =
-        playlistData.sounds.findIndex((sound) => sound._id === soundPlay._id) +
+        playlistData.sounds.findIndex((sound) => sound._id === soundPlay?._id) +
         1;
       firstArray = playlistData.sounds.slice(0, index);
       secondArray = playlistData.sounds.slice(index);
@@ -96,7 +96,7 @@ const PlaylistDrawer = ({ classes }: Props) => {
               <li
                 key={index}
                 ref={isLastItem ? lastElementRef : null}
-                className={`w-[calc(25rem-2.5rem)] my-1 flex-nowrap ${soundPlay._id !== item._id && "filter grayscale"
+                className={`w-[calc(25rem-2.5rem)] my-1 flex-nowrap ${soundPlay?._id !== item._id && "filter grayscale"
                   }`}
               >
                 <TrackItem

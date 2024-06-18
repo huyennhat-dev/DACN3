@@ -14,6 +14,10 @@ const soundApi = {
       { onUploadProgress: processFunc }
     );
   },
+  delete: (id: string) => {
+    const url = `/sound/delete/${id}`;
+    return axiosClient.delete(url);
+  },
   getSoundByOther: (params: params) => {
     const url = `/sound/get-sounds-by-other`;
     return axiosClient.get(url, { params });

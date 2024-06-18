@@ -9,6 +9,7 @@ const requiresToken = (url: string) => {
     "/transition/buy-sound",
     "/transition/get-all",
     "/sound/create",
+    "/sound/delete/:id",
     "/history",
     "/history/create",
     "/history/delete/:id",
@@ -19,6 +20,10 @@ const requiresToken = (url: string) => {
     "/file/download/:path",
     "/comment/create",
     "/comment/delete/:id",
+    "/notification/create",
+    "/notification/update/:id",
+    "/notification/read-all",
+    "/notification/read/:id"
   ];
 
   // Hàm chuyển đổi đường dẫn thành biểu thức chính quy (regex)

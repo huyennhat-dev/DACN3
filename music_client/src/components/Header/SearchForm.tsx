@@ -76,7 +76,7 @@ const SearchForm = () => {
       <form
         onSubmit={handleOnSubmit}
         onFocus={() => setShowSuggestion(true)}
-        className={`relative z-999999 rounded-md px-3 py-2 flex-1 md:ml-10  flex items-center `}
+        className={`relative z-999999 rounded-md md:px-3 py-2 flex-1 md:ml-10  flex items-center `}
       >
         <IconSearch className={`${showSuggestion && "text-primary-200"}`} />
         <input

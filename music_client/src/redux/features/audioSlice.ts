@@ -5,7 +5,7 @@ import { savePlaylist } from "../../utils/storage";
 interface AudioState {
   isPlay: boolean;
   isMute: boolean;
-  sound: sound;
+  sound: sound | null;
   currentIndexPlaylist: number;
   infoSoundPlayer: sound;
   currentTime: number;
@@ -59,9 +59,10 @@ const audioSlice = createSlice({
     changeIconVolume: (state, action: PayloadAction<boolean>) => {
       state.isMute = action.payload;
     },
-    setSoundPlay: (state, action: PayloadAction<sound>) => {
+    setSoundPlay: (state, action: PayloadAction<sound | null>) => {
       state.sound = action.payload;
-      localStorage.setItem("sound-play", JSON.stringify(action.payload));
+      if (action.payload)
+        localStorage.setItem("sound-play", JSON.stringify(action.payload));
     },
     setInfoSoundPlayer: (state, action: PayloadAction<object>) => {
       state.infoSoundPlayer = {

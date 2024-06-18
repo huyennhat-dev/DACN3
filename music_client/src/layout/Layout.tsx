@@ -6,7 +6,7 @@ import Player from "../components/Player";
 import PlaylistDrawer from "../components/Global/PlaylistDrawer";
 
 const DefaultLayout: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const songId = useAppSelector((state) => state.audio.sound._id)
+  const songId = useAppSelector((state) => state.audio.sound?._id)
 
   return (
     <>

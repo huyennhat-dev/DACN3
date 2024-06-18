@@ -158,6 +158,28 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
                     />
                 </div>
 
+                <div className="">
+                    <label
+                        className="block text-gray-700 text-sm font-bold mb-2"
+                        htmlFor="re-password"
+                    >
+                        Nhập lại mật khẩu
+                    </label>
+                    <input
+                        className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
+                        id="re-password"
+                        type="re-password"
+                        name="re-password"
+                        value={formData.password || ""}
+                        onChange={handleChange}
+                        placeholder="******************"
+                    />
+                </div>
+                <div className="my-2 mb-3">
+                    <input type="checkbox" id="show-password" />
+                    <label htmlFor="show-password">Hiển thị mật khẩu</label>
+                </div>
+
                 <Button
                     onclick={handleSubmit}
                     title="Đăng ký"

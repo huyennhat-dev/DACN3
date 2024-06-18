@@ -29,7 +29,7 @@ const PlayListPop = ({
   data,
   hidePopover
 }: {
-  data: string[];
+  data: sound[];
   hidePopover: () => void
 
 }) => {
@@ -57,10 +57,10 @@ const PlayListPop = ({
     setSelectPlaylist(event.target.value)
   };
 
-  const getDataWithSounds = async (data: string[]) => {
+  const getDataWithSounds = async (data: sound[]) => {
     const rsArr: sound[] = await Promise.all(
       data.map(async (item) => {
-        const response = await soundApi.getSound({ token: getToken()! }, item);
+        const response = await soundApi.getSound({ token: getToken()! }, item._id!);
         delete response.data.lyric;
         return response.data;
       })

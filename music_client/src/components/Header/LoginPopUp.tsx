@@ -111,7 +111,7 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
                         Mật khẩu
                     </label>
                     <input
-                        className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                        className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
                         id="password"
                         type="password"
                         name="password"
@@ -119,6 +119,11 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
                         onChange={handleChange}
                         placeholder="******************"
                     />
+                </div>
+
+                <div className="my-2 mb-3">
+                    <input type="checkbox" id="show-password" />
+                    <label htmlFor="show-password">Hiển thị mật khẩu</label>
                 </div>
 
                 <Button

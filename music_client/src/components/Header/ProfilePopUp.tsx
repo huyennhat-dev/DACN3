@@ -38,12 +38,12 @@ const ProfilePopUp = () => {
         onOpenChange={handleVisibleChange}
       >
         <div className="flex items-center gap-2 cursor-pointer">
-          <div className="w-11 h-1w-11 rounded-full bg-primary00 flex cursor-pointer">
+          <div className="w-10 h-1w-10 rounded-full bg-primary00 flex cursor-pointer">
             <img
               src={env.apiUrl+"/static/"+info?.photo}
               alt=""
               onError={handleImageError}
-              className="m-auto rounded-full object-cover w-11 h-1w-11"
+              className="m-auto rounded-full object-cover w-10 h-1w-10"
             />
           </div>
           <div className="hidden sm:block">

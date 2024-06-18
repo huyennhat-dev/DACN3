@@ -16,7 +16,7 @@ const Control: React.FC<{ auRef: HTMLAudioElement | null }> = ({ auRef }) => {
     <>
       <div className="grid grid-cols-1 md:grid-cols-4 h-full gap-6 mx-[5vw] z-[-1]">
         {/* Track Info */}
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center">
           <TrackInfo />
         </div>
         {/* End Track Info */}

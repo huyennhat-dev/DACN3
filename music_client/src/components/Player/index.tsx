@@ -7,6 +7,7 @@ import {
   setCurrentTime,
   setDuration,
   setInfoSoundPlayer,
+  setPlaylistSong,
   setSoundPlay,
 } from "../../redux/features/audioSlice";
 import soundApi from "../../api/sound.api";
@@ -18,7 +19,7 @@ import { playlist } from "../../utils/types";
 
 const Player = memo(() => {
   const { audioRef } = useAudio();
-  const songId = useAppSelector((state) => state.audio.sound._id!);
+  const sound = useAppSelector((state) => state.audio.sound);
   const infoSoundPlayer = useAppSelector(
     (state) => state.audio.infoSoundPlayer
   );
@@ -36,13 +37,13 @@ const Player = memo(() => {
   useEffect(() => {
     (async () => {
       try {
-        if (!songId) {
+        if (!sound) {
           return;
         } else {
           const token = getToken();
 
           soundApi
-            .getSound({ token: token! }, songId)
+            .getSound({ token: token! }, sound._id!)
             .then((rs) => {
               dispatch(
                 setInfoSoundPlayer({
@@ -59,19 +60,20 @@ const Player = memo(() => {
               if (audioRef.current) audioRef.current.volume = volume;
             })
             .catch((err) => {
-              localStorage.removeItem("songId");
-              console.log(err);
+              localStorage.removeItem("sound-play");
+              dispatch(setSoundPlay(null))
+              dispatch(setPlaylistSong({ ...playlistSong, sounds: playlistSong?.sounds!.filter((item) => item._id != sound._id!) }))
             });
         }
       } catch (err) {
         console.log("error:" + err);
       }
     })();
-  }, [songId]);
+  }, [sound]);
 
   return (
     <>
-      {songId && (
+      {sound && (
         <div className="relative z-20 border-t-[1px] flex flex-col justify-around h-20  inset-x-0 bottom-0 ">
           <Controls auRef={audioRef.current} />
         </div>
