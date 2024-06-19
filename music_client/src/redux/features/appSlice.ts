@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { homeData, sound } from "../../utils/types";
+import { RESET_STATE } from "../actions";
 
 interface appState {
   title: string;
@@ -24,6 +25,7 @@ const appSlice = createSlice({
       state.homeData = action.payload;
     },
   },
+
 });
 
 export const { toggleSideBar, setHomeData } = appSlice.actions;

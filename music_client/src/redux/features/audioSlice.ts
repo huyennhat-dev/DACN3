@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { playlist, sound } from "../../utils/types";
 import { savePlaylist } from "../../utils/storage";
+import { RESET_STATE } from "../actions";
 
 interface AudioState {
   isPlay: boolean;
@@ -98,6 +99,9 @@ const audioSlice = createSlice({
     setOpenPlaylist: (state, action: PayloadAction<boolean>) => {
       state.isOpenPlaylist = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(RESET_STATE, () => initialState);
   },
 });
 

@@ -2,6 +2,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { clearToken, saveToken } from "../../utils/tokenUtils";
 import { jwtDecode } from "jwt-decode";
+import { RESET_STATE } from "../actions";
 
 export type UserInfo = {
   id: string;
@@ -74,7 +75,8 @@ const authSlice = createSlice({
       .addCase(logoutAsync.fulfilled, (state) => {
         state.isLoggedIn = false;
         state.userInfo = null;
-      });
+      })
+      .addCase(RESET_STATE, () => initialState);
   },
 });
 

@@ -34,7 +34,6 @@ const History = () => {
   const handleDelete = (id: string) => {
     try {
       const newSounds = sounds.filter((item) => item._id != id);
-
       homeApi.deleteRecent(id).then(() => {
         setSounds(newSounds);
       });
@@ -48,7 +47,7 @@ const History = () => {
       <>
         <div className="grid grid-cols-4 lg:grid-cols-8 gap-4">
           {data.items.map((item: any, index: number) => (
-              <RecentSoundItem key={index} data={item} />
+              <RecentSoundItem key={index} data={item} onRemove={()=>handleDelete(item._id)}/>
           ))}
         </div>
       </>

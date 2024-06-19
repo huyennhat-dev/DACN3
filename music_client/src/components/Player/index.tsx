@@ -38,8 +38,10 @@ const Player = memo(() => {
     (async () => {
       try {
         if (!sound) {
+
           return;
         } else {
+          console.log("get sound")
           const token = getToken();
 
           soundApi

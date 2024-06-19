@@ -22,6 +22,10 @@ const playlistApi = {
     const url = `/playlist/delete/${id}`;
     return axiosClient.delete(url);
   },
+  deleteSoundToPlaylist: ({ sid, pid }: { sid: string; pid: string }) => {
+    const url = `/playlist/delete-sound/${pid}-${sid}`;
+    return axiosClient.delete(url);
+  },
   getPlaylistByOther: (params: params) => {
     const url = `/playlist/get-playlist-by-other`;
     return axiosClient.get(url, { params });

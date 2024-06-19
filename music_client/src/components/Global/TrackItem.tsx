@@ -20,19 +20,20 @@ import transactionApi from "../../api/transaction.api";
 import soundApi from "../../api/sound.api";
 import { getToken } from "../../utils/tokenUtils";
 import homeApi from "../../api/home.api";
-import { handleImageError } from "../../utils";
+import { createSlug, handleImageError } from "../../utils";
 import fileApi from "../../api/file.api";
 import fileDownload from "js-file-download";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { socket } from "../../utils/socket";
 import notiApi from "../../api/noti.api";
 
 interface Props {
   sound: sound,
   removeToPlaylist?: () => void
+  removeToAlbum?: () => void
 }
 
-const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
+const TrackItem = memo(({ sound, removeToPlaylist, removeToAlbum }: Props) => {
   const { audioRef } = useAudio();
   const location = useLocation()
   const { pathname } = location;
@@ -131,6 +132,7 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
     }
 
     const rs = await notiApi.create(notiData)
+    console.log(rs)
     socket.emit("new-notify", rs.data);
 
   }
@@ -256,9 +258,11 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs text-grey-500 hover:underline hover:text-primary-300 cursor-pointer">
+            <Link
+              to={`/author/${createSlug(sound.user?.fullName || "")}/${sound.user?._id}`}
+              className="text-xs text-grey-500 hover:underline hover:text-primary-300 cursor-pointer">
               {sound.user?.fullName}
-            </p>
+            </Link>
             <p className="text-xs text-grey-500">
               {formatRelativeTime(sound.createdAt!)}
             </p>
@@ -274,6 +278,7 @@ const TrackItem = memo(({ sound, removeToPlaylist }: Props) => {
                 downloadSound={handleDownLoadSound}
                 removeToPlaylist={removeToPlaylist}
                 addToPlaylist={handleAddToPlaylist}
+                removeToAlbum={removeToAlbum}
                 buySound={
                   sound.price && info?.id != sound.user?._id && !pathname.includes("/library")
                     ? handleBuySound

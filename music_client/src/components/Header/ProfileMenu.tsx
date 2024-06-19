@@ -5,6 +5,7 @@ import { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { changeIconPlay, setAutoPlay, setSoundPlay } from "../../redux/features/audioSlice";
 import { useAudio } from "../../context/AudioContext";
+import { resetState } from "../../redux/actions";
 
 const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
     const navigate = useNavigate()
@@ -36,6 +37,7 @@ const ProfileMenu = ({ hidePopover }: { hidePopover: () => void }) => {
             dispatch(setSoundPlay({}))
             hidePopover()
             navigate("/")
+            dispatch(resetState());
         } catch (error) {
             console.log(error);
         }

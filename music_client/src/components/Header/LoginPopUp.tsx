@@ -77,6 +77,8 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
         setFormData({ fullName: "", username: "" });
     };
 
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+
     return (
         <div className="min-w-100 modal-content">
 
@@ -113,7 +115,7 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
                     <input
                         className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
                         id="password"
-                        type="password"
+                        type={showPassword?"text":"password"}
                         name="password"
                         value={formData.password || ""}
                         onChange={handleChange}
@@ -122,7 +124,7 @@ const LoginPopUp = ({ hideModal, changeModalAction }: Props) => {
                 </div>
 
                 <div className="my-2 mb-3">
-                    <input type="checkbox" id="show-password" />
+                    <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} id="show-password" />
                     <label htmlFor="show-password">Hiển thị mật khẩu</label>
                 </div>
 

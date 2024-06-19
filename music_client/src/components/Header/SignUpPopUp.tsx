@@ -76,6 +76,11 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
             return setLoading(false);
         }
 
+        if(formData.password!= rePassword){
+             setLoading(false);
+            return message.warning("Mật khẩu không khớp!")
+        }
+
         authApi
             .register(formData)
             .then(async (rs: any) => {
@@ -97,6 +102,11 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
             });
         setFormData({ fullName: "", username: "", password: "" });
     };
+
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [rePassword, setRePassword] = useState<string>("")
+
+
     return (
         <div className="min-w-100 modal-content">
             {loading && <Loader />}
@@ -150,7 +160,7 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
                     <input
                         className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
                         id="password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         name="password"
                         value={formData.password || ""}
                         onChange={handleChange}
@@ -168,15 +178,15 @@ const SignUpPopUp = ({ hideModal, changeModalAction }: Props) => {
                     <input
                         className="shadow appearance-none border  rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
                         id="re-password"
-                        type="re-password"
+                        type={showPassword ? "text" : "password"}
                         name="re-password"
-                        value={formData.password || ""}
-                        onChange={handleChange}
+                        value={rePassword || ""}
+                        onChange={(e) => setRePassword(e.target.value)}
                         placeholder="******************"
                     />
                 </div>
                 <div className="my-2 mb-3">
-                    <input type="checkbox" id="show-password" />
+                    <input type="checkbox" checked={showPassword} onChange={() => setShowPassword(!showPassword)} id="show-password" />
                     <label htmlFor="show-password">Hiển thị mật khẩu</label>
                 </div>
 

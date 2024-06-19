@@ -33,9 +33,11 @@ const playlistController = {
         id: uid,
         $push: { playlist: newPlaylist._id },
       });
-      return res
-        .status(201)
-        .json({ statusCode: 201, message: "Tạo playlist thành công!" });
+      return res.status(201).json({
+        statusCode: 201,
+        data: newPlaylist,
+        message: "Tạo playlist thành công!",
+      });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
@@ -52,16 +54,14 @@ const playlistController = {
       let playlistData = await playlistModel.findById(playlistId).populate([
         {
           path: "user",
-          select:
-            "fullName photo wallet_address",
+          select: "fullName photo wallet_address",
         },
         {
           path: "sounds",
-          populate:{
-            path:"user",
-            select:
-            "fullName photo wallet_address",
-          }
+          populate: {
+            path: "user",
+            select: "fullName photo wallet_address",
+          },
         },
       ]);
 
@@ -125,8 +125,12 @@ const playlistController = {
       }
 
       const updateData = { title, status };
+      let newPlaylist;
 
-      const playlist = await playlistModel.find({ user: uid, _id: playlistId });
+      const playlist = await playlistModel.findOne({
+        user: uid,
+        _id: playlistId,
+      });
       if (playlist) {
         if (photo && photo.split(":")[0] == "data") {
           playlistData = await playlistModel.findById(playlistId);
@@ -143,7 +147,7 @@ const playlistController = {
 
           if (playlistData.photo) deleteFile(playlistData.photo);
         }
-        await performCRUD(playlistModel, "update", {
+        newPlaylist = await performCRUD(playlistModel, "update", {
           id: playlistId,
           ...updateData,
         });
@@ -159,24 +163,32 @@ const playlistController = {
           );
 
           if (newSounds.length > 0) {
-            await performCRUD(playlistModel, "update", {
+            const existingSounds = playlist.sounds || [];
+
+            const soundsToAdd = newSounds.filter(
+              (sound) => !existingSounds.includes(sound._id)
+            );
+
+            newPlaylist = await performCRUD(playlistModel, "update", {
               id: playlistId,
-              $push: { sounds: { $each: newSounds } },
+              $push: { sounds: { $each: soundsToAdd } },
             });
           }
         }
       }
 
       if (favouriteValue) {
-        await performCRUD(playlistModel, "update", {
+        newPlaylist = await performCRUD(playlistModel, "update", {
           id: playlistId,
           $inc: { favourite: favouriteValue },
         });
       }
 
-      return res
-        .status(200)
-        .json({ statusCode: 200, message: "Cập nhật thành công!" });
+      return res.status(200).json({
+        statusCode: 200,
+        data: newPlaylist,
+        message: "Cập nhật thành công!",
+      });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
@@ -216,8 +228,7 @@ const playlistController = {
         .find({ user: keyword })
         .populate({
           path: "user",
-          select:
-            "fullName photo wallet_address",
+          select: "fullName photo wallet_address",
         })
         .populate({
           path: "sounds",
@@ -247,6 +258,25 @@ const playlistController = {
         limit,
         total: totalResults,
       });
+    } catch (error) {
+      console.log(error);
+      return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));
+    }
+  },
+  deleteSoundToPlaylist: async (req, res, next) => {
+    try {
+      const params = req.params.id;
+
+      const playlistId = params.split("-")[0]
+      const soundId = params.split("-")[1]
+
+      await performCRUD(playlistModel, "update", {
+        id: playlistId,
+        $pull: { sounds: soundId },
+      });
+      return res
+        .status(204)
+        .json({ statusCode: 204, message: "Xóa thành công!" });
     } catch (error) {
       console.log(error);
       return next(new ApiError(500, "Đã xảy ra lỗi. Vui lòng thử lại sau."));

@@ -14,12 +14,17 @@ const PopItem = ({
 }: {
   data: playlist;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
 }) => {
   const id = useId();
   return (
     <li className="flex items-center justify-start gap-2 mb-2 cursor-pointer hover:text-primary-200">
-      <input value={data._id} type="radio" name="playlist" id={id} onChange={onChange} />
+      <input
+        value={data._id}
+        type="radio"
+        name="playlist"
+        id={id}
+        onChange={onChange}
+      />
       <label htmlFor={id}>{data.title}</label>
     </li>
   );
@@ -27,21 +32,17 @@ const PopItem = ({
 
 const PlayListPop = ({
   data,
-  hidePopover
+  hidePopover,
 }: {
   data: sound[];
-  hidePopover: () => void
-
+  hidePopover: () => void;
 }) => {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const [playlist, setPlaylist] = useState<playlist[]>([]);
   const uid = useAppSelector((state) => state.auth.userInfo?.id);
   const playlistSong = useAppSelector((state) => state.audio.playlistSong);
-  const [selectPlaylist, setSelectPlaylist] = useState<string>("")
+  const [selectPlaylist, setSelectPlaylist] = useState<string>("");
   const getPlaylist = () => {
-
-
-
     playlistApi
       .getPlaylistByOther({ keyword: uid, token: getToken()! })
       .then((rs) => {
@@ -54,13 +55,16 @@ const PlayListPop = ({
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectPlaylist(event.target.value)
+    setSelectPlaylist(event.target.value);
   };
 
   const getDataWithSounds = async (data: sound[]) => {
     const rsArr: sound[] = await Promise.all(
       data.map(async (item) => {
-        const response = await soundApi.getSound({ token: getToken()! }, item._id!);
+        const response = await soundApi.getSound(
+          { token: getToken()! },
+          item._id!
+        );
         delete response.data.lyric;
         return response.data;
       })
@@ -70,12 +74,11 @@ const PlayListPop = ({
   };
 
   const handlePushSoundToPlaylist = async () => {
-
-    if (data.length <= 0) return message.warning("Chọn tối thiểu 1 soud!")
-    if (!selectPlaylist) return message.warning("Chọn một playlist")
+    if (data.length <= 0) return message.warning("Chọn tối thiểu 1 soud!");
+    if (!selectPlaylist) return message.warning("Chọn một playlist");
 
     if (selectPlaylist == playlistSong?._id) {
-      const arr = await getDataWithSounds(data)
+      const arr = await getDataWithSounds(data);
 
       const filteredSounds: sound[] =
         playlistSong?.sounds?.filter(
@@ -84,17 +87,19 @@ const PlayListPop = ({
 
       const modifierData: playlist = {
         ...playlistSong,
-        sounds: filteredSounds.concat(arr)
-      }
+        sounds: filteredSounds.concat(arr),
+      };
 
-      dispatch(setPlaylistSong(modifierData))
+      dispatch(setPlaylistSong(modifierData));
     }
 
-    playlistApi.update({ data: { sounds: data, _id: selectPlaylist } }).then(() => {
-      message.success("Thêm vào playlist thành công!")
-      hidePopover()
-    })
-  }
+    playlistApi
+      .update({ data: { sounds: data, _id: selectPlaylist } })
+      .then(() => {
+        message.success("Thêm vào playlist thành công!");
+        hidePopover();
+      });
+  };
 
   return (
     <>

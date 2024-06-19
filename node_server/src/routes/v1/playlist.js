@@ -7,6 +7,11 @@ router
   .post("/create", authMiddleware, playlistController.create)
   .put("/update/:id", authMiddleware, playlistController.update)
   .delete("/delete/:id", authMiddleware, playlistController.delete)
+  .delete(
+    "/delete-sound/:id",
+    authMiddleware,
+    playlistController.deleteSoundToPlaylist
+  )
   .get("/read/:id", playlistController.read)
   .get("/get-playlist-by-other", playlistController.getPlaylistByOther);
 

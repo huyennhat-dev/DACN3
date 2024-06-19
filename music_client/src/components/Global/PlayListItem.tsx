@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { playlist, sound } from "../../utils/types";
 import { env } from "../../configs/env";
 import Play from "../Icons/Play";
-import { IconDots, IconHeart, IconX } from "@tabler/icons-react";
+import { IconDots, IconEdit, IconHeart, IconX } from "@tabler/icons-react";
 import { Popconfirm, message } from "antd";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { handleImageError } from "../../utils";
@@ -21,9 +21,10 @@ import MusicWave from "../Icons/MusicWave";
 interface Props {
   playlist: playlist;
   onDelete?: () => void;
+  showEditModal?: () => void
 }
 
-const PlayListItem = ({ playlist, onDelete }: Props) => {
+const PlayListItem = ({ playlist, onDelete, showEditModal }: Props) => {
   const { audioRef } = useAudio();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -57,7 +58,7 @@ const PlayListItem = ({ playlist, onDelete }: Props) => {
   };
 
   const handlePlayPlaylist = async () => {
-    if (isPlay) { 
+    if (isPlay) {
       pauseSound()
     } else {
       const playlistData = await getPlaylistData();
@@ -147,9 +148,12 @@ const PlayListItem = ({ playlist, onDelete }: Props) => {
                   <Play setColor="white" setHeight="1.2rem" setWidth="1.2rem" />
                 )}
               </button>
-              <button className="hover:bg-white/30 p-2 rounded-full">
+              {showEditModal && <button onClick={showEditModal} className="hover:bg-white/30 p-2 rounded-full">
+                <IconEdit size={16} color="#fff" />
+              </button>}
+              {!showEditModal && <button  className="hover:bg-white/30 p-2 rounded-full">
                 <IconDots size={16} color="#fff" />
-              </button>
+              </button>}
             </div>
           </div>
         )}

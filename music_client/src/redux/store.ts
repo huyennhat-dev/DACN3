@@ -1,16 +1,8 @@
-import { configureStore } from "@reduxjs/toolkit";
-import appReducer from "./features/appSlice";
-import audioReducer from "./features/audioSlice";
-import authReducer from "./features/authSlice";
-import loadingReducer from "./features/loadingSlice";
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from './rootReducer';
 
 const store = configureStore({
-  reducer: {
-    app: appReducer,
-    audio: audioReducer,
-    auth: authReducer,
-    loading: loadingReducer,
-  },
+  reducer: rootReducer,
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

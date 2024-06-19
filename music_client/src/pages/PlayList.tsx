@@ -10,6 +10,7 @@ import { formatCountNumber } from "../utils/format";
 import Button from "../components/Global/Button";
 import { IconArrowsDownUp, IconDots, IconHeart } from "@tabler/icons-react";
 import TrackItem from "../components/Global/TrackItem";
+import { message } from "antd";
 
 type Props = {};
 
@@ -27,6 +28,18 @@ const PlayListPage = (props: Props) => {
         if (id) getPlaylistData();
     }, [id]);
 
+    const handleRemoveToAlbum = (soundId: string) => {
+        const newPlaylistData: playlist = {
+            ...playlistData,
+            sounds: playlistData?.sounds?.filter((sound) => sound._id != soundId)
+        }
+        playlistApi.deleteSoundToPlaylist({ pid: id!, sid: soundId }).then(() => {
+            message.success("Xóa thành công!")
+        })
+
+        setPlaylistData(newPlaylistData)
+    }
+
     return (
         <>
             <div className="md:mr-5">
@@ -35,7 +48,7 @@ const PlayListPage = (props: Props) => {
                         <div className="h-full flex items-center justify-center">
                             <div className="text-center">
                                 <img
-                                    src={env.apiUrl + "/static/" + playlistData?.photo}
+                                    src={env.apiUrl + "/static/" + (playlistData?.photo || playlistData?.sounds && playlistData?.sounds[0]?.photo)}
                                     alt={playlistData?.title}
                                     onError={handleImageError}
                                     className="max-w-75 w-full lg:min-w-50 rounded shadow object-cover"
@@ -90,7 +103,7 @@ const PlayListPage = (props: Props) => {
                             </div>
                             {playlistData?.sounds?.map((item: sound) => (
                                 <div key={item._id} className="my-1">
-                                    <TrackItem sound={item} />
+                                    <TrackItem sound={item} removeToAlbum={() => handleRemoveToAlbum(item._id!)} />
                                 </div>
                             ))}
                         </div>

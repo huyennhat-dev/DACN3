@@ -13,6 +13,7 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
   IconPlaylistAdd,
+  IconPlaylistX,
   IconShare,
 } from "@tabler/icons-react";
 import { sound } from "../../../utils/types";
@@ -33,6 +34,7 @@ interface Props {
   buySound?: (() => void) | null;
   addToPlaylist?: () => void;
   removeToPlaylist?: () => void;
+  removeToAlbum?: () => void;
   addToFavourite?: () => void;
   removeToFavourite?: () => void;
   addToClipboard?: () => void;
@@ -40,10 +42,10 @@ interface Props {
 }
 
 const TrackPopup = memo((props: Props) => {
-  const songId = useAppSelector((state) => state.audio.sound._id);
+  const songId = useAppSelector((state) => state.audio.sound?._id);
   const isPlay = useAppSelector((state) => state.audio.isPlay);
 
-  const [openPlaylistPopup, setOpenPlaylistPopup] = useState<boolean>(false)
+  const [openPlaylistPopup, setOpenPlaylistPopup] = useState<boolean>(false);
 
   const hidePopover = () => {
     setOpenPlaylistPopup(false);
@@ -155,23 +157,30 @@ const TrackPopup = memo((props: Props) => {
             <span>Xóa khỏi danh sách phát</span>
           </li>
         )}
-        <Popover
-          open={openPlaylistPopup}
-          onOpenChange={handleOpenPopup}
-          placement="leftTop"
-          content={
-            <PlayListPop data={[props.sound?._id!]} hidePopover={hidePopover} />
-          }
-          trigger="click"
-        >
-
+        {!props.removeToAlbum ? (
+          <Popover
+            open={openPlaylistPopup}
+            onOpenChange={handleOpenPopup}
+            placement="leftTop"
+            content={
+              <PlayListPop data={[props.sound]} hidePopover={hidePopover} />
+            }
+            trigger="click"
+          >
+            <li className="flex items-center justify-start gap-2 mb-2 cursor-pointer hover:text-primary-200">
+              <IconPlaylistAdd strokeWidth={1.5} size={20} />
+              <span>Thêm vào playlist</span>
+            </li>
+          </Popover>
+        ) : (
           <li
+            onClick={props.removeToAlbum}
             className="flex items-center justify-start gap-2 mb-2 cursor-pointer hover:text-primary-200"
           >
-            <IconPlaylistAdd strokeWidth={1.5} size={20} />
-            <span>Thêm vào playlist</span>
+            <IconPlaylistX strokeWidth={1.5} size={20} />
+            <span>Xóa khỏi playlist</span>
           </li>
-        </Popover>
+        )}
         {props.addToFavourite && (
           <li
             onClick={props.addToFavourite}

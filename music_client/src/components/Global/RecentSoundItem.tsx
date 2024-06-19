@@ -11,10 +11,11 @@ import {
 import MusicWave from "../Icons/MusicWave";
 import { getToken } from "../../utils/tokenUtils";
 import homeApi from "../../api/home.api";
+import { IconX } from "@tabler/icons-react";
 
-const RecentSoundItem = ({ data }: { data: any }) => {
+const RecentSoundItem = ({ data, onRemove }: { data: any, onRemove?: () => void }) => {
     const dispatch = useAppDispatch();
-    const songId = useAppSelector((state) => state.audio.sound._id);
+    const songId = useAppSelector((state) => state.audio.sound?._id);
     const { audioRef } = useAudio();
     const isPlay = useAppSelector((state) => state.audio.isPlay);
     const info = useAppSelector((state) => state.auth.userInfo);
@@ -86,6 +87,10 @@ const RecentSoundItem = ({ data }: { data: any }) => {
                                 <MusicWave color="#fff" classes="bottom-0 left-[-25%] " />
                             )}
                         </button>
+
+                        {onRemove && <div className="relative text-white z-2 top-0 right-0 bottom-0 left-0 w-full h-full">
+                            <IconX onClick={onRemove} size={16} className="absolute z-2 top-1 right-1 hover:text-primary-50 cursor-pointer" />
+                        </div>}
                     </div>
                 )}
             </div>

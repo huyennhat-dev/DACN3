@@ -16,6 +16,7 @@ const requiresToken = (url: string) => {
     "/playlist/create",
     "/playlist/delete/:id",
     "/playlist/update/:id",
+    "/playlist/delete-sound/:id",
     "/sound/get-sounds-by-buyer",
     "/file/download/:path",
     "/comment/create",
